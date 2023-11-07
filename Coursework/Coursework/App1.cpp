@@ -96,6 +96,9 @@ float App1::distance_from_sphere(XMFLOAT3 p, XMFLOAT3 c, float r)
 {
 	float answer = Distance_between_3Dpoints_2_(p,c);
 	answer = answer - r;
+	//answer < 0 is inside the sphere
+	//answer = 0 is on the surface of the sphere
+	//answer > 0 is outside the sphere
 	return answer;
 }
 
