@@ -4,6 +4,7 @@
 
 // Includes
 #include "DXF.h"
+#include <cmath>
 
 
 class App1 : public BaseApplication
@@ -19,6 +20,13 @@ public:
 protected:
 	bool render();
 	void gui();
+
+	//Initial SDF Render
+	float distance_from_sphere(XMFLOAT3 p, XMFLOAT3 c, float r);
+	//
+
+	//Function to calculate the distance between two 3D points
+	float Distance_between_3Dpoints_2_(XMFLOAT3 a, XMFLOAT3 b);
 
 private:
 

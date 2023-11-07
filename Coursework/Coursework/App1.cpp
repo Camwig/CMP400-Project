@@ -13,7 +13,10 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	BaseApplication::init(hinstance, hwnd, screenWidth, screenHeight, in, VSYNC, FULL_SCREEN);
 
 	// Initalise scene variables.
-	
+	XMFLOAT3 a = XMFLOAT3(-7,11,12);
+	XMFLOAT3 b = XMFLOAT3(0, 0, 0);
+
+	float v = distance_from_sphere(a,b,3);
 
 }
 
@@ -87,4 +90,24 @@ void App1::gui()
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
+
+//
+float App1::distance_from_sphere(XMFLOAT3 p, XMFLOAT3 c, float r)
+{
+	float answer = Distance_between_3Dpoints_2_(p,c);
+	answer = answer - r;
+	return answer;
+}
+
+float App1::Distance_between_3Dpoints_2_(XMFLOAT3 b, XMFLOAT3 a)
+{
+	float x =( pow((b.x - a.x),2.0));
+	float y = (pow((b.y - a.y), 2.0));
+	float z = (pow((b.z - a.z), 2.0));
+	float d = (x + y + z);
+	d = std::sqrt(d);
+	return d;
+}
+
+//
 
