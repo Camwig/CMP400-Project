@@ -51,35 +51,35 @@ float4 main(InputType input) : SV_TARGET
     //ray.TMax = 1000000.0f; //maximum extent of the ray
     //ray.TMin = 0.f; //minimum extent of the ray
     
-    float3 camPos = CameraOrigin;
+    //float3 camPos = CameraOrigin;
     
-    float stepSize = 100.0f;
-    int num_of_steps = 32;
-    float total_distance = 0.0f;
+    //float stepSize = 100.0f;
+    //int num_of_steps = 32;
+    //float total_distance = 0.0f;
     
-    for (int i = 0.f; i < num_of_steps; i++)
-    {
-        //if (camPos = distance_from_shape)
-        //{
-            float currentPos = CameraOrigin + total_distance * CameraForwardDirection;
+    //for (int i = 0.f; i < num_of_steps; i++)
+    //{
+    //    //if (camPos = distance_from_shape)
+    //    //{
+    //    float currentPos = CameraOrigin + total_distance *CameraForwardDirection;
             
-            currentPos = distance_from_sphere(CameraOrigin, float3(0.0f, 1.0f, 0.0f), 3.0f);
+    //        currentPos = distance_from_sphere(CameraOrigin, float3(0.0f, 1.0f, 0.0f), 3.0f);
             
-            if (currentPos < 0.f)
-            {
-                input.colour = float4(1.0f, 0.0f, 0.0f, 1.0f);
-                return input.colour;
-            }
+    //        if (currentPos < 0.f)
+    //        {
+    //            input.colour = float4(1.0f, 0.0f, 0.0f, 1.0f);
+    //            return input.colour;
+    //        }
             
-            if (currentPos > 1000.0f)
-            {
-                break;
-            }
+    //        if (currentPos > 1000.0f)
+    //        {
+    //            break;
+    //        }
 
-            total_distance += currentPos;
-        //}
-    }
-    input.colour = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //        total_distance += currentPos;
+    //    //}
+    //}
+    input.colour = float4(1.0f, 1.0f, 1.0f, 1.0f);
     return input.colour;
     
     /*
