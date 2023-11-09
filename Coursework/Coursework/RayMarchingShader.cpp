@@ -15,6 +15,12 @@ RayMarchingShader::~RayMarchingShader()
 		matrixBuffer = 0;
 	}
 
+	if (cameraBuffer)
+	{
+		cameraBuffer->Release();
+		cameraBuffer = 0;
+	}
+
 	// Release the layout.
 	if (layout)
 	{
@@ -30,6 +36,7 @@ RayMarchingShader::~RayMarchingShader()
 void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilename)
 {
 	D3D11_BUFFER_DESC matrixBufferDesc;
+	D3D11_BUFFER_DESC cameraBufferDesc;
 
 	// Load (+ compile) shader files
 	loadColourVertexShader(vsFilename);
@@ -46,15 +53,24 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	renderer->CreateBuffer(&matrixBufferDesc, NULL, &matrixBuffer);
 
+	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	cameraBufferDesc.ByteWidth = sizeof(MatrixBufferType);
+	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cameraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cameraBufferDesc.MiscFlags = 0;
+	cameraBufferDesc.StructureByteStride = 0;
+	renderer->CreateBuffer(&cameraBufferDesc, NULL, &cameraBuffer);
+
 }
 
 
-void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix)
+void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	XMMATRIX tworld, tview, tproj;
 
+	CameraBuffer* camPtr;
 
 	// Transpose the matrices to prepare them for the shader.
 	tworld = XMMatrixTranspose(worldMatrix);
@@ -69,6 +85,15 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	dataPtr->projection = tproj;
 	deviceContext->Unmap(matrixBuffer, 0);
 
+	deviceContext->Map(cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	camPtr = (CameraBuffer*)mappedResource.pData;
+	camPtr->CameraOrigin = cameraPos;
+	camPtr->CameraForwardDirection = camForwardVec;
+	camPtr->padding = 0.0f;
+	camPtr->padding2 = 0.0f;
+	deviceContext->Unmap(cameraBuffer, 0);
+	
 	// Now set the constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
+	deviceContext->PSSetConstantBuffers(0, 1, &cameraBuffer);
 }

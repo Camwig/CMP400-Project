@@ -56,6 +56,10 @@ public:
 	void strafeLeft();			///< default function for moving left
 	void turn(int x, int y);	///< default function for turning in both x/y axis
 
+
+	//My own edit
+	XMFLOAT3 ForwardVector;
+
 private:
 	XMFLOAT3 position;		///< float3 for position
 	XMFLOAT3 rotation;		///< float3 for rotation (angles)

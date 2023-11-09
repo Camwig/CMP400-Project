@@ -81,6 +81,23 @@ void Camera::update()
 
 	// Finally create the view matrix from the three updated vectors.
 	viewMatrix = XMMatrixLookAtLH(positionv, lookAt, up);
+
+
+	//My own edit
+	//////////////////////////////////////////
+
+	float cosY = cosf(yaw * 3.1415 / 180);
+	float cosP = cosf(pitch * 3.1415 / 180);
+	float cosR = cosf(roll * 3.1415 / 180);
+	float sinY = sinf(yaw * 3.1415 / 180);
+	float sinP = sinf(pitch * 3.1415 / 180);
+	float sinR = sinf(roll * 3.1415 / 180);
+	ForwardVector.x = sinY * cosP;
+	ForwardVector.y = sinP;
+	ForwardVector.z = cosP * (-cosY);
+
+	//////////////////////////////////////////
+	//
 }
 
 

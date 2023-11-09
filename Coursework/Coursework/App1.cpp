@@ -64,8 +64,6 @@ bool App1::render()
 	XMMATRIX viewMatrix = camera->getViewMatrix();
 	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
 
-	
-
 	// Render GUI
 	gui();
 
