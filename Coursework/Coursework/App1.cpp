@@ -166,6 +166,9 @@ void App1::RenderedPass()
 {
 	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
 
+	float screenSizeY = (float)FinalTexture->getTextureHeight();
+	float screenSizeX = (float)FinalTexture->getTextureWidth();
+
 	FinalTexture->setRenderTarget(renderer->getDeviceContext());
 	FinalTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
 
@@ -178,7 +181,7 @@ void App1::RenderedPass()
 
 	orthoMesh->sendData(renderer->getDeviceContext());
 	//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
-	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, DownSampletexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f);
+	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, DownSampletexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, screenSizeY,screenSizeX);
 	shader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 
 	renderer->setZBuffer(true);

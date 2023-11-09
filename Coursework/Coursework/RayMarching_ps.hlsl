@@ -11,6 +11,14 @@ cbuffer CameraBuffer : register(b0)
     float3 padding3;
 };
 
+cbuffer ScreenSizeBuffer : register(b1)
+{
+    float screenWidth;
+    float3 Spadding;
+    float screenheight;
+    float3 Spadding2;
+};
+
 struct InputType
 {
     float4 position : SV_POSITION;
@@ -51,34 +59,45 @@ float4 main(InputType input) : SV_TARGET
     //ray.TMax = 1000000.0f; //maximum extent of the ray
     //ray.TMin = 0.f; //minimum extent of the ray
     
-    //float3 camPos = CameraOrigin;
+    float3 camPos = CameraOrigin;
     
-    //float stepSize = 100.0f;
-    //int num_of_steps = 32;
-    //float total_distance = 0.0f;
+    //float stepSize = 1000.0f;
+    int num_of_steps = 32;
+    float total_distance = 0.0f;
     
-    //for (int i = 0.f; i < num_of_steps; i++)
-    //{
-    //    //if (camPos = distance_from_shape)
-    //    //{
-    //    float currentPos = CameraOrigin + total_distance *CameraForwardDirection;
+    //float texelSize = 1.0f / screenWidth;
+    
+    
+    
+    //No idea how to normalize these coordinates?
+    //////
+    float3 newCoords = ((2.0 * (input.position.x / screenWidth - 0.5f)), (2.0 * (input.position.y / screenheight - 0.5f)));
+    newCoords.x *= screenWidth / screenheight;
+    //////
+    
+    
+    
+    for (int i = 0.f; i < num_of_steps; i++)
+    {
+        float currentPos = newCoords + total_distance * CameraForwardDirection;
             
-    //        currentPos = distance_from_sphere(CameraOrigin, float3(0.0f, 1.0f, 0.0f), 3.0f);
+        float distance_to_currentPos = distance_from_sphere(currentPos, float3(screenWidth / 2, screenheight / 2, 6.0f), 3.0f);
+        
+        //currentPos = -1.f;
             
-    //        if (currentPos < 0.f)
-    //        {
-    //            input.colour = float4(1.0f, 0.0f, 0.0f, 1.0f);
-    //            return input.colour;
-    //        }
+        if (distance_to_currentPos < 0.001f)
+        {
+            input.colour = float4(1.0f, 0.0f, 0.0f, 1.0f);
+            return input.colour;
+        }
             
-    //        if (currentPos > 1000.0f)
-    //        {
-    //            break;
-    //        }
+        if (total_distance > 1000.0f)
+        {
+            break;
+        }
 
-    //        total_distance += currentPos;
-    //    //}
-    //}
+        total_distance += distance_to_currentPos;
+    }
     input.colour = float4(1.0f, 1.0f, 1.0f, 1.0f);
     return input.colour;
     
@@ -93,5 +112,11 @@ float4 main(InputType input) : SV_TARGET
     
     */
     
+    //float3 camPos = float3(0, 0, -1);
+    //float3 camTarget = float3(0, 0, 0);
     
+    //Normalize screen coordinates
+    
+    //Then render the image
+
 }

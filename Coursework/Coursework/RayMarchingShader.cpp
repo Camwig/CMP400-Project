@@ -21,6 +21,12 @@ RayMarchingShader::~RayMarchingShader()
 		cameraBuffer = 0;
 	}
 
+	if (screenSizeBuffer)
+	{
+		screenSizeBuffer->Release();
+		screenSizeBuffer = 0;
+	}
+
 	// Release the layout.
 	if (layout)
 	{
@@ -37,6 +43,7 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 {
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_BUFFER_DESC cameraBufferDesc;
+	D3D11_BUFFER_DESC screenSizeBufferDesc;
 
 	// Load (+ compile) shader files
 	loadColourVertexShader(vsFilename);
@@ -61,16 +68,26 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 	cameraBufferDesc.StructureByteStride = 0;
 	renderer->CreateBuffer(&cameraBufferDesc, NULL, &cameraBuffer);
 
+	// Setup the description of the screen size.
+	screenSizeBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	screenSizeBufferDesc.ByteWidth = sizeof(ScreenSizeBuffer);
+	screenSizeBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	screenSizeBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	screenSizeBufferDesc.MiscFlags = 0;
+	screenSizeBufferDesc.StructureByteStride = 0;
+	renderer->CreateBuffer(&screenSizeBufferDesc, NULL, &screenSizeBuffer);
+
 }
 
 
-void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap)
+void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	XMMATRIX tworld, tview, tproj;
 
 	CameraBuffer* camPtr;
+	ScreenSizeBuffer* screen_;
 
 	// Transpose the matrices to prepare them for the shader.
 	tworld = XMMatrixTranspose(worldMatrix);
@@ -94,6 +111,15 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	camPtr->padding2 = 0.0f;
 	camPtr->padding3 = XMFLOAT3(0.0f,0.0f,0.0f);
 	deviceContext->Unmap(cameraBuffer, 0);
+
+	deviceContext->Map(screenSizeBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	screen_ = (ScreenSizeBuffer*)mappedResource.pData;
+	screen_->screenheight = height;
+	screen_->screenWidth = width;
+	screen_->padding = XMFLOAT3(1.0f, 1.f, 1.f);
+	screen_->padding2 = XMFLOAT3(1.0f, 1.f, 1.f);
+	deviceContext->Unmap(screenSizeBuffer, 0);
+	deviceContext->PSSetConstantBuffers(1, 1, &screenSizeBuffer);
 	
 	// Now set the constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
