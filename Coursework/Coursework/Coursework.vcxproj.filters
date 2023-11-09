@@ -24,6 +24,9 @@
     <ClCompile Include="RayMarchingShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TextureShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h">
@@ -41,12 +44,24 @@
     <ClInclude Include="resource2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TextureShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="RayMarching_ps.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
     <FxCompile Include="RayMarching_vs.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="texture_vs.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="texture_ps.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>

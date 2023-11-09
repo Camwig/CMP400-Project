@@ -64,7 +64,7 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 }
 
 
-void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap)
+void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -98,4 +98,8 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	// Now set the constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
 	deviceContext->PSSetConstantBuffers(0, 1, &cameraBuffer);
+
+	// Set shader texture resource in the pixel shader.
+	deviceContext->PSSetShaderResources(0, 1, &texture);
+	deviceContext->PSSetSamplers(0, 1, &sampleState);
 }

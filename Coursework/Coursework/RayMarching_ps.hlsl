@@ -1,3 +1,5 @@
+Texture2D shaderTexture : register(t0);
+SamplerState SampleType : register(s0);
 
 cbuffer CameraBuffer : register(b0)
 {

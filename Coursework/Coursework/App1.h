@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include "RayMarchingShader.h"
+#include "TextureShader.h"
 
 class App1 : public BaseApplication
 {
@@ -22,15 +23,29 @@ protected:
 	bool render();
 	void gui();
 
+	void SamplePass();
+	void RenderedPass();
+	void finalPass();
+
 	//Initial SDF Render
-	float distance_from_sphere(XMFLOAT3 p, XMFLOAT3 c, float r);
+	//float distance_from_sphere(XMFLOAT3 p, XMFLOAT3 c, float r);
 	//
 
 	//Function to calculate the distance between two 3D points
-	float Distance_between_3Dpoints_2_(XMFLOAT3 a, XMFLOAT3 b);
+	//float Distance_between_3Dpoints_2_(XMFLOAT3 a, XMFLOAT3 b);
 
 private:
 	RayMarchingShader* shader;
+	TextureShader* textureShader;
+
+	OrthoMesh* orthoMesh;
+	OrthoMesh* sampleMesh;
+
+	RenderTexture* renderTexture;
+
+	RenderTexture* FinalTexture;
+
+	RenderTexture* DownSampletexture;
 };
 
 #endif
