@@ -26,6 +26,7 @@ protected:
 	void SamplePass();
 	void RenderedPass();
 	void finalPass();
+	void firstPass();
 
 	//Initial SDF Render
 	//float distance_from_sphere(XMFLOAT3 p, XMFLOAT3 c, float r);

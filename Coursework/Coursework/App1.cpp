@@ -66,27 +66,29 @@ bool App1::frame()
 
 bool App1::render()
 {
-	// Clear the scene. (default blue colour)
-	//renderer->beginScene(0.39f, 0.58f, 0.92f, 1.0f);
+	//// Clear the scene. (default blue colour)
+	////renderer->beginScene(0.39f, 0.58f, 0.92f, 1.0f);
 
-	// Set the render target to be the render to texture and clear it
-	renderTexture->setRenderTarget(renderer->getDeviceContext());
-	renderTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
+	//// Set the render target to be the render to texture and clear it
+	//renderTexture->setRenderTarget(renderer->getDeviceContext());
+	//renderTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
 
-	// Generate the view matrix based on the camera's position.
-	camera->update();
+	//// Generate the view matrix based on the camera's position.
+	//camera->update();
 
-	// Get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
-	XMMATRIX worldMatrix = renderer->getWorldMatrix();
-	XMMATRIX viewMatrix = camera->getViewMatrix();
-	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
+	//// Get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
+	//XMMATRIX worldMatrix = renderer->getWorldMatrix();
+	//XMMATRIX viewMatrix = camera->getViewMatrix();
+	//XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
 
-	//shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, camera->getPosition(), camera->getForwardVector(),0.0f);
-	//shader->render(renderer->getDeviceContext(),0);
+	////shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, camera->getPosition(), camera->getForwardVector(),0.0f);
+	////shader->render(renderer->getDeviceContext(),0);
 
-	renderer->setBackBufferRenderTarget();
+	//renderer->setBackBufferRenderTarget();
 
+	firstPass();
 	SamplePass();
+	RenderedPass();
 	finalPass();
 
 	//gui();
@@ -111,6 +113,29 @@ void App1::gui()
 	// Render UI
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+void App1::firstPass()
+{
+	// Clear the scene. (default blue colour)
+//renderer->beginScene(0.39f, 0.58f, 0.92f, 1.0f);
+
+// Set the render target to be the render to texture and clear it
+	renderTexture->setRenderTarget(renderer->getDeviceContext());
+	renderTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
+
+	// Generate the view matrix based on the camera's position.
+	camera->update();
+
+	// Get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
+	XMMATRIX worldMatrix = renderer->getWorldMatrix();
+	XMMATRIX viewMatrix = camera->getViewMatrix();
+	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
+
+	//shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, camera->getPosition(), camera->getForwardVector(),0.0f);
+	//shader->render(renderer->getDeviceContext(),0);
+
+	renderer->setBackBufferRenderTarget();
 }
 
 void App1::SamplePass()
