@@ -13,10 +13,13 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	BaseApplication::init(hinstance, hwnd, screenWidth, screenHeight, in, VSYNC, FULL_SCREEN);
 
 	// Initalise scene variables.
-	XMFLOAT3 a = XMFLOAT3(-7,11,12);
-	XMFLOAT3 b = XMFLOAT3(0, 0, 0);
+	//XMFLOAT3 a = XMFLOAT3(-7,11,12);
+	//XMFLOAT3 b = XMFLOAT3(0, 0, 0);
 
-	float v = distance_from_sphere(a,b,3);
+	//float v = distance_from_sphere(a,b,3);
+
+	shader = new RayMarchingShader(renderer->getDevice(), hwnd);
+
 
 }
 
@@ -27,7 +30,11 @@ App1::~App1()
 	BaseApplication::~BaseApplication();
 
 	// Release the Direct3D object.
-	
+	if (shader)
+	{
+		delete shader;
+		shader = 0;
+	}
 }
 
 
@@ -64,7 +71,10 @@ bool App1::render()
 	XMMATRIX viewMatrix = camera->getViewMatrix();
 	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
 
-	// Render GUI
+	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, camera->getPosition(), camera->getForwardVector(),0.0f);
+
+	shader->render(renderer->getDeviceContext(),0);
+
 	gui();
 
 	// Present the rendered scene to the screen.
@@ -90,6 +100,7 @@ void App1::gui()
 }
 
 //
+/*
 float App1::distance_from_sphere(XMFLOAT3 p, XMFLOAT3 c, float r)
 {
 	float answer = Distance_between_3Dpoints_2_(p,c);
@@ -109,6 +120,7 @@ float App1::Distance_between_3Dpoints_2_(XMFLOAT3 b, XMFLOAT3 a)
 	d = std::sqrt(d);
 	return d;
 }
+*/
 
 //
 

@@ -56,6 +56,13 @@ public:
 	void strafeLeft();			///< default function for moving left
 	void turn(int x, int y);	///< default function for turning in both x/y axis
 
+	//My own edit
+	XMFLOAT3 getForwardVector();
+
+/// <summary>
+/// //
+/// </summary>
+
 private:
 	XMFLOAT3 position;		///< float3 for position
 	XMFLOAT3 rotation;		///< float3 for rotation (angles)
@@ -63,6 +70,9 @@ private:
 	XMMATRIX orthoMatrix;	///< current orthographic matrix
 	float speed, frameTime;	///< movement speed and time variables
 	float lookSpeed;		///< rotation speed
+
+	//My own edit
+	XMFLOAT3 ForwardVector;
 };
 
 #endif

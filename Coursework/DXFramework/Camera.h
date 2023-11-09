@@ -58,7 +58,7 @@ public:
 
 
 	//My own edit
-	XMFLOAT3 ForwardVector;
+	XMFLOAT3 getForwardVector();
 
 private:
 	XMFLOAT3 position;		///< float3 for position
@@ -67,6 +67,9 @@ private:
 	XMMATRIX orthoMatrix;	///< current orthographic matrix
 	float speed, frameTime;	///< movement speed and time variables
 	float lookSpeed;		///< rotation speed
+
+	//My own edit
+	XMFLOAT3 ForwardVector;
 };
 
 #endif

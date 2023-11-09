@@ -111,6 +111,16 @@ XMMATRIX Camera::getOrthoViewMatrix()
 	return orthoMatrix;
 }
 
+//
+//////////////////////////////////////////
+XMFLOAT3 Camera::getForwardVector()
+{
+	return ForwardVector;
+}
+
+//////////////////////////////////////////
+//
+
 void Camera::moveForward()
 {
 	float radians;

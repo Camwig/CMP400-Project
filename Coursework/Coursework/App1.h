@@ -6,6 +6,7 @@
 #include "DXF.h"
 #include <cmath>
 
+#include "RayMarchingShader.h"
 
 class App1 : public BaseApplication
 {
@@ -29,7 +30,7 @@ protected:
 	float Distance_between_3Dpoints_2_(XMFLOAT3 a, XMFLOAT3 b);
 
 private:
-
+	RayMarchingShader* shader;
 };
 
 #endif
