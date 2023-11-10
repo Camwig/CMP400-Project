@@ -111,6 +111,7 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	camPtr->padding2 = 0.0f;
 	camPtr->padding3 = XMFLOAT3(0.0f,0.0f,0.0f);
 	deviceContext->Unmap(cameraBuffer, 0);
+	deviceContext->PSSetConstantBuffers(0, 1, &cameraBuffer);
 
 	deviceContext->Map(screenSizeBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	screen_ = (ScreenSizeBuffer*)mappedResource.pData;
@@ -123,7 +124,6 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	
 	// Now set the constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
-	deviceContext->PSSetConstantBuffers(0, 1, &cameraBuffer);
 
 	// Set shader texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);

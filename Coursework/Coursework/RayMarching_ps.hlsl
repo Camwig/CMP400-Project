@@ -22,7 +22,8 @@ cbuffer ScreenSizeBuffer : register(b1)
 struct InputType
 {
     float4 position : SV_POSITION;
-    float4 colour : COLOR;
+    //float4 colour : COLOR;
+    float2 tex : TEXCOORD0;
 };
 
 float Distance_between_3Dpoints_2_(float3 b, float3 a)
@@ -39,6 +40,8 @@ float distance_from_sphere(float3 p, float3 c, float r)
 {
     float answer = Distance_between_3Dpoints_2_(p, c);
     answer = answer - r;
+    
+    //return (distance(p, c) - r);
 	//answer < 0 is inside the sphere
 	//answer = 0 is on the surface of the sphere
 	//answer > 0 is outside the sphere
@@ -47,7 +50,7 @@ float distance_from_sphere(float3 p, float3 c, float r)
 
 float4 main(InputType input) : SV_TARGET
 {
-    
+    //return float4(input.tex.x, input.tex.y, 0, 1);
     //RayDesc ray;
     
     //Origin position so the camera position
@@ -62,7 +65,7 @@ float4 main(InputType input) : SV_TARGET
     float3 camPos = CameraOrigin;
     
     //float stepSize = 1000.0f;
-    int num_of_steps = 32;
+    int num_of_steps = 5000;
     float total_distance = 0.0f;
     
     //float texelSize = 1.0f / screenWidth;
@@ -71,24 +74,25 @@ float4 main(InputType input) : SV_TARGET
     
     //No idea how to normalize these coordinates?
     //////
-    float3 newCoords = ((2.0 * (input.position.x / screenWidth - 0.5f)), (2.0 * (input.position.y / screenheight - 0.5f)));
-    newCoords.x *= screenWidth / screenheight;
+    float3 newCoords = float3(input.tex.x * screenWidth - (screenWidth / 2), input.tex.y * screenheight - (screenheight / 2), 0); //((2.0 * (input.position.x * screenWidth) / screenWidth - 0.5f), (2.0 * (input.position.y * screenheight) / screenheight - 0.5f));
+    newCoords.y = -newCoords.y;
+    //newCoords.x *= screenWidth / screenheight;
     //////
     
+    //input.
     
-    
-    for (int i = 0.f; i < num_of_steps; i++)
+    for (int i = 0; i < num_of_steps; i++)
     {
-        float currentPos = newCoords + total_distance * CameraForwardDirection;
+        float3 currentPos = newCoords + total_distance * float3(0, 0, 1); /*CameraForwardDirection*/;
             
-        float distance_to_currentPos = distance_from_sphere(currentPos, float3(screenWidth / 2, screenheight / 2, 6.0f), 3.0f);
+        float distance_to_currentPos = distance_from_sphere(currentPos, float3(0, 0, 6.0f), 5.0f);
         
         //currentPos = -1.f;
             
-        if (distance_to_currentPos < 0.001f)
+        if (distance_to_currentPos < 10.0f)
         {
-            input.colour = float4(1.0f, 0.0f, 0.0f, 1.0f);
-            return input.colour;
+            float4 col = float4(1.0f, 0.0f, 0.0f, 1.0f);
+            return col;
         }
             
         if (total_distance > 1000.0f)
@@ -98,8 +102,8 @@ float4 main(InputType input) : SV_TARGET
 
         total_distance += distance_to_currentPos;
     }
-    input.colour = float4(1.0f, 1.0f, 1.0f, 1.0f);
-    return input.colour;
+    float4 col = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    return col;
     
     /*
     
