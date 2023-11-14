@@ -119,6 +119,7 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	screen_->screenWidth = width;
 	screen_->padding = XMFLOAT3(1.0f, 1.f, 1.f);
 	screen_->padding2 = XMFLOAT3(1.0f, 1.f, 1.f);
+	screen_->Projection = tproj;
 	deviceContext->Unmap(screenSizeBuffer, 0);
 	deviceContext->PSSetConstantBuffers(1, 1, &screenSizeBuffer);
 	
