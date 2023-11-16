@@ -205,18 +205,21 @@ float4 main(InputType input) : SV_TARGET
     
     newCoords = float3((newCoords.x / Projection[0][0]), (newCoords.y / Projection[1][1]), 1.0f);
     
-    newCoords = float3((newCoords.x * View[0][0]), (newCoords.y * View[1][1]), 1.0f);
+    //newCoords = float3((newCoords.x * View[0][0]), (newCoords.y * View[1][1]), 1.0f);
     
-    newCoords = float3((newCoords.x * World[0][0]), (newCoords.y * World[1][1]), 1.0f);
+    //newCoords = float3((newCoords.x * World[0][0]), (newCoords.y * World[1][1]), 1.0f);
     
-    newCoords.y = -newCoords.y;
+    float3 viewVector = normalize(mul(newCoords, View));
+    viewVector = normalize(mul(viewVector,World));
+    
+    //newCoords.y = -newCoords.y;
     //////
     
     //input.
     
     for (int i = 0; i < num_of_steps; i++)
     {
-        float3 currentPos = camPos + total_distance * newCoords; /*CameraForwardDirection*/;
+        float3 currentPos = camPos + total_distance * viewVector; /*CameraForwardDirection*/;
         
         //float3 currentPos = (camPos * newCoords) + total_distance * CameraForwardDirection; /*CameraForwardDirection*/;
             
