@@ -18,6 +18,8 @@ cbuffer ScreenSizeBuffer : register(b1)
     float screenheight;
     float3 Spadding2;
     float4x4 Projection;
+    float4x4 World;
+    float4x4 View;
 };
 
 struct InputType
@@ -203,6 +205,10 @@ float4 main(InputType input) : SV_TARGET
     
     newCoords = float3((newCoords.x / Projection[0][0]), (newCoords.y / Projection[1][1]), 1.0f);
     
+    newCoords = float3((newCoords.x * View[0][0]), (newCoords.y * View[1][1]), 1.0f);
+    
+    newCoords = float3((newCoords.x * World[0][0]), (newCoords.y * World[1][1]), 1.0f);
+    
     newCoords.y = -newCoords.y;
     //////
     
@@ -210,7 +216,7 @@ float4 main(InputType input) : SV_TARGET
     
     for (int i = 0; i < num_of_steps; i++)
     {
-        float3 currentPos = newCoords + total_distance * float3(0, 0, 1); /*CameraForwardDirection*/;
+        float3 currentPos = camPos + total_distance * newCoords; /*CameraForwardDirection*/;
         
         //float3 currentPos = (camPos * newCoords) + total_distance * CameraForwardDirection; /*CameraForwardDirection*/;
             
@@ -231,7 +237,7 @@ float4 main(InputType input) : SV_TARGET
 
         total_distance += distance_to_currentPos;
     }
-    float4 col = float4(newCoords.x, newCoords.y, 1.0f, 1.0f);
+    float4 col = float4(1.0f ,1.0f, 1.0f, 1.0f);
     return col;
     
     /*

@@ -27,6 +27,8 @@ private:
 		float screenheight;
 		XMFLOAT3 padding2;
 		XMMATRIX Projection;
+		XMMATRIX World;
+		XMMATRIX View;
 	};
 
 public:
