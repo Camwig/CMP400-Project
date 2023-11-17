@@ -17,7 +17,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	//XMFLOAT3 b = XMFLOAT3(0, 0, 0);
 
 	//float v = distance_from_sphere(a,b,3);
-
+	sx = screenWidth;
+	sy = screenHeight;
 	orthoMesh = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth, screenHeight);	// Full screen size
 	sampleMesh = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth, screenHeight);
 
@@ -181,7 +182,7 @@ void App1::RenderedPass()
 
 	orthoMesh->sendData(renderer->getDeviceContext());
 	//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
-	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, DownSampletexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, screenSizeY,screenSizeX, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix());
+	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, DownSampletexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, sy,sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix());
 	shader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 
 	renderer->setZBuffer(true);

@@ -31,6 +31,7 @@ struct InputType
 
 float Distance_between_3Dpoints_2_(float3 b, float3 a)
 {
+    return distance(b, a);
     float x = (pow((b.x - a.x), 2.0));
     float y = (pow((b.y - a.y), 2.0));
     float z = (pow((b.z - a.z), 2.0));
@@ -196,23 +197,35 @@ float4 main(InputType input) : SV_TARGET
     //Perspective matrix
     
     float2 Resoloution = float2(screenWidth, screenheight);
-    float3 newCoords = float3((2.0 * (input.tex.x * (screenWidth) - (screenWidth / 2)) / Resoloution.x - 1.0f) /** CameraForwardDirection.x*/, (-2.0 * ( (input.tex.y * (screenheight) - (screenheight / 2)) / Resoloution.y) + 1.0f), 1.0f);
+    
+    float xc = input.tex.x * screenWidth;
+    
+    
+    float yc = input.tex.y * screenheight;
+    
+    
+    float4 newCoords = float4( (2.0 * xc / Resoloution.x - 1.0f) /** CameraForwardDirection.x*/, (-2.0 * yc / Resoloution.y + 1.0f), 1.0f, 0.0f);
     
     //newCoords = float3(newCoords.x * (Resoloution.x/Resoloution.y), newCoords.y, 1.0f);
     
     //float P00 = 1 / Resoloution * tan(vertical field of view/2);
     //float p11 = 1/ tan(vertical field of view/2);
-    
-    newCoords = float3((newCoords.x / Projection[0][0]), (newCoords.y / Projection[1][1]), 1.0f);
+    float xcoord = newCoords.x / Projection._11;
+    float ycoord = newCoords.y / Projection._22;
+    //newCoords = float4((newCoords.x / Projection._11), (newCoords.y / Projection._22), 1.0f, 0.0f);
     
     //newCoords = float3((newCoords.x * View[0][0]), (newCoords.y * View[1][1]), 1.0f);
     
     //newCoords = float3((newCoords.x * World[0][0]), (newCoords.y * World[1][1]), 1.0f);
-    
-    float3 viewVector = normalize(mul(newCoords, View));
+    float4 v = float4(xcoord, ycoord, 1, 0);
+    float3 viewVector = normalize(mul(v, View));
     viewVector = normalize(mul(viewVector,World));
+   // float4 col = float4(viewVector.x, viewVector.y, viewVector.z, 1.0f);
+    //return col;
+       
+    //return float4(viewVector,1.0f);
     
-    newCoords.y = -newCoords.y;
+    //viewVector.y = -viewVector.y;
     //////
     
     //input.
@@ -240,7 +253,7 @@ float4 main(InputType input) : SV_TARGET
 
         total_distance += distance_to_currentPos;
     }
-    float4 col = float4(viewVector.x, viewVector.y, 1.0f, 1.0f);
+    float4 col = float4(viewVector.x, viewVector.y, viewVector.z, 1.0f);
     return col;
     
     /*

@@ -47,6 +47,9 @@ private:
 	RenderTexture* FinalTexture;
 
 	RenderTexture* DownSampletexture;
+
+	float sx;
+	float sy;
 };
 
 #endif
