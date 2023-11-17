@@ -212,7 +212,7 @@ float4 main(InputType input) : SV_TARGET
     float3 viewVector = normalize(mul(newCoords, View));
     viewVector = normalize(mul(viewVector,World));
     
-    //newCoords.y = -newCoords.y;
+    newCoords.y = -newCoords.y;
     //////
     
     //input.

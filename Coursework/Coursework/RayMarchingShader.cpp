@@ -80,7 +80,7 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 }
 
 
-void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width)
+void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -119,9 +119,9 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	screen_->screenWidth = width;
 	screen_->padding = XMFLOAT3(1.0f, 1.f, 1.f);
 	screen_->padding2 = XMFLOAT3(1.0f, 1.f, 1.f);
-	screen_->Projection = tproj;
-	screen_->View = tview;
-	screen_->World = tworld;
+	screen_->Projection = world2;
+	screen_->View = view2;
+	screen_->World = projection2;
 	deviceContext->Unmap(screenSizeBuffer, 0);
 	deviceContext->PSSetConstantBuffers(1, 1, &screenSizeBuffer);
 	
