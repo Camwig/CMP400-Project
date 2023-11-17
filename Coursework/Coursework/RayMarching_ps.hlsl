@@ -223,11 +223,11 @@ float4 main(InputType input) : SV_TARGET
         
         //float3 currentPos = (camPos * newCoords) + total_distance * CameraForwardDirection; /*CameraForwardDirection*/;
             
-        float distance_to_currentPos = distance_from_sphere(currentPos, float3(-Resoloution.x/2, -Resoloution.y/2, 6.0f), 100.0f);
+        float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0f, 0.0f, 6.0f), 1.0f);
         
         //currentPos = -1.f;
             
-        if (distance_to_currentPos < 100.0f)
+        if (distance_to_currentPos < 1.0f)
         {
             float4 col = float4(1.0f, 0.0f, 0.0f, 1.0f);
             return col;
@@ -240,7 +240,7 @@ float4 main(InputType input) : SV_TARGET
 
         total_distance += distance_to_currentPos;
     }
-    float4 col = float4(1.0f ,1.0f, 1.0f, 1.0f);
+    float4 col = float4(viewVector.x, viewVector.y, 1.0f, 1.0f);
     return col;
     
     /*
