@@ -1,3 +1,5 @@
+#include "Header.hlsli"
+
 Texture2D shaderTexture : register(t0);
 SamplerState SampleType : register(s0);
 
@@ -29,28 +31,28 @@ struct InputType
     float2 tex : TEXCOORD0;
 };
 
-float Distance_between_3Dpoints_2_(float3 b, float3 a)
-{
-    return distance(b, a);
-    float x = (pow((b.x - a.x), 2.0));
-    float y = (pow((b.y - a.y), 2.0));
-    float z = (pow((b.z - a.z), 2.0));
-    float d = (x + y + z);
-    d = sqrt(d);
-    return d;
-}
+//float Distance_between_3Dpoints_2_(float3 b, float3 a)
+//{
+//    return distance(b, a);
+//    float x = (pow((b.x - a.x), 2.0));
+//    float y = (pow((b.y - a.y), 2.0));
+//    float z = (pow((b.z - a.z), 2.0));
+//    float d = (x + y + z);
+//    d = sqrt(d);
+//    return d;
+//}
 
-float distance_from_sphere(float3 p, float3 c, float r)
-{
-    float answer = Distance_between_3Dpoints_2_(p, c);
-    answer = answer - r;
+//float distance_from_sphere(float3 p, float3 c, float r)
+//{
+//    float answer = Distance_between_3Dpoints_2_(p, c);
+//    answer = answer - r;
     
-    //return (distance(p, c) - r);
-	//answer < 0 is inside the sphere
-	//answer = 0 is on the surface of the sphere
-	//answer > 0 is outside the sphere
-    return answer;
-}
+//    //return (distance(p, c) - r);
+//	//answer < 0 is inside the sphere
+//	//answer = 0 is on the surface of the sphere
+//	//answer > 0 is outside the sphere
+//    return answer;
+//}
 
 float4 main(InputType input) : SV_TARGET
 {
@@ -210,8 +212,8 @@ float4 main(InputType input) : SV_TARGET
     
     //float P00 = 1 / Resoloution * tan(vertical field of view/2);
     //float p11 = 1/ tan(vertical field of view/2);
-    float xcoord = newCoords.x / Projection._11;
-    float ycoord = newCoords.y / Projection._22;
+    float xcoord = newCoords.x / Projection[0][0];
+    float ycoord = newCoords.y / Projection[1][1];
     //newCoords = float4((newCoords.x / Projection._11), (newCoords.y / Projection._22), 1.0f, 0.0f);
     
     //newCoords = float3((newCoords.x * View[0][0]), (newCoords.y * View[1][1]), 1.0f);

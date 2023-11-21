@@ -50,6 +50,9 @@
     <ClInclude Include="resource3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="RayMarching_ps.hlsl">
@@ -64,5 +67,10 @@
     <FxCompile Include="texture_ps.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Header.hlsli">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
