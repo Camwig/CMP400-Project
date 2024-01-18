@@ -201,8 +201,6 @@ float4 main(InputType input) : SV_TARGET
     float2 Resoloution = float2(screenWidth, screenheight);
     
     float xc = input.tex.x * screenWidth;
-    
-    
     float yc = input.tex.y * screenheight;
     
     
@@ -234,6 +232,7 @@ float4 main(InputType input) : SV_TARGET
     
     for (int i = 0; i < num_of_steps; i++)
     {
+        
         float3 currentPos = camPos + total_distance * viewVector; /*CameraForwardDirection*/;
         
         //float3 currentPos = (camPos * newCoords) + total_distance * CameraForwardDirection; /*CameraForwardDirection*/;
@@ -253,8 +252,9 @@ float4 main(InputType input) : SV_TARGET
             break;
         }
 
-        total_distance += distance_to_currentPos;
+        total_distance += /*0.1f*/distance_to_currentPos;
     }
+    
     float4 col = float4(viewVector.x, viewVector.y, viewVector.z, 1.0f);
     return col;
     
