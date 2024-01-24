@@ -3,6 +3,8 @@
 Texture2D shaderTexture : register(t0);
 SamplerState SampleType : register(s0);
 
+const float EPSILON = 0.0001;
+
 cbuffer CameraBuffer : register(b0)
 {
     float3 CameraOrigin;
