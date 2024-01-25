@@ -80,7 +80,7 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 }
 
 
-void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2)
+void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2, float deltaTime)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -107,9 +107,11 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	camPtr->CameraOrigin = cameraPos;
 	camPtr->CameraForwardDirection = camForwardVec;
 	camPtr->distance_from_shape = distance_from_shap;
+	camPtr->deltaTime = deltaTime;
 	camPtr->padding = 0.0f;
 	camPtr->padding2 = 0.0f;
 	camPtr->padding3 = XMFLOAT3(0.0f,0.0f,0.0f);
+	camPtr->padding4 = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	deviceContext->Unmap(cameraBuffer, 0);
 	deviceContext->PSSetConstantBuffers(0, 1, &cameraBuffer);
 
