@@ -1,5 +1,5 @@
 
-const float EPSILON = 0.0001;
+const float EPSILON = 1000.0f;
 
 float Distance_between_3Dpoints_2_(float3 b, float3 a)
 {
@@ -29,15 +29,15 @@ float3 estimateNormal(float3 p)
     //This is not working right Need to work out the epsilon
     
     return normalize(float3(
-    (distance_from_sphere(float3(p.x + EPSILON, p.y, p.z), float3(0.0f, 0.0f, 6.0f), 1.0f)) - (distance_from_sphere(float3(p.x - EPSILON, p.y, p.z), float3(0.0f, 0.0f, 6.0f), 1.0f)),
-    (distance_from_sphere(float3(p.x, p.y + EPSILON, p.z), float3(0.0f, 0.0f, 6.0f), 1.0f)) - (distance_from_sphere(float3(p.x, p.y - EPSILON, p.z), float3(0.0f, 0.0f, 6.0f), 1.0f)),
-    (distance_from_sphere(float3(p.x, p.y, p.z + EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)) - (distance_from_sphere(float3(p.x, p.y, p.z - EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f))
+    distance_from_sphere(float3(p.x + EPSILON, p.y, p.z), float3(0.0f, 0.0f, 6.0f), 1.0f) - distance_from_sphere(float3(p.x - EPSILON, p.y, p.z), float3(0.0f, 0.0f, 6.0f), 1.0f),
+    distance_from_sphere(float3(p.x, p.y + EPSILON, p.z), float3(0.0f, 0.0f, 6.0f), 1.0f) - distance_from_sphere(float3(p.x, p.y - EPSILON, p.z), float3(0.0f, 0.0f, 6.0f), 1.0f),
+    distance_from_sphere(float3(p.x, p.y, p.z + EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f) - distance_from_sphere(float3(p.x, p.y, p.z - EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)
     ));
 }
 
 float3 phongContributeForLight(float3 k_d, float3 k_s, float alpha, float3 p, float3 eye, float3 lightPos, float3 lightIntensity)
 {
-    float3 N = float3(1.0f, 1.0f, 1.0f); //estimateNormal(p);
+    float3 N = estimateNormal(p); /*float3(1.0f, 1.0f, 1.0f);*/
     float3 L = normalize(lightPos - p);
     float3 V = normalize(eye - p);
     float3 R = normalize(reflect(-L, N));
