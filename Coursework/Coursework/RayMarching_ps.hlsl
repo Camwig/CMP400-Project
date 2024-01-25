@@ -3,8 +3,6 @@
 Texture2D shaderTexture : register(t0);
 SamplerState SampleType : register(s0);
 
-const float EPSILON = 0.0001;
-
 cbuffer CameraBuffer : register(b0)
 {
     float3 CameraOrigin;
@@ -232,6 +230,12 @@ float4 main(InputType input) : SV_TARGET
     
     //input.
     
+    float3 K_a = float3(0.2f,0.2f,0.2f);
+    float3 K_d = float3(0.7f, 0.2f, 0.2f);
+    float3 K_s = float3(1.0f, 1.0f, 1.0f);
+    
+    float shininess = 10.0f;
+    
     for (int i = 0; i < num_of_steps; i++)
     {
         
@@ -245,7 +249,9 @@ float4 main(InputType input) : SV_TARGET
             
         if (distance_to_currentPos < 1.0f)
         {
-            float4 col = float4(1.0f, 0.0f, 0.0f, 1.0f);
+            //float4 col = float4(1.0f, 0.0f, 0.0f, 1.0f);
+            float3 col2 = phongIllumination(K_a, K_d, K_s, shininess, padding, currentPos);
+            float4 col = float4(col2.x,col2.y,col2.z,1.0f);
             return col;
         }
             
