@@ -255,7 +255,7 @@ float4 main(InputType input) : SV_TARGET
         if (distance_to_currentPos < 1.0f)
         {
             //float4 col = float4(1.0f, 0.0f, 0.0f, 1.0f);
-            float3 col2 = phongIllumination(K_a, K_d, K_s, shininess, currentPos, camPos, deltaTime);
+            float3 col2 = phongIllumination(K_a, K_d, K_s, shininess, distance_to_currentPos, camPos, deltaTime);
             float4 col = float4(col2.x,col2.y,col2.z,1.0f);
             return col;
         }
