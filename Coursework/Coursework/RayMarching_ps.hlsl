@@ -250,12 +250,14 @@ float4 main(InputType input) : SV_TARGET
             
         float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0f, 0.0f, 6.0f), 1.0f);
         
+        float p = camPos + distance_to_currentPos * viewVector;
+        
         //currentPos = -1.f;
             
         if (distance_to_currentPos < 1.0f)
         {
             //float4 col = float4(1.0f, 0.0f, 0.0f, 1.0f);
-            float3 col2 = phongIllumination(K_a, K_d, K_s, shininess, distance_to_currentPos, camPos, deltaTime);
+            float3 col2 = phongIllumination(K_a, K_d, K_s, shininess, p, camPos, deltaTime);
             float4 col = float4(col2.x,col2.y,col2.z,1.0f);
             return col;
         }
