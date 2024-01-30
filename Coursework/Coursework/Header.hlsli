@@ -24,6 +24,39 @@ float distance_from_sphere(float3 p, float3 c, float r)
     return answer;
 }
 
+//--------------------------------------------------------------------------------
+
+// Calculate lighting intensity based on direction and normal. Combine with light colour.
+float3 calculateLighting(float3 lightDirection, float3 normal, float3 ldiffuse, float3 position)
+{
+    float intensity;
+    //if (position.w == 1.0f)
+    //{
+        intensity = saturate(dot(normal, lightDirection));
+    //}
+    //else if (position.w == 2.0f)
+    //{
+    //    intensity = saturate(dot(normal, -lightDirection));
+    //}
+    float3 colour = saturate(ldiffuse * intensity);
+    return colour;
+}
+
+float4 calcSpecular(float3 lightDirection, float3 normal, float3 viewVector, float4 specularColour, float specularPower)
+{
+    float3 halfway = normalize(lightDirection + viewVector);
+    float specularIntensity = pow(max(dot(normal, halfway), 0.0f), specularPower);
+    return saturate(specularColour * specularIntensity);
+}
+
+float4 calcAttenuation(float distance, float constantfactor, float linearFactor, float quadraticfactor)
+{
+    float attenuation = 1.f / ((constantfactor + (linearFactor * distance) + (quadraticfactor * pow(distance, 2))));
+    return attenuation;
+}
+
+//--------------------------------------------------------------------------------
+
 float3 estimateNormal(float3 p)
 {
       //Normal comes out as negative everytime
@@ -138,17 +171,31 @@ float3 phongContributeForLight(float3 k_d, float3 k_s, float alpha, float3 p, fl
 
 }
 
-float3 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, float3 eye, float DeltaTime)
+float3 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, float3 eye, float DeltaTime,float3 ViewVector)
 {
-    const float3 ambientLight = float3(0.5, 0.5, 0.5);
+    const float3 ambientLight = float3(1.0, 1.0, 1.0);
     float3 colour  /*= float3(0.0f,0.0f,0.0f);*/ = ambientLight * k_a;
     
     //The values in the sin and cos can be anything its for light position
-    float3 Light1Pos = float3(0.0f, 0.0f, -7.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float3 Light1Pos = float3(0.0f, 0.0f, -8.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
-    float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
+    //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
-    colour = phongContributeForLight(k_d, k_s, alpha, p, eye, Light1Pos, Light1Intensity);
+    float3 light1Vector = float3(0.0f, -0.1f, -1.0f);
+    
+    light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - eye);
+    
+    float3 Normal = estimateNormal(p);
+    
+    float attenuation = calcAttenuation(length(light1Vector), 0.5f, 0.125f, 0.0f);
+    
+    light1Vector = normalize(light1Vector);
+    
+    colour = ambientLight * attenuation * calculateLighting(light1Vector, Normal, float3(1.0f, 0.0f, 0.0f), Light1Pos);
+    
+    colour *= calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), 2.0f);
+    
+    //colour += phongContributeForLight(k_d, k_s, alpha, p, eye, Light1Pos, Light1Intensity);
 
     //float3 Light2Pos = float3(0.0f, 0.0f, 6.0f); //float3(2.0f * sin(DeltaTime * 0.37), 2.0f * cos(DeltaTime * 0.37), 2.0f);
     
