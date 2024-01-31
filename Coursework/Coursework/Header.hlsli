@@ -1,12 +1,42 @@
 
 const float EPSILON = 0.0001f;
 
+float Distance_between_3Dpoints_(float3 a)
+{
+    //return distance(b, a);
+    
+    float x1 = a.x;
+    float y1 = a.y;
+    float z1 = a.z;
+    
+    float x = (pow(x1, 2.0));
+    float y = (pow(y1, 2.0));
+    float z = (pow(z1, 2.0));
+    
+    //float bums = y - (x * ((20 - x) / 100));
+    //float d = ((x * x) + (bums * bums) + (z * z));
+    
+    float d = (x + y + z);
+    d = sqrt(d);
+    return d;
+}
+
+
 float Distance_between_3Dpoints_2_(float3 b, float3 a)
 {
     return distance(b, a);
-    float x = (pow((b.x - a.x), 2.0));
-    float y = (pow((b.y - a.y), 2.0));
-    float z = (pow((b.z - a.z), 2.0));
+    
+    float x1 = b.x - a.x;
+    float y1 = b.y - a.y;
+    float z1 = b.z - a.z;
+    
+    float x = (pow((x1), 2.0));
+    float y = (pow((y1), 2.0));
+    float z = (pow((z1), 2.0));
+    
+    //float bums = y - (x * ((20 - x) / 100));
+    //float d = ((x * x) + (bums * bums) + (z * z));
+    
     float d = (x + y + z);
     d = sqrt(d);
     return d;
@@ -14,7 +44,12 @@ float Distance_between_3Dpoints_2_(float3 b, float3 a)
 
 float distance_from_sphere(float3 p, float3 c, float r)
 {
-    float answer = Distance_between_3Dpoints_2_(p, c);
+    
+    //float bums = p.x - (p.x * ((20 - p.x) / 100));
+    //float d = ((p.x * p.x) + (bums * bums) + (p.z * p.z));
+    
+    
+    float answer = Distance_between_3Dpoints_2_(p,c);
     answer = answer - r;
     
     //return (distance(p, c) - r);
@@ -22,6 +57,18 @@ float distance_from_sphere(float3 p, float3 c, float r)
 	//answer = 0 is on the surface of the sphere
 	//answer > 0 is outside the sphere
     return answer;
+}
+
+float distance_from_Elipsoid_bound(float3 p, float3 c, float r)
+{
+   //Better version
+   //float k0 = Distance_between_3Dpoints_(p / c);
+   //float k1 = Distance_between_3Dpoints_(p / (c*c));
+   //return ((k0 * (k0 - 1.0f)) / k1) - r;
+    
+    //Worse version
+    float answer = Distance_between_3Dpoints_(p / c);
+    return ((answer - 1.0f) * min(min(c.x, c.y), c.z)) - r;
 }
 
 //--------------------------------------------------------------------------------
