@@ -50,6 +50,7 @@ float distance_from_sphere(float3 p, float3 c, float r)
     
     
     float answer = Distance_between_3Dpoints_2_(p,c);
+    //float answer = Distance_between_3Dpoints_(p);
     answer = answer - r;
     
     //return (distance(p, c) - r);
@@ -109,26 +110,24 @@ float3 estimateNormal(float3 p)
       //Normal comes out as negative everytime
     
     const float2 k = float2(1, -1);
-    return normalize((k.xyy * distance_from_sphere(float3(p + k.xyy * EPSILON), float3(0.0f, 0.0f, 6.0f),1.0f)) +
-                     (k.yyx * distance_from_sphere(float3(p + k.yyx * EPSILON), float3(0.0f, 0.0f, 6.0f),1.0f)) +
-                     (k.yxy * distance_from_sphere(float3(p + k.yxy * EPSILON), float3(0.0f, 0.0f, 6.0f),1.0f)));
+    return normalize((k.xyy * distance_from_sphere(float3(p + k.xyy * EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)) +
+                     (k.yyx * distance_from_sphere(float3(p + k.yyx * EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)) +
+                     (k.yxy * distance_from_sphere(float3(p + k.yxy * EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)));
     
     
     //float2 h = float2(EPSILON, 0);
     //float3 value = normalize(float3((Distance_between_3Dpoints_2_(float3(p + h.xyy), float3(0.0f, 0.0f, 6.0f)) - Distance_between_3Dpoints_2_(float3(p - h.xyy), float3(0.0f, 0.0f, 6.0f))),
     //                        (Distance_between_3Dpoints_2_(float3(p + h.yxy), float3(0.0f, 0.0f, 6.0f)) - Distance_between_3Dpoints_2_(float3(p - h.yxy), float3(0.0f, 0.0f, 6.0f))),
     //                        (Distance_between_3Dpoints_2_(float3(p + h.yyx), float3(0.0f, 0.0f, 6.0f)) - Distance_between_3Dpoints_2_(float3(p - h.yyx), float3(0.0f, 0.0f, 6.0f)))));
-    
     //return value;
     
     //This is not working right Need to work out the epsilon
     
-    //float3 value =  normalize(float3(
+    //float3 value = normalize(float3(
     //((p.x + EPSILON, -p.y, -p.z) - (p.x - EPSILON, p.y, p.z)),
     //((p.x, -p.y + EPSILON, -p.z) - (p.x, p.y - EPSILON, p.z)),
     //(p.x, -p.y, -p.z + EPSILON) - (p.x, p.y, p.z - EPSILON))
     //);
-    
     //value = float3(sqrt(value.x), sqrt(value.y), sqrt(value.z));
     //return value;
     
@@ -224,23 +223,25 @@ float3 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, 
     float3 colour  /*= float3(0.0f,0.0f,0.0f);*/ = ambientLight * k_a;
     
     //The values in the sin and cos can be anything its for light position
-    float3 Light1Pos = float3(0.0f, 0.0f, -8.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    
+    //The lightposition doesnt work as it should not entirley sure
+    float3 Light1Pos = float3(0.0f, 0.0f, -5.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
-    float3 light1Vector = float3(0.0f, -0.1f, -1.0f);
+    float3 light1Vector = float3(0.0f, 0.0f, 0.0f);
     
     light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - eye);
     
-    float3 Normal = estimateNormal(p);
+    float3 Normal = estimateNormal(p); /*float3(1.0f, 1.0f, 1.0f);*/
     
     float attenuation = calcAttenuation(length(light1Vector), 0.5f, 0.125f, 0.0f);
     
     light1Vector = normalize(light1Vector);
     
-    colour = ambientLight * attenuation * calculateLighting(light1Vector, Normal, float3(1.0f, 0.0f, 0.0f), Light1Pos);
+    colour += ambientLight * attenuation * calculateLighting(light1Vector, Normal, float3(0.0f, 1.0f, 0.0f), Light1Pos);
     
-    colour *= calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), 2.0f);
+    colour *= calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), alpha);
     
     //colour += phongContributeForLight(k_d, k_s, alpha, p, eye, Light1Pos, Light1Intensity);
 
