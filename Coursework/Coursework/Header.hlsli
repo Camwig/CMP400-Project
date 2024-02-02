@@ -217,21 +217,22 @@ float3 phongContributeForLight(float3 k_d, float3 k_s, float alpha, float3 p, fl
 
 }
 
-float3 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, float3 eye, float DeltaTime,float3 ViewVector)
+float3 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, float3 eye, float DeltaTime,float3 ViewVector,float3 Position)
 {
-    const float3 ambientLight = float3(1.0, 1.0, 1.0);
-    float3 colour  /*= float3(0.0f,0.0f,0.0f);*/ = ambientLight * k_a;
+    float3 ambientLight = float3(1.0, 1.0, 1.0);
+    float3 colour  /*= float3(0.0f,0.0f,0.0f);*/;
+    //ambientLight = ambientLight * k_a;
     
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float3 Light1Pos = float3(0.0f, 0.0f, -5.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float3 Light1Pos = float3(1.5f, 0.0f, 10.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
-    float3 light1Vector = float3(0.0f, 0.0f, 0.0f);
+    float3 light1Vector;
     
-    light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - eye);
+    light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - p);
     
     float3 Normal = estimateNormal(p); /*float3(1.0f, 1.0f, 1.0f);*/
     
@@ -239,7 +240,7 @@ float3 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, 
     
     light1Vector = normalize(light1Vector);
     
-    colour += ambientLight * attenuation * calculateLighting(light1Vector, Normal, float3(0.0f, 1.0f, 0.0f), Light1Pos);
+    colour = ambientLight * attenuation * calculateLighting(light1Vector, Normal, float3(0.0f, 1.0f, 0.0f), Light1Pos);
     
     colour *= calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), alpha);
     
