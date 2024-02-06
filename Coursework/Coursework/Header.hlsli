@@ -75,18 +75,18 @@ float distance_from_Elipsoid_bound(float3 p, float3 c, float r)
 //--------------------------------------------------------------------------------
 
 // Calculate lighting intensity based on direction and normal. Combine with light colour.
-float3 calculateLighting(float3 lightDirection, float3 normal, float3 ldiffuse, float3 position)
+float4 calculateLighting(float3 lightDirection, float3 normal, float4 ldiffuse, float4 position)
 {
-    float intensity;
-    //if (position.w == 1.0f)
-    //{
+    float intensity = 1.0f;
+    if (position.w == 1.0f)
+    {
         intensity = saturate(dot(normal, lightDirection));
-    //}
-    //else if (position.w == 2.0f)
-    //{
-    //    intensity = saturate(dot(normal, -lightDirection));
-    //}
-    float3 colour = saturate(ldiffuse * intensity);
+}
+    else if (position.w == 2.0f)
+    {
+        intensity = saturate(dot(normal, -lightDirection));
+    }
+    float4 colour = saturate(ldiffuse * intensity);
     return colour;
 }
 
@@ -110,9 +110,33 @@ float3 estimateNormal(float3 p)
       //Normal comes out as negative everytime
     
     const float2 k = float2(1, -1);
-    return normalize((k.xyy * distance_from_sphere(float3(p + k.xyy * EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)) +
-                     (k.yyx * distance_from_sphere(float3(p + k.yyx * EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)) +
-                     (k.yxy * distance_from_sphere(float3(p + k.yxy * EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)));
+    
+    float Additive_x = k.xyy * 0.0001f;
+    float Additive_y = k.yyx * 0.0001f;
+    float Additive_z = k.yxy * 0.0001f;
+    float Additive_w = k.xxx * 0.0001f;
+    
+    float3 Normal_x = k.xyy * (distance_from_sphere(float3(p + Additive_x), float3(0.0f, 0.0f, 6.0f), 1.0f));
+    float3 Normal_y = k.yyx * (distance_from_sphere(float3(p + Additive_y), float3(0.0f, 0.0f, 6.0f), 1.0f));
+    float3 Normal_z = k.yxy * (distance_from_sphere(float3(p + Additive_z), float3(0.0f, 0.0f, 6.0f), 1.0f));
+    float3 Normal_w = k.xxx * (distance_from_sphere(float3(p + Additive_w), float3(0.0f, 0.0f, 6.0f), 1.0f));
+    
+    //float3 Normal_x = k.xyy * (Distance_between_3Dpoints_(float3(p + Additive_x)));
+    //float3 Normal_y = k.yyx * (Distance_between_3Dpoints_(float3(p + Additive_y)));
+    //float3 Normal_z = k.yxy * (Distance_between_3Dpoints_(float3(p + Additive_z)));
+    //float3 Normal_w = k.xxx * (Distance_between_3Dpoints_(float3(p + Additive_w)));
+    
+    return normalize(float3(Normal_x + Normal_y + Normal_z + Normal_w));
+    
+    //const float2 k = float2(10, -10);
+    //return normalize((k.xyy * min(distance_from_sphere(float3(p + (k.xyy * EPSILON)), float3(1.5f, 0.0f, 0.0f), 2.0f), distance_from_sphere(float3(p + (k.xyy * EPSILON)), -1 * float3(1.5f, 0.0f, 0.0f), 2.0f)) +
+    //                 (k.yyx * min(distance_from_sphere(float3(p + (k.yyx * EPSILON)), float3(1.5f, 0.0f, 0.0f), 2.0f), distance_from_sphere(float3(p + (k.yyx * EPSILON)), -1 * float3(1.5f, 0.0f, 0.0f), 2.0f))) +
+    //                 (k.yxy * min(distance_from_sphere(float3(p + (k.yxy * EPSILON)), float3(1.5f, 0.0f, 0.0f), 2.0f), distance_from_sphere(float3(p + (k.yxy * EPSILON)), -1 * float3(1.5f, 0.0f, 0.0f), 2.0f)))));
+    
+    //const float2 k = float2(1, -1);
+    //return normalize((k.xyy * distance_from_sphere(float3(p + k.xyy * EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)) +
+    //                 (k.yyx * distance_from_sphere(float3(p + k.yyx * EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)) +
+    //                 (k.yxy * distance_from_sphere(float3(p + k.yxy * EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)));
     
     
     //float2 h = float2(EPSILON, 0);
@@ -217,16 +241,17 @@ float3 phongContributeForLight(float3 k_d, float3 k_s, float alpha, float3 p, fl
 
 }
 
-float3 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, float3 eye, float DeltaTime,float3 ViewVector,float3 Position)
+float4 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, float3 eye, float DeltaTime,float3 ViewVector,float3 Position,float3 view2)
 {
-    float3 ambientLight = float3(1.0, 1.0, 1.0);
-    float3 colour  /*= float3(0.0f,0.0f,0.0f);*/;
+    float4 ambientLight = float4(1.0, 1.0, 1.0,1.0f);
+    float4 colour = float4(0.0f, 0.0f, 0.0f,0.0f);
     //ambientLight = ambientLight * k_a;
+    //colour = ambientLight * k_a;
     
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float3 Light1Pos = float3(1.5f, 0.0f, 10.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float4 Light1Pos = float4(0.0f, 0.0f, 0.0f,0.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
@@ -234,15 +259,21 @@ float3 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, 
     
     light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - p);
     
-    float3 Normal = estimateNormal(p); /*float3(1.0f, 1.0f, 1.0f);*/
+    float3 light1Direction = (float3(0.0f, 0.0f, -1.0f));
     
-    float attenuation = calcAttenuation(length(light1Vector), 0.5f, 0.125f, 0.0f);
+    float3 Normal = estimateNormal(p); /*float3(0.0f, 0.0f, 1.0f);*/
+    
+    float attenuation;
+    
+    attenuation = calcAttenuation(length(light1Vector), 0.5f, 0.125f, 0.0f);
+    
+    //float attenuation = calcAttenuation(length(float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - p), 0.5f, 0.125f, 0.0f);
     
     light1Vector = normalize(light1Vector);
     
-    colour = ambientLight * attenuation * calculateLighting(light1Vector, Normal, float3(0.0f, 1.0f, 0.0f), Light1Pos);
+    colour = ambientLight + attenuation * calculateLighting(light1Direction, Normal, float4(0.5f, 0.5f, 0.0f, 0.0f), Light1Pos);
     
-    colour *= calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), alpha);
+    colour *= calcSpecular(light1Direction, Normal, ViewVector, float4(1, 1, 1, 1), alpha);
     
     //colour += phongContributeForLight(k_d, k_s, alpha, p, eye, Light1Pos, Light1Intensity);
 
@@ -254,4 +285,11 @@ float3 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, 
     
     return colour;
 
+}
+
+float3 rayDirection(float fieldOfView, float2 size, float2 fragCoord)
+{
+    float2 xy = fragCoord - size / 2.0;
+    float z = size.y / tan(radians(fieldOfView) / 2.0);
+    return normalize(float3(xy, -z));
 }

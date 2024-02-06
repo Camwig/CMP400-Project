@@ -31,6 +31,8 @@ struct InputType
     float4 position : SV_POSITION;
     //float4 colour : COLOR;
     float2 tex : TEXCOORD0;
+    float3 worldPosition : TEXCOORD1;
+    float3 viewVectror : TEXCOOORD2;
 };
 
 //float Distance_between_3Dpoints_2_(float3 b, float3 a)
@@ -239,7 +241,7 @@ float4 main(InputType input) : SV_TARGET
     //Specular Colour
     float3 K_s = float3(1.0f, 1.0f, 1.0f);
     
-    float shininess = 10.0f;
+    float shininess = 2.0f;
     
     for (int i = 0; i < num_of_steps; i++)
     {
@@ -248,22 +250,26 @@ float4 main(InputType input) : SV_TARGET
         
         //float3 currentPos = (camPos * newCoords) + total_distance * CameraForwardDirection; /*CameraForwardDirection*/;
             
-        float distance_to_currentPos = min(distance_from_sphere(currentPos, float3(1.5f, 0.0f, 0.0f), 2.0f), distance_from_sphere(currentPos, -1 * float3(1.5f, 0.0f, 0.0f), 2.0f));
+        //float distance_to_currentPos = min(distance_from_sphere(currentPos, float3(1.5f, 0.0f, 0.0f), 2.0f), distance_from_sphere(currentPos, -1 * float3(1.5f, 0.0f, 0.0f), 2.0f));
         
         //float distance_to_currentPos = distance_from_Elipsoid_bound(currentPos, float3(0.18f, 0.3f, 0.2f), 0.1f);
         
-        //float distance_to_currentPos = distance_from_sphere(currentPos, float3(1.5f, 0.0f, 0.0f),2.0f);
+        float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f),1.0f);
         
-        float p = camPos + distance_to_currentPos * viewVector;
+        //distance_to_currentPos /= 2.0f;
+        
+        //float3 dir = rayDirection(45.0, Resoloution, input.position.xy);
+        
+        float3 p = camPos + (distance_to_currentPos * viewVector);
         
         //currentPos = -1.f;
             
         if (distance_to_currentPos < 1.0f)
         {
             float4 col = float4(0.0f, 1.0f, 1.0f, 1.0f);
-            float3 col2 = phongIllumination(K_a, K_d, K_s, shininess, p, camPos, deltaTime,viewVector,input.position.xyz);
+            float4 col2 = phongIllumination(K_a, K_d, K_s, shininess, p, camPos, deltaTime, viewVector, float3(0.0, 0.0f, 0.6f),input.viewVectror);
             //float4 col = float4(col2.x,col2.y,col2.z,1.0f);
-            col = float4(col.x * col2.x, col.y * col2.y,col.z * col2.z,1.0f);
+            col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             return col;
         }
             
@@ -275,7 +281,8 @@ float4 main(InputType input) : SV_TARGET
         total_distance += /*0.1f*/distance_to_currentPos;
     }
     
-    float4 col = float4(viewVector.x, viewVector.y, viewVector.z, 1.0f);
+    //float4 col = float4(viewVector.x, viewVector.y, viewVector.z, 1.0f);
+    float4 col = float4(1.0f, 1.0f, 1.0f, 1.0f);
     return col;
     
     /*
