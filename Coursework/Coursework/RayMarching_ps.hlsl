@@ -252,9 +252,9 @@ float4 main(InputType input) : SV_TARGET
             
         //float distance_to_currentPos = min(distance_from_sphere(currentPos, float3(1.5f, 0.0f, 0.0f), 2.0f), distance_from_sphere(currentPos, -1 * float3(1.5f, 0.0f, 0.0f), 2.0f));
         
-        //float distance_to_currentPos = distance_from_Elipsoid_bound(currentPos, float3(0.18f, 0.3f, 0.2f), 0.1f);
+        float distance_to_currentPos = distance_from_Elipsoid_bound(currentPos, float3(0.2f, 0.25f, 0.05f), 0.1f);
         
-        float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f),1.0f);
+        //float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f),1.0f);
         
         //float3 dir = rayDirection(45.0, Resoloution, input.position.xy);
         

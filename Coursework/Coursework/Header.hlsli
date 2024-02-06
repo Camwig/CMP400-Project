@@ -44,36 +44,31 @@ float Distance_between_3Dpoints_2_(float3 b, float3 a)
 
 float distance_from_sphere(float3 p, float3 c, float r)
 {
-    
-    //float bums = p.x - (p.x * ((20 - p.x) / 100));
-    //float d = ((p.x * p.x) + (bums * bums) + (p.z * p.z));
-    
-    
     float answer = Distance_between_3Dpoints_2_(p,c);
     //float answer = Distance_between_3Dpoints_(p);
     answer = answer - r;
     
-    float d2 = (sin(20 * p.x) * sin(20 * p.y) * sin(20 * p.z));
-    
-    
+    //Add these to the answer for diffrent effects
+    //float d2 = (sin(5 * p.x) * sin(5 * p.y) * sin(5 * p.z));
+    //float bums = p.y - (p.x * ((20 - p.x) / 100));
     
     //return (distance(p, c) - r);
 	//answer < 0 is inside the sphere
 	//answer = 0 is on the surface of the sphere
 	//answer > 0 is outside the sphere
-    return answer + d2;
+    return answer;
 }
 
 float distance_from_Elipsoid_bound(float3 p, float3 c, float r)
 {
    //Better version
-   //float k0 = Distance_between_3Dpoints_(p / c);
-   //float k1 = Distance_between_3Dpoints_(p / (c*c));
-   //return ((k0 * (k0 - 1.0f)) / k1) - r;
+    float k0 = Distance_between_3Dpoints_2_(p / c,c);
+    float k1 = Distance_between_3Dpoints_2_(p / (c * c), c);
+    return (k0 * (k0 - 1.0f)) / k1;
     
     //Worse version
-    float answer = Distance_between_3Dpoints_(p / c);
-    return ((answer - 1.0f) * min(min(c.x, c.y), c.z)) - r;
+    //float answer = Distance_between_3Dpoints_2_(p / c,c);
+    //return ((answer - 1.0f) * min(min(c.x, c.y), c.z)) - r;
 }
 
 //--------------------------------------------------------------------------------
