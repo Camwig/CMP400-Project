@@ -84,6 +84,7 @@ float4 calculateLighting(float3 lightDirection, float3 normal, float4 ldiffuse, 
     else if (position.w == 2.0f)
     {
         intensity = saturate(dot(normal, -lightDirection));
+        //return float4(0, 1, 0, 1);
     }
     float4 colour = saturate(ldiffuse * intensity);
     return colour;
@@ -104,28 +105,50 @@ float4 calcAttenuation(float distance, float constantfactor, float linearFactor,
 
 //--------------------------------------------------------------------------------
 
-float3 estimateNormal(float3 p)
+float3 estimateNormal(float3 p, float3x3 World)
 {
       //Normal comes out as negative everytime
     
     const float2 k = float2(1, -1);
+    
+    //Epsilon is not working properly
+    const float E = 0.0001f; /*0.0001f;*/
     
     float Additive_x = k.xyy * 0.0001f;
     float Additive_y = k.yyx * 0.0001f;
     float Additive_z = k.yxy * 0.0001f;
     float Additive_w = k.xxx * 0.0001f;
     
-    float3 Normal_x = k.xyy * (distance_from_sphere(float3(p + Additive_x), float3(0.0f, 0.0f, 6.0f), 1.0f));
-    float3 Normal_y = k.yyx * (distance_from_sphere(float3(p + Additive_y), float3(0.0f, 0.0f, 6.0f), 1.0f));
-    float3 Normal_z = k.yxy * (distance_from_sphere(float3(p + Additive_z), float3(0.0f, 0.0f, 6.0f), 1.0f));
-    float3 Normal_w = k.xxx * (distance_from_sphere(float3(p + Additive_w), float3(0.0f, 0.0f, 6.0f), 1.0f));
+    //float3 New_x = float3(p + Additive_x);
+    //float3 New_y = float3(p + Additive_y);
+    //float3 New_z = float3(p + Additive_z);
+    //float3 New_w = float3(p + Additive_w);
+    
+    //float dist_x = distance_from_sphere(New_x, float3(0.0f, 0.0f, 0.6f), 1.0f);
+    //float dist_y = distance_from_sphere(New_y, float3(0.0f, 0.0f, 0.6f), 1.0f);
+    //float dist_z = distance_from_sphere(New_z, float3(0.0f, 0.0f, 0.6f), 1.0f);
+    //float dist_w = distance_from_sphere(New_w, float3(0.0f, 0.0f, 0.6f), 1.0f);
+    
+    //float3 Normal_x = k.xyy * dist_x;
+    //float3 Normal_y = k.yyx * dist_y;
+    //float3 Normal_z = k.yxy * dist_z;
+    //float3 Normal_w = k.xxx * dist_w;
     
     //float3 Normal_x = k.xyy * (Distance_between_3Dpoints_(float3(p + Additive_x)));
     //float3 Normal_y = k.yyx * (Distance_between_3Dpoints_(float3(p + Additive_y)));
     //float3 Normal_z = k.yxy * (Distance_between_3Dpoints_(float3(p + Additive_z)));
     //float3 Normal_w = k.xxx * (Distance_between_3Dpoints_(float3(p + Additive_w)));
     
-    return normalize(float3(Normal_x + Normal_y + Normal_z + Normal_w));
+    float3 Normal_x = k.xyy * (distance_from_sphere(float3(p + Additive_x), float3(0.0f, 0.0f, 6.0f), 1.0f));
+    float3 Normal_y = k.yyx * (distance_from_sphere(float3(p + Additive_y), float3(0.0f, 0.0f, 6.0f), 1.0f));
+    float3 Normal_z = k.yxy * (distance_from_sphere(float3(p + Additive_z), float3(0.0f, 0.0f, 6.0f), 1.0f));
+    float3 Normal_w = k.xxx * (distance_from_sphere(float3(p + Additive_w), float3(0.0f, 0.0f, 6.0f), 1.0f));
+    
+    float3 Final_Normal = Normal_x + Normal_y + Normal_z + Normal_w;
+    
+    //Final_Normal = mul(Final_Normal, World);
+    
+    return normalize(Final_Normal);
     
     //const float2 k = float2(10, -10);
     //return normalize((k.xyy * min(distance_from_sphere(float3(p + (k.xyy * EPSILON)), float3(1.5f, 0.0f, 0.0f), 2.0f), distance_from_sphere(float3(p + (k.xyy * EPSILON)), -1 * float3(1.5f, 0.0f, 0.0f), 2.0f)) +
@@ -168,81 +191,81 @@ float3 estimateNormal(float3 p)
     //));
 }
 
-float3 phongContributeForLight(float3 k_d, float3 k_s, float alpha, float3 p, float3 eye, float3 lightPos, float3 lightIntensity)
-{
-    float3 N = estimateNormal(p); /*float3(1.0f, 1.0f, 1.0f);*/
-    //N = N * -1;
+//float3 phongContributeForLight(float3 k_d, float3 k_s, float alpha, float3 p, float3 eye, float3 lightPos, float3 lightIntensity)
+//{
+//    //float3 N = estimateNormal(p); /*float3(1.0f, 1.0f, 1.0f);*/
+//    //N = N * -1;
     
-    //return float3(N.x, N.y, N.z);
+//    //return float3(N.x, N.y, N.z);
     
-    //if (N.x < 0)
-    //{
-    //    return float3(0.0f, 1.0f, 0.0f);
-    //}
-    //if (N.y < 0)
-    //{
-    //    return float3(0.0f, 1.0f, 0.0f);
-    //}
-    //if (N.z < 0)
-    //{
-    //    return float3(0.0f, 1.0f, 0.0f);
-    //}
+//    //if (N.x < 0)
+//    //{
+//    //    return float3(0.0f, 1.0f, 0.0f);
+//    //}
+//    //if (N.y < 0)
+//    //{
+//    //    return float3(0.0f, 1.0f, 0.0f);
+//    //}
+//    //if (N.z < 0)
+//    //{
+//    //    return float3(0.0f, 1.0f, 0.0f);
+//    //}
     
-    float3 L = normalize(lightPos - p);
-    float3 V = normalize(eye - p);
-    float3 R = normalize(reflect(-L, N));
+//    float3 L = normalize(lightPos - p);
+//    float3 V = normalize(eye - p);
+//    float3 R = normalize(reflect(-L, N));
     
-    float dotLN = dot(L, N);
-    //if (dotLN <= 0)
-    //{
-    //    return float3(0.0f, 1.0f, 0.0f);
-    //}
-    float dotRV = dot(R, V);
-    //if (dotRV >= 0)
-    //{
-    //    return float3(0.0f, 1.0f, 0.0f);
-    //}
+//    float dotLN = dot(L, N);
+//    //if (dotLN <= 0)
+//    //{
+//    //    return float3(0.0f, 1.0f, 0.0f);
+//    //}
+//    float dotRV = dot(R, V);
+//    //if (dotRV >= 0)
+//    //{
+//    //    return float3(0.0f, 1.0f, 0.0f);
+//    //}
     
-    //dotLN is always less than zero
-    if (dotLN < 0.0f)
-    {
-        //Light not visible from this point on the surface
-        return float3(0.0f, 0.0f, 0.0f);
-    }
+//    //dotLN is always less than zero
+//    if (dotLN < 0.0f)
+//    {
+//        //Light not visible from this point on the surface
+//        return float3(0.0f, 0.0f, 0.0f);
+//    }
     
-    if (dotRV < 0.0f)
-    {
-        //Light reflection in opposite direction as viewer, apply only diffuse component
-        return lightIntensity * (k_d * dotLN);
-        //return float3(0.0f, 0.0f, 1.0f);
-    }
+//    if (dotRV < 0.0f)
+//    {
+//        //Light reflection in opposite direction as viewer, apply only diffuse component
+//        return lightIntensity * (k_d * dotLN);
+//        //return float3(0.0f, 0.0f, 1.0f);
+//    }
     
     
-    float3 check_value = lightIntensity * ((k_d * dotLN) + (k_s * pow(dotRV, alpha)));
+//    float3 check_value = lightIntensity * ((k_d * dotLN) + (k_s * pow(dotRV, alpha)));
     
-    //if (check_value.x)
-    //{
-    //    return float3(0.0f, 1.0f, 0.0f);
-    //}
-    //if (check_value.y)
-    //{
-    //    return float3(0.0f, 1.0f, 0.0f);
-    //}
-    //if (check_value.z)
-    //{
-    //    return float3(0.0f, 1.0f, 0.0f);
-    //}
+//    //if (check_value.x)
+//    //{
+//    //    return float3(0.0f, 1.0f, 0.0f);
+//    //}
+//    //if (check_value.y)
+//    //{
+//    //    return float3(0.0f, 1.0f, 0.0f);
+//    //}
+//    //if (check_value.z)
+//    //{
+//    //    return float3(0.0f, 1.0f, 0.0f);
+//    //}
     
-    //I think something is up with this equation
-    //return lightIntensity * ((k_d * dotLN) + (k_s * pow(dotRV, alpha)));
-    return check_value;
-    //return float3(1.0f, 1.0f, 0.0f);
+//    //I think something is up with this equation
+//    //return lightIntensity * ((k_d * dotLN) + (k_s * pow(dotRV, alpha)));
+//    return check_value;
+//    //return float3(1.0f, 1.0f, 0.0f);
 
-}
+//}
 
-float4 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, float3 eye, float DeltaTime,float3 ViewVector,float3 Position,float3 view2)
+float4 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, float3 eye, float DeltaTime,float3 ViewVector,float3 Position,float3 view2,float3x3 World)
 {
-    float4 ambientLight = float4(1.0, 1.0, 1.0,1.0f);
+    float4 ambientLight = float4(0.5, 0.5, 0.5, 1.0f);
     float4 colour = float4(0.0f, 0.0f, 0.0f,0.0f);
     //ambientLight = ambientLight * k_a;
     //colour = ambientLight * k_a;
@@ -250,23 +273,24 @@ float4 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, 
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float4 Light1Pos = float4(0.0f, 0.0f, 9.0f,0.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float4 Light1Pos = float4(0.0f, 0.0f, 0.0f,2.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
-    float3 light1Vector;
+    float3 light1Vector = float3(0.0f,0.0f,0.0f);
     
-    light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - p);
+    light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - eye);
     
-    float3 light1Direction = (float3(0.0f, 0.0f, 0.2f));
+    float3 light1Direction = (float3(0.0f, 0.0f, 1.0f));
     
-    float3 Normal = estimateNormal(p); /*float3(0.0f, 0.0f, 1.0f);*/
+    float3 Normal = estimateNormal(view2,World); /*float3(0.0f, 0.0f, 1.0f);*/
     
-    float attenuation;
+    //Normal = mul(Normal, World);
+    //Normal = normalize(Normal);
     
-    attenuation = calcAttenuation(length(light1Vector), 0.5f, 0.125f, 0.0f);
+    float attenuation = 0.0f;
     
-    //float attenuation = calcAttenuation(length(float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - p), 0.5f, 0.125f, 0.0f);
+    attenuation = calcAttenuation(length(light1Vector), 0.0f, 0.125f, 0.0f); 
     
     light1Vector = normalize(light1Vector);
     

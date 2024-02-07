@@ -252,22 +252,22 @@ float4 main(InputType input) : SV_TARGET
             
         //float distance_to_currentPos = min(distance_from_sphere(currentPos, float3(1.5f, 0.0f, 0.0f), 2.0f), distance_from_sphere(currentPos, -1 * float3(1.5f, 0.0f, 0.0f), 2.0f));
         
-        float distance_to_currentPos = distance_from_Elipsoid_bound(currentPos, float3(0.2f, 0.25f, 0.05f), 0.1f);
+        //float distance_to_currentPos = distance_from_Elipsoid_bound(currentPos, float3(0.2f, 0.25f, 0.05f), 0.1f);
         
-        //float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f),1.0f);
+        float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f),1.0f);
         
         //float3 dir = rayDirection(45.0, Resoloution, input.position.xy);
         
-        float3 p = camPos + (distance_to_currentPos * viewVector);
+        float3 p = camPos + distance_to_currentPos * viewVector;
         
         //currentPos = -1.f;
             
         if (distance_to_currentPos < 1.0f)
         {
             float4 col = float4(1.0f, 0.0f, 0.0f, 1.0f);
-            //float4 col2 = phongIllumination(K_a, K_d, K_s, shininess, p, camPos, deltaTime, viewVector, float3(0.0, 0.0f, 0.6f),input.viewVectror);
+            float4 col2 = phongIllumination(K_a, K_d, K_s, shininess, p, camPos, deltaTime, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, (float3x3) World);
             //float4 col = float4(col2.x,col2.y,col2.z,1.0f);
-            //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
+            col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             return col;
         }
             
