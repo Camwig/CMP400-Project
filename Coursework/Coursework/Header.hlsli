@@ -145,10 +145,10 @@ float3 estimateNormal(float3 p, float3x3 World)
     //float3 Normal_z = k.yxy * (Distance_between_3Dpoints_(float3(p + Additive_z)));
     //float3 Normal_w = k.xxx * (Distance_between_3Dpoints_(float3(p + Additive_w)));
     
-    float3 Normal_x = k.xyy * (distance_from_sphere(float3(p + Additive_x), float3(0.0f, 0.0f, 6.0f), 1.0f));
-    float3 Normal_y = k.yyx * (distance_from_sphere(float3(p + Additive_y), float3(0.0f, 0.0f, 6.0f), 1.0f));
-    float3 Normal_z = k.yxy * (distance_from_sphere(float3(p + Additive_z), float3(0.0f, 0.0f, 6.0f), 1.0f));
-    float3 Normal_w = k.xxx * (distance_from_sphere(float3(p + Additive_w), float3(0.0f, 0.0f, 6.0f), 1.0f));
+    float3 Normal_x = k.xyy * (distance_from_sphere(float3(p + Additive_x), float3(0.0f, 0.0f, 0.6f), 1.0f));
+    float3 Normal_y = k.yyx * (distance_from_sphere(float3(p + Additive_y), float3(0.0f, 0.0f, 0.6f), 1.0f));
+    float3 Normal_z = k.yxy * (distance_from_sphere(float3(p + Additive_z), float3(0.0f, 0.0f, 0.6f), 1.0f));
+    float3 Normal_w = k.xxx * (distance_from_sphere(float3(p + Additive_w), float3(0.0f, 0.0f, 0.6f), 1.0f));
     
     float3 Final_Normal = Normal_x + Normal_y + Normal_z + Normal_w;
     
@@ -279,7 +279,7 @@ float4 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, 
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float4 Light1Pos = float4(4.0f, 4.0f, 1.6f,2.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float4 Light1Pos = float4(4.0f, 4.0f, 0.6f,2.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
