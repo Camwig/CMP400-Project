@@ -71,6 +71,12 @@ float distance_from_Elipsoid_bound(float3 p, float3 c, float r)
     //return ((answer - 1.0f) * min(min(c.x, c.y), c.z)) - r;
 }
 
+float distance_from_plane(float3 p,float3 n, float h)
+{
+    //n must be normalised
+    return dot(p, n) + h;
+}
+
 //--------------------------------------------------------------------------------
 
 // Calculate lighting intensity based on direction and normal. Combine with light colour.
