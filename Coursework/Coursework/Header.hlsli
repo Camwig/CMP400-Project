@@ -128,7 +128,7 @@ float3 estimateNormal(float3 p, float3x3 World)
     float3 Normal_z = k.yxy * (distance_from_sphere(float3(p + Additive_z), float3(0.0f, 0.0f, 0.6f), 1.0f));
     float3 Normal_w = k.xxx * (distance_from_sphere(float3(p + Additive_w), float3(0.0f, 0.0f, 0.6f), 1.0f));
     
-    float3 Final_Normal = Normal_x + Normal_y + Normal_z + Normal_w;
+    float3 Final_Normal = Normal_x * Normal_y * Normal_z * Normal_w;
     
     Final_Normal = mul(Final_Normal, World);
     
@@ -157,7 +157,7 @@ float4 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, 
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float4 Light1Pos = float4(4.0f, 4.0f, 0.6f,2.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float4 Light1Pos = float4(4.0f, 0.0f, 0.6f,1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
@@ -165,9 +165,9 @@ float4 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, 
     
     float3 Test = mul(Position, World);
     
-    light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - Test/*eye*/);
+    light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - eye/*eye*/);
     
-    float3 light1Direction = (float3(-0.6f, 0.0f, -0.3f));
+    float3 light1Direction = (float3(0.6f, 0.0f, -0.3f));
     
     float3 Normal = estimateNormal(view2,World); /*float3(0.0f, 0.0f, 1.0f);*/
     
@@ -182,9 +182,9 @@ float4 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, 
     
     light1Vector = normalize(light1Vector);
     
-    colour = ambientLight + attenuation * calculateLighting(light1Direction, Normal, float4(0.5f, 0.5f, 0.0f, 0.0f), Light1Pos);
+    colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, float4(0.5f, 0.5f, 0.0f, 0.0f), Light1Pos);
     
-    colour *= calcSpecular(light1Direction, Normal, ViewVector, float4(1, 1, 1, 1), alpha);
+    colour *= calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), alpha);
     
     return colour;
 }
