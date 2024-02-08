@@ -273,11 +273,10 @@ float4 main(InputType input) : SV_TARGET
             
         if (distance_to_currentPos < 1.0f)
         {
-            float4 col = float4(1.0f, 0.0f, 0.0f, 1.0f);
             float4 col2 = phongIllumination(K_a, K_d, K_s, shininess, p, WorldPosition, deltaTime, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, (float3x3) World);
-            //float4 col = float4(col2.x,col2.y,col2.z,1.0f);
-            col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
-            return col;
+            //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
+            //float4 col = float4(1.0f, 0.0f, 0.0f, 1.0f);
+            return col2;
         }
             
         if (total_distance > 1000.0f)

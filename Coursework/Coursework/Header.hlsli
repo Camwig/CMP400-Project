@@ -112,9 +112,7 @@ float4 calcAttenuation(float distance, float constantfactor, float linearFactor,
 //--------------------------------------------------------------------------------
 
 float3 estimateNormal(float3 p, float3x3 World)
-{
-      //Normal comes out as negative everytime
-    
+{   
     const float2 k = float2(1, -1);
     
     //Epsilon is not working properly
@@ -124,26 +122,6 @@ float3 estimateNormal(float3 p, float3x3 World)
     float Additive_y = k.yyx * 0.0001f;
     float Additive_z = k.yxy * 0.0001f;
     float Additive_w = k.xxx * 0.0001f;
-    
-    //float3 New_x = float3(p + Additive_x);
-    //float3 New_y = float3(p + Additive_y);
-    //float3 New_z = float3(p + Additive_z);
-    //float3 New_w = float3(p + Additive_w);
-    
-    //float dist_x = distance_from_sphere(New_x, float3(0.0f, 0.0f, 0.6f), 1.0f);
-    //float dist_y = distance_from_sphere(New_y, float3(0.0f, 0.0f, 0.6f), 1.0f);
-    //float dist_z = distance_from_sphere(New_z, float3(0.0f, 0.0f, 0.6f), 1.0f);
-    //float dist_w = distance_from_sphere(New_w, float3(0.0f, 0.0f, 0.6f), 1.0f);
-    
-    //float3 Normal_x = k.xyy * dist_x;
-    //float3 Normal_y = k.yyx * dist_y;
-    //float3 Normal_z = k.yxy * dist_z;
-    //float3 Normal_w = k.xxx * dist_w;
-    
-    //float3 Normal_x = k.xyy * (Distance_between_3Dpoints_(float3(p + Additive_x)));
-    //float3 Normal_y = k.yyx * (Distance_between_3Dpoints_(float3(p + Additive_y)));
-    //float3 Normal_z = k.yxy * (Distance_between_3Dpoints_(float3(p + Additive_z)));
-    //float3 Normal_w = k.xxx * (Distance_between_3Dpoints_(float3(p + Additive_w)));
     
     float3 Normal_x = k.xyy * (distance_from_sphere(float3(p + Additive_x), float3(0.0f, 0.0f, 0.6f), 1.0f));
     float3 Normal_y = k.yyx * (distance_from_sphere(float3(p + Additive_y), float3(0.0f, 0.0f, 0.6f), 1.0f));
@@ -156,118 +134,18 @@ float3 estimateNormal(float3 p, float3x3 World)
     
     return normalize(Final_Normal);
     
-    //const float2 k = float2(10, -10);
-    //return normalize((k.xyy * min(distance_from_sphere(float3(p + (k.xyy * EPSILON)), float3(1.5f, 0.0f, 0.0f), 2.0f), distance_from_sphere(float3(p + (k.xyy * EPSILON)), -1 * float3(1.5f, 0.0f, 0.0f), 2.0f)) +
-    //                 (k.yyx * min(distance_from_sphere(float3(p + (k.yyx * EPSILON)), float3(1.5f, 0.0f, 0.0f), 2.0f), distance_from_sphere(float3(p + (k.yyx * EPSILON)), -1 * float3(1.5f, 0.0f, 0.0f), 2.0f))) +
-    //                 (k.yxy * min(distance_from_sphere(float3(p + (k.yxy * EPSILON)), float3(1.5f, 0.0f, 0.0f), 2.0f), distance_from_sphere(float3(p + (k.yxy * EPSILON)), -1 * float3(1.5f, 0.0f, 0.0f), 2.0f)))));
     
-    //const float2 k = float2(1, -1);
-    //return normalize((k.xyy * distance_from_sphere(float3(p + k.xyy * EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)) +
-    //                 (k.yyx * distance_from_sphere(float3(p + k.yyx * EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)) +
-    //                 (k.yxy * distance_from_sphere(float3(p + k.yxy * EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)));
-    
-    
-    //float2 h = float2(EPSILON, 0);
-    //float3 value = normalize(float3((Distance_between_3Dpoints_2_(float3(p + h.xyy), float3(0.0f, 0.0f, 6.0f)) - Distance_between_3Dpoints_2_(float3(p - h.xyy), float3(0.0f, 0.0f, 6.0f))),
-    //                        (Distance_between_3Dpoints_2_(float3(p + h.yxy), float3(0.0f, 0.0f, 6.0f)) - Distance_between_3Dpoints_2_(float3(p - h.yxy), float3(0.0f, 0.0f, 6.0f))),
-    //                        (Distance_between_3Dpoints_2_(float3(p + h.yyx), float3(0.0f, 0.0f, 6.0f)) - Distance_between_3Dpoints_2_(float3(p - h.yyx), float3(0.0f, 0.0f, 6.0f)))));
-    //return value;
-    
-    //This is not working right Need to work out the epsilon
-    
-    //float3 value = normalize(float3(
-    //((p.x + EPSILON, -p.y, -p.z) - (p.x - EPSILON, p.y, p.z)),
-    //((p.x, -p.y + EPSILON, -p.z) - (p.x, p.y - EPSILON, p.z)),
-    //(p.x, -p.y, -p.z + EPSILON) - (p.x, p.y, p.z - EPSILON))
-    //);
-    //value = float3(sqrt(value.x), sqrt(value.y), sqrt(value.z));
-    //return value;
-    
-    //return normalize(float3(
-    //((p.x + EPSILON, p.y, p.z) - (p.x - EPSILON, p.y, p.z)),
-    //((p.x, p.y + EPSILON, p.z) - (p.x, p.y - EPSILON, p.z)),
-    //(p.x, p.y, p.z + EPSILON) - (p.x, p.y, p.z - EPSILON))
-    //);
-    
-    
-    //return normalize(float3(
-    //distance_from_sphere(float3(p.x + EPSILON, p.y, p.z), float3(0.0f, 0.0f, 6.0f), 1.0f) - distance_from_sphere(float3(p.x - EPSILON, p.y, p.z), float3(0.0f, 0.0f, 6.0f), 1.0f),
-    //distance_from_sphere(float3(p.x, p.y + EPSILON, p.z), float3(0.0f, 0.0f, 6.0f), 1.0f) - distance_from_sphere(float3(p.x, p.y - EPSILON, p.z), float3(0.0f, 0.0f, 6.0f), 1.0f),
-    //distance_from_sphere(float3(p.x, p.y, p.z + EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f) - distance_from_sphere(float3(p.x, p.y, p.z - EPSILON), float3(0.0f, 0.0f, 6.0f), 1.0f)
+    //float3 Final_Normal = (float3(
+    //distance_from_sphere(float3(p.x + 0.0001f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x - 0.0001f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    //distance_from_sphere(float3(p.x, p.y + 0.0001f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y - 0.0001f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    //distance_from_sphere(float3(p.x, p.y, p.z + 0.0001f), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y, p.z - 0.0001f), float3(0.0f, 0.0f, 0.6f), 1.0f)
     //));
+    
+    //Final_Normal = mul(Final_Normal, World);
+    
+    //return normalize(Final_Normal);
+    
 }
-
-//float3 phongContributeForLight(float3 k_d, float3 k_s, float alpha, float3 p, float3 eye, float3 lightPos, float3 lightIntensity)
-//{
-//    //float3 N = estimateNormal(p); /*float3(1.0f, 1.0f, 1.0f);*/
-//    //N = N * -1;
-    
-//    //return float3(N.x, N.y, N.z);
-    
-//    //if (N.x < 0)
-//    //{
-//    //    return float3(0.0f, 1.0f, 0.0f);
-//    //}
-//    //if (N.y < 0)
-//    //{
-//    //    return float3(0.0f, 1.0f, 0.0f);
-//    //}
-//    //if (N.z < 0)
-//    //{
-//    //    return float3(0.0f, 1.0f, 0.0f);
-//    //}
-    
-//    float3 L = normalize(lightPos - p);
-//    float3 V = normalize(eye - p);
-//    float3 R = normalize(reflect(-L, N));
-    
-//    float dotLN = dot(L, N);
-//    //if (dotLN <= 0)
-//    //{
-//    //    return float3(0.0f, 1.0f, 0.0f);
-//    //}
-//    float dotRV = dot(R, V);
-//    //if (dotRV >= 0)
-//    //{
-//    //    return float3(0.0f, 1.0f, 0.0f);
-//    //}
-    
-//    //dotLN is always less than zero
-//    if (dotLN < 0.0f)
-//    {
-//        //Light not visible from this point on the surface
-//        return float3(0.0f, 0.0f, 0.0f);
-//    }
-    
-//    if (dotRV < 0.0f)
-//    {
-//        //Light reflection in opposite direction as viewer, apply only diffuse component
-//        return lightIntensity * (k_d * dotLN);
-//        //return float3(0.0f, 0.0f, 1.0f);
-//    }
-    
-    
-//    float3 check_value = lightIntensity * ((k_d * dotLN) + (k_s * pow(dotRV, alpha)));
-    
-//    //if (check_value.x)
-//    //{
-//    //    return float3(0.0f, 1.0f, 0.0f);
-//    //}
-//    //if (check_value.y)
-//    //{
-//    //    return float3(0.0f, 1.0f, 0.0f);
-//    //}
-//    //if (check_value.z)
-//    //{
-//    //    return float3(0.0f, 1.0f, 0.0f);
-//    //}
-    
-//    //I think something is up with this equation
-//    //return lightIntensity * ((k_d * dotLN) + (k_s * pow(dotRV, alpha)));
-//    return check_value;
-//    //return float3(1.0f, 1.0f, 0.0f);
-
-//}
 
 float4 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, float3 eye, float DeltaTime,float3 ViewVector,float3 Position,float3 view2,float3x3 World)
 {
@@ -285,11 +163,15 @@ float4 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, 
     
     float3 light1Vector = float3(0.0f,0.0f,0.0f);
     
-    light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - eye);
+    float3 Test = mul(Position, World);
+    
+    light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - Test/*eye*/);
     
     float3 light1Direction = (float3(-0.6f, 0.0f, -0.3f));
     
     float3 Normal = estimateNormal(view2,World); /*float3(0.0f, 0.0f, 1.0f);*/
+    
+    //return float4(Normal.x,Normal.y,Normal.z,1.0f);
     
     //Normal = mul(Normal, World);
     //Normal = normalize(Normal);
@@ -304,21 +186,5 @@ float4 phongIllumination(float3 k_a,float3 k_d,float3 k_s,float alpha,float3 p, 
     
     colour *= calcSpecular(light1Direction, Normal, ViewVector, float4(1, 1, 1, 1), alpha);
     
-    //colour += phongContributeForLight(k_d, k_s, alpha, p, eye, Light1Pos, Light1Intensity);
-
-    //float3 Light2Pos = float3(0.0f, 0.0f, 6.0f); //float3(2.0f * sin(DeltaTime * 0.37), 2.0f * cos(DeltaTime * 0.37), 2.0f);
-    
-    //float3 Light2Intensity = float3(0.4f,0.4f,0.4f);
-    
-    //colour += phongContributeForLight(k_d, k_s, alpha, p, eye, Light2Pos, Light2Intensity);
-    
     return colour;
-
-}
-
-float3 rayDirection(float fieldOfView, float2 size, float2 fragCoord)
-{
-    float2 xy = fragCoord - size / 2.0;
-    float z = size.y / tan(radians(fieldOfView) / 2.0);
-    return normalize(float3(xy, -z));
 }
