@@ -234,18 +234,17 @@ float4 main(InputType input) : SV_TARGET
     
     //input.
     
-    //Ambient colour
-    float3 K_a = float3(0.2f,0.2f,0.2f);
-    //Diffuse Colour
-    float3 K_d = float3(0.2f, 0.2f, 0.2f);
-    //Specular Colour
-    float3 K_s = float3(1.0f, 1.0f, 1.0f);
-    
     float shininess = 10.0f;
     
     //output.worldPosition = mul(input.position, worldMatrix).xyz;
     
     float3 WorldPosition = mul(camPos, World).xyz;
+    
+    //float3 Test = mul(input.position, World);
+    
+    //float3 NewView = camPos.xyz - Test.xyz;
+    
+    //NewView = normalize(NewView);
     
     for (int i = 0; i < num_of_steps; i++)
     {
@@ -267,13 +266,13 @@ float4 main(InputType input) : SV_TARGET
         
         //float3 dir = rayDirection(45.0, Resoloution, input.position.xy);
         
-        float3 p = camPos + distance_to_currentPos * viewVector;
-        
         //currentPos = -1.f;
             
         if (distance_to_currentPos < 1.0f)
         {
-            float4 col2 = phongIllumination(K_a, K_d, K_s, shininess, p, WorldPosition, deltaTime, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, (float3x3) World);
+            float3 p = currentPos + (distance_to_currentPos);
+            
+            float4 col2 = phongIllumination(shininess, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, (float3x3) World, camPos,p);
             //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             //float4 col = float4(1.0f, 0.0f, 0.0f, 1.0f);
             return col2;
