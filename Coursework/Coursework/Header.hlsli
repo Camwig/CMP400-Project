@@ -77,6 +77,76 @@ float distance_from_plane(float3 p,float3 n, float h)
     return dot(p, n) + h;
 }
 
+/*float udQuad( vec3 p, vec3 a, vec3 b, vec3 c, vec3 d )
+{
+  vec3 ba = b - a; vec3 pa = p - a;
+  vec3 cb = c - b; vec3 pb = p - b;
+  vec3 dc = d - c; vec3 pc = p - c;
+  vec3 ad = a - d; vec3 pd = p - d;
+  vec3 nor = cross( ba, ad );
+
+  return sqrt(
+    (sign(dot(cross(ba,nor),pa)) +
+     sign(dot(cross(cb,nor),pb)) +
+     sign(dot(cross(dc,nor),pc)) +
+     sign(dot(cross(ad,nor),pd))<3.0)
+     ?
+     min( min( min(
+     dot2(ba*clamp(dot(ba,pa)/dot2(ba),0.0,1.0)-pa),
+     dot2(cb*clamp(dot(cb,pb)/dot2(cb),0.0,1.0)-pb) ),
+     dot2(dc*clamp(dot(dc,pc)/dot2(dc),0.0,1.0)-pc) ),
+     dot2(ad*clamp(dot(ad,pd)/dot2(ad),0.0,1.0)-pd) )
+     :
+     dot(nor,pa)*dot(nor,pa)/dot2(nor) );
+}*/
+
+float dot2(float3 v)
+{
+    return dot(v, v);
+}
+
+float distance_from_quad(float3 p, float3 a, float3 b,float3 c,float3 d)
+{
+    float3 ba = b - a; 
+    float3 pa = p - a;
+    float3 cb = c - b; 
+    float3 pb = p - b;
+    float3 dc = d - c;
+    float3 pc = p - c;
+    float3 ad = a - d;
+    float3 pd = p - d;
+    
+    float3 nor = cross(ba, ad);
+    
+    return sqrt(
+    (sign(dot(cross(ba, nor), pa)) +
+     sign(dot(cross(cb, nor), pb)) +
+     sign(dot(cross(dc, nor), pc)) +
+     sign(dot(cross(ad, nor), pd)) < 3.0)
+     ?
+     min(min(min(
+     dot2(ba * clamp(dot(ba, pa) / dot2(ba), 0.0, 1.0) - pa),
+     dot2(cb * clamp(dot(cb, pb) / dot2(cb), 0.0, 1.0) - pb)),
+     dot2(dc * clamp(dot(dc, pc) / dot2(dc), 0.0, 1.0) - pc)),
+     dot2(ad * clamp(dot(ad, pd) / dot2(ad), 0.0, 1.0) - pd))
+     :
+     dot(nor, pa) * dot(nor, pa) / dot2(nor));
+    
+}
+
+/*float sdBox( vec3 p, vec3 b )
+{
+  vec3 q = abs(p) - b;
+  return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);
+}*/
+
+float distance_from_box(float3 p, float3 b)
+{
+    float3 q = abs(p) - b;
+    return length(max(q, 0.0f)) + min(max(q.x, max(q.y, q.z)), 0.0f);
+}
+
+
 //--------------------------------------------------------------------------------
 
 // Calculate lighting intensity based on direction and normal. Combine with light colour.
@@ -136,10 +206,30 @@ float3 estimateNormal(float3 p, float3x3 World)
     //return Final_Normal;
     
     
+    //float3 Final_Normal = (float3(
+    //distance_from_sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x - 0.002f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    //distance_from_sphere(float3(p.x, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    //distance_from_sphere(float3(p.x, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f)
+    //));
+    
+    //Final_Normal = mul(Final_Normal, World);
+    
+    //return normalize(Final_Normal);
+    
+    //float3 Final_Normal = (float3(
+    //distance_from_quad(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f)) - distance_from_quad(float3(p.x - 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f)),
+    //distance_from_quad(float3(p.x /*0.00001f*/, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f)),
+    //distance_from_quad(float3(p.x /*0.00001f*/, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f))
+    //));
+    
+    //Final_Normal = mul(Final_Normal, World);
+    
+    //return normalize(Final_Normal);
+    
     float3 Final_Normal = (float3(
-    distance_from_sphere(float3(p.x + 0.0001f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x - 0.0001f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
-    distance_from_sphere(float3(p.x, p.y + 0.0001f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y - 0.0001f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
-    distance_from_sphere(float3(p.x, p.y, p.z + 0.0001f), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y, p.z - 0.0001f), float3(0.0f, 0.0f, 0.6f), 1.0f)
+    distance_from_box(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.3f, 0.3f, 1.0f)) - distance_from_box(float3(p.x - 0.002f /*0.00001f*/, p.y, p.z), float3(0.3f, 0.3f, 1.0f)),
+    distance_from_box(float3(p.x /*0.00001f*/, p.y + 0.002f, p.z), float3(0.3f, 0.3f, 1.0f)) - distance_from_box(float3(p.x /*0.00001f*/, p.y - 0.002f, p.z), float3(0.3f, 0.3f, 1.0f)),
+    distance_from_box(float3(p.x /*0.00001f*/, p.y, p.z + 0.002f), float3(0.3f, 0.3f, 1.0f)) - distance_from_box(float3(p.x /*0.00001f*/, p.y, p.z - 0.002f), float3(0.3f, 0.3f, 1.0f))
     ));
     
     Final_Normal = mul(Final_Normal, World);
@@ -158,7 +248,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float4 Light1Pos = float4(0.0f, 0.0f, 0.8f,1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float4 Light1Pos = float4(0.9f, 0.8f, 1.0f,2.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
@@ -174,7 +264,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     //light1Vector /= Campos;
     
-    float3 light1Direction = (float3(0.0f, 0.0f, 1.0f));
+    float3 light1Direction = (float3(-1.0f, -0.7f, 0.0f));
    
     //Not this
     float3 Normal = estimateNormal(p,World); /*float3(0.0f, 0.0f, 1.0f);*/
@@ -190,9 +280,9 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     light1Vector = normalize(light1Vector);
     
-    colour = ambientLight + /*attenuation **/ calculateLighting(light1Vector, Normal, float4(0.5f, 0.5f, 0.0f, 0.0f), Light1Pos);
+    colour = ambientLight /*+ attenuation*/ * calculateLighting(light1Direction, Normal, float4(0.5f, 0.5f, 0.0f, 0.0f), Light1Pos);
     
-    //colour *= calcSpecular(-light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
+    //colour *= calcSpecular(light1Direction, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
     
     return colour;
     //return float4(Normal, 1.0f);
