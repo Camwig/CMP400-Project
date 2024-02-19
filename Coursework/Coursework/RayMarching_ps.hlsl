@@ -234,11 +234,11 @@ float4 main(InputType input) : SV_TARGET
     
     //input.
     
-    float shininess = 10.0f;
+    float shininess = 2.0f;
     
     //output.worldPosition = mul(input.position, worldMatrix).xyz;
     
-    float3 WorldPosition = mul(camPos, World).xyz;
+    //float3 WorldPosition = mul(camPos, World).xyz;
     
     //float3 Test = mul(input.position, World);
     
@@ -249,7 +249,7 @@ float4 main(InputType input) : SV_TARGET
     for (int i = 0; i < num_of_steps; i++)
     {
         
-        float3 currentPos = camPos + total_distance * viewVector; /*CameraForwardDirection*/;
+        float3 currentPos = camPos + total_distance * viewVector; /*CameraForwardDirection*/
         
         //float3 currentPos = (camPos * newCoords) + total_distance * CameraForwardDirection; /*CameraForwardDirection*/;
             
@@ -264,9 +264,9 @@ float4 main(InputType input) : SV_TARGET
         
         //float distance_to_currentPos = distance_from_plane(currentPos, normalize(float3(0.0021f, 0.0045f, 0.001f)), 200.0f);
         
-        float distance_to_currentPos = distance_from_box(currentPos, float3(0.3f, 0.3f, 1.0f));
+        //float distance_to_currentPos = distance_from_box(currentPos, float3(0.3f, 0.3f, 1.0f));
         
-        //float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f));
+        float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f));
         
         //float3 dir = rayDirection(45.0, Resoloution, input.position.xy);
         
@@ -276,8 +276,8 @@ float4 main(InputType input) : SV_TARGET
         {
             float3 p = currentPos + (distance_to_currentPos);
             
-            //float4 col = float4(1.0f, 0.0f, 0.0f, 1.0f);
-            float4 col2 = phongIllumination(shininess, viewVector, float3(0.3f, 0.3f, 1.0f), currentPos, (float3x3) World, camPos, p);
+            //float4 col = float4(0.5f, 0.5f, 0.5f, 1.0f);
+            float4 col2 = phongIllumination(shininess, viewVector, float3(5.0f, 0.0f, 5.0f), currentPos, (float3x3) World, camPos, p);
             //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             return col2;
         }

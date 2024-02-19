@@ -152,15 +152,14 @@ float distance_from_box(float3 p, float3 b)
 // Calculate lighting intensity based on direction and normal. Combine with light colour.
 float4 calculateLighting(float3 lightDirection, float3 normal, float4 ldiffuse, float4 position)
 {
-    float intensity = 1.0f;
+    float intensity;
     if (position.w == 1.0f)
     {
         intensity = saturate(dot(normal, lightDirection));
-}
+    }
     else if (position.w == 2.0f)
     {
         intensity = saturate(dot(normal, -lightDirection));
-        //return float4(0, 1, 0, 1);
     }
     float4 colour = saturate(ldiffuse * intensity);
     return colour;
@@ -216,25 +215,27 @@ float3 estimateNormal(float3 p, float3x3 World)
     
     //return normalize(Final_Normal);
     
-    //float3 Final_Normal = (float3(
-    //distance_from_quad(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f)) - distance_from_quad(float3(p.x - 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f)),
-    //distance_from_quad(float3(p.x /*0.00001f*/, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f)),
-    //distance_from_quad(float3(p.x /*0.00001f*/, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(0.0f, 10.0f, 10.0f), float3(0.0f, 10.0f, 0.0f))
-    //));
-    
-    //Final_Normal = mul(Final_Normal, World);
-    
-    //return normalize(Final_Normal);
+    float Epsilon = 0.002f;
     
     float3 Final_Normal = (float3(
-    distance_from_box(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.3f, 0.3f, 1.0f)) - distance_from_box(float3(p.x - 0.002f /*0.00001f*/, p.y, p.z), float3(0.3f, 0.3f, 1.0f)),
-    distance_from_box(float3(p.x /*0.00001f*/, p.y + 0.002f, p.z), float3(0.3f, 0.3f, 1.0f)) - distance_from_box(float3(p.x /*0.00001f*/, p.y - 0.002f, p.z), float3(0.3f, 0.3f, 1.0f)),
-    distance_from_box(float3(p.x /*0.00001f*/, p.y, p.z + 0.002f), float3(0.3f, 0.3f, 1.0f)) - distance_from_box(float3(p.x /*0.00001f*/, p.y, p.z - 0.002f), float3(0.3f, 0.3f, 1.0f))
+    distance_from_quad(float3(p.x + Epsilon /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x - Epsilon /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)),
+    distance_from_quad(float3(p.x /*0.00001f*/, p.y + Epsilon, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y - Epsilon, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)),
+    distance_from_quad(float3(p.x /*0.00001f*/, p.y, p.z + Epsilon), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y, p.z - Epsilon), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f))
     ));
     
     Final_Normal = mul(Final_Normal, World);
     
     return normalize(Final_Normal);
+    
+    //float3 Final_Normal = (float3(
+    //distance_from_box(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.3f, 0.3f, 1.0f)) - distance_from_box(float3(p.x - 0.002f /*0.00001f*/, p.y, p.z), float3(0.3f, 0.3f, 1.0f)),
+    //distance_from_box(float3(p.x /*0.00001f*/, p.y + 0.002f, p.z), float3(0.3f, 0.3f, 1.0f)) - distance_from_box(float3(p.x /*0.00001f*/, p.y - 0.002f, p.z), float3(0.3f, 0.3f, 1.0f)),
+    //distance_from_box(float3(p.x /*0.00001f*/, p.y, p.z + 0.002f), float3(0.3f, 0.3f, 1.0f)) - distance_from_box(float3(p.x /*0.00001f*/, p.y, p.z - 0.002f), float3(0.3f, 0.3f, 1.0f))
+    //));
+    
+    //Final_Normal = mul(Final_Normal, World);
+    
+    //return normalize(Final_Normal);
     
 }
 
@@ -248,11 +249,11 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float4 Light1Pos = float4(0.9f, 0.8f, 1.0f,2.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float4 Light1Pos = float4(8.0f, 1.0f, 3.0f, 2.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
-    float3 light1Vector = float3(0.0f,0.0f,0.0f);
+    float3 light1Vector = float3(0.0f, 0.0f, 0.0f);
     
     //Do this without camera matrix applied
     
@@ -264,9 +265,8 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     //light1Vector /= Campos;
     
-    float3 light1Direction = (float3(-1.0f, -0.7f, 0.0f));
+    float3 light1Direction = (float3(0.0f, -0.8f, 1.0f));
    
-    //Not this
     float3 Normal = estimateNormal(p,World); /*float3(0.0f, 0.0f, 1.0f);*/
     
     //return float4(Normal.x,Normal.y,Normal.z,1.0f);
@@ -276,13 +276,13 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     float attenuation = 0.0f;
     
-    attenuation = calcAttenuation(length(light1Vector), 0.0f, 0.125f, 0.0f); 
+    attenuation = calcAttenuation(length(light1Vector), 0.5f, 0.125f, 0.0f); 
     
     light1Vector = normalize(light1Vector);
     
-    colour = ambientLight /*+ attenuation*/ * calculateLighting(light1Direction, Normal, float4(0.5f, 0.5f, 0.0f, 0.0f), Light1Pos);
+    colour = ambientLight + attenuation * calculateLighting(light1Direction, Normal, float4(0.5f, 0.5f, 0.0f, 0.0f), Light1Pos);
     
-    //colour *= calcSpecular(light1Direction, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
+    colour *= calcSpecular(-light1Direction, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
     
     return colour;
     //return float4(Normal, 1.0f);
