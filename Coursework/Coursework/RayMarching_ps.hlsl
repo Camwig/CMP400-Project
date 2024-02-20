@@ -223,6 +223,9 @@ float4 main(InputType input) : SV_TARGET
     //newCoords = float3((newCoords.x * World[0][0]), (newCoords.y * World[1][1]), 1.0f);
     float4 v = float4(xcoord, ycoord, 1, 0);
     float3 viewVector = normalize(mul(v, View));
+    
+    //float3 Test = mul(viewVector, World);
+    
     viewVector = normalize(mul(viewVector,World));
    // float4 col = float4(viewVector.x, viewVector.y, viewVector.z, 1.0f);
     //return col;
@@ -276,10 +279,12 @@ float4 main(InputType input) : SV_TARGET
         {
             float3 p = currentPos + (distance_to_currentPos);
             
-            //float4 col = float4(0.5f, 0.5f, 0.5f, 1.0f);
-            float4 col2 = phongIllumination(shininess, viewVector, float3(5.0f, 0.0f, 5.0f), currentPos, (float3x3) World, camPos, p);
-            //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
-            return col2;
+            float3 SDF_Position = /*currentPos * distance_to_currentPos;*/ float3(5.0f, 0.0f, 5.0f);
+            
+            float4 col = float4(1.0f, 0.5f, 0.5f, 1.0f);
+            float4 col2 = phongIllumination(shininess, viewVector, SDF_Position, currentPos, (float3x3) World, camPos, p);
+            col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
+            return col;
         }
             
         if (total_distance > 1000.0f)
