@@ -59,6 +59,22 @@ float distance_from_sphere(float3 p, float3 c, float r)
     return answer;
 }
 
+float Random_Sphere(float3 i,float3 f, float3 c,float3 Coords)
+{
+    //NEED TO REPLACE WITH SOMETHING BETTER BUT THIS WILL DO FOR NOW!!!!
+    
+    //Doesnt seem to work anyway so Ill have to look into that
+    
+    //float3 p = 0.1f * frac((i + c) * 0.3183099 + float3(0.11, 0.17, 0.13));
+    //float w = frac(p.x * p.y * p.z * (p.x+p.y+p.z));
+    //float Rad = 0.3f * w * w;
+    //-----------------------------------------------------------------
+    
+    float answer = Distance_between_3Dpoints_2_(f - c, Coords);
+    answer = answer - 0.5f;
+    return answer;
+}
+
 float distance_from_Elipsoid_bound(float3 p, float3 c, float r)
 {
    //Better version

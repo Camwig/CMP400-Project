@@ -260,7 +260,8 @@ float4 main(InputType input) : SV_TARGET
         
         //float distance_to_currentPos = distance_from_Elipsoid_bound(currentPos, float3(0.2f, 0.25f, 0.05f), 0.1f);
         
-        //float3 value = currentPos - 100*(round(currentPos/100.0f));
+        //float3 value = currentPos - 25*(round(currentPos/25.0f));
+        
         //float distance_to_currentPos = distance_from_sphere(value, float3(0.0, 0.0f, 0.6f), 1.0f);
         
         //float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f),1.0f);
@@ -271,9 +272,28 @@ float4 main(InputType input) : SV_TARGET
         
         float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f));
         
-        //float3 dir = rayDirection(45.0, Resoloution, input.position.xy);
         
-        //currentPos = -1.f;
+        //float3 i = floor(currentPos);
+        //float3 f = frac(currentPos);
+        ////float distance_to_currentPos = Random_Sphere(i, f, float3(0, 1, 1), float3(0.0, 0.0f, 0.6f));
+        
+        //float distance_to_currentPos = min(min(min(Random_Sphere(i, f, float3(0, 0, 0), float3(0.0f, 0.0f, 0.6f)),
+        //        Random_Sphere(i, f, float3(0, 0, 100), float3(0.0f, 0.0f, 0.6f))),
+        //    min(Random_Sphere(i, f, float3(0, 100, 0), float3(0.0f, 0.0f, 0.6f)),
+        //        Random_Sphere(i, f, float3(0, 100, 10), float3(0.0f, 0.0f, 0.6f)))),
+        //min(min(Random_Sphere(i, f, float3(100, 0, 0), float3(0.0f, 0.0f, 0.6f)),
+        //        Random_Sphere(i, f, float3(100, 0, 10), float3(0.0f, 0.0f, 0.6f))),
+        //    min(Random_Sphere(i, f, float3(100, 100, 0), float3(0.0f, 0.0f, 0.6f)),
+        //        Random_Sphere(i, f, float3(100, 100, 10), float3(0.0f, 0.0f, 0.6f)))));
+        
+        /*    return min(min(min(sph(i,f,vec3(0,0,0)),
+                       sph(i,f,vec3(0,0,1))),
+                   min(sph(i,f,vec3(0,1,0)),
+                       sph(i,f,vec3(0,1,1)))),
+               min(min(sph(i,f,vec3(1,0,0)),
+                       sph(i,f,vec3(1,0,1))),
+                   min(sph(i,f,vec3(1,1,0)),
+                       sph(i,f,vec3(1,1,1)))));*/
             
         if (distance_to_currentPos < 0.01f)
         {
