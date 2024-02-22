@@ -1,3 +1,4 @@
+#include "Perlin_noise.hlsli"
 
 const float EPSILON = 0.0001f;
 
@@ -61,25 +62,14 @@ float distance_from_sphere(float3 p, float3 c, float r)
     return answer;
 }
 
-//This works but its only between one and zero and its clamped between 0 and 1 and also I need a seed that doesnt mess with the sphere that much
-float random(float2 st)
-{
-    return frac(sin(dot(st.xy, float2(12.9898, 78.233))) * 43758.5453123);
-}
-
-float Random_Sphere(float3 p,float3 Coords,float2 st)
-{
-    //NEED TO REPLACE WITH SOMETHING BETTER BUT THIS WILL DO FOR NOW!!!!
+float Random_Sphere(float3 p, float3 c, float r,float x,float y,float z)
+{   
+    float answer = Distance_between_3Dpoints_2_(p, c);
+    answer = answer - r;
     
-    //Doesnt seem to work anyway so Ill have to look into that
+    //float d2 = (cos(5 * p.x) * cos(5 * p.y) * cos(5 * p.z));
     
-    //float3 p = 0.1f * frac((i + c) * 0.3183099 + float3(0.11, 0.17, 0.13));
-    //float w = frac(p.x * p.y * p.z * (p.x+p.y+p.z));
-    //float Rad = 0.3f * w * w;
-    //-----------------------------------------------------------------
-    
-    float answer = Distance_between_3Dpoints_2_(p, Coords);
-    answer = answer - (random(st));
+    //answer = answer + noise(double(x * 0.053f), double(y * 0.053f), double(z * 0.053f));
     return answer;
 }
 
@@ -229,25 +219,24 @@ float3 estimateNormal(float3 p, float3x3 World)
     //return Final_Normal;
     
     
-    //float3 Final_Normal = (float3(
-    //distance_from_sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x - 0.002f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
-    //distance_from_sphere(float3(p.x, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
-    //distance_from_sphere(float3(p.x, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f)
-    //));
-    
-    //Final_Normal = mul(Final_Normal, World);
-    
-    //return normalize(Final_Normal);
-    
-    float Epsilon = 0.002f;
     float3 Final_Normal = (float3(
-    distance_from_quad(float3(p.x + Epsilon /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x - Epsilon /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)),
-    distance_from_quad(float3(p.x /*0.00001f*/, p.y + Epsilon, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y - Epsilon, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)),
-    distance_from_quad(float3(p.x /*0.00001f*/, p.y, p.z + Epsilon), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y, p.z - Epsilon), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f))
+    distance_from_sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x - 0.002f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    distance_from_sphere(float3(p.x, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    distance_from_sphere(float3(p.x, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f)
     ));
     
     Final_Normal = mul(Final_Normal, World);
     return normalize(Final_Normal);
+    
+    //float Epsilon = 0.002f;
+    //float3 Final_Normal = (float3(
+    //distance_from_quad(float3(p.x + Epsilon /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x - Epsilon /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)),
+    //distance_from_quad(float3(p.x /*0.00001f*/, p.y + Epsilon, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y - Epsilon, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)),
+    //distance_from_quad(float3(p.x /*0.00001f*/, p.y, p.z + Epsilon), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y, p.z - Epsilon), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f))
+    //));
+    
+    //Final_Normal = mul(Final_Normal, World);
+    //return normalize(Final_Normal);
     
     //float3 Final_Normal = (float3(
     //distance_from_box(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.3f, 0.3f, 1.0f)) - distance_from_box(float3(p.x - 0.002f /*0.00001f*/, p.y, p.z), float3(0.3f, 0.3f, 1.0f)),
@@ -271,7 +260,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float4 Light1Pos = float4(0.0f, 5.0f, 0.0f, 1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float4 Light1Pos = float4(5.0f, 1.0f, 5.0f, 1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
@@ -304,8 +293,9 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, float4(1.0f, 1.0f, 1.0f, 0.0f), Light1Pos);
     
-    colour *= calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
+    //Viewvector is wrong
+    //colour *= calcSpecular(light1Vector, Normal, -ViewVector, float4(1, 1, 1, 1), shininess);
     
-    return colour;
-    //return float4(Normal, 1.0f);
+    //return colour;
+    return float4(Normal, 1.0f);
 }

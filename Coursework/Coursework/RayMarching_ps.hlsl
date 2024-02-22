@@ -227,7 +227,7 @@ float4 main(InputType input) : SV_TARGET
     //float3 Test = mul(viewVector, World);
     
     viewVector = normalize(mul(viewVector,World));
-   // float4 col = float4(viewVector.x, viewVector.y, viewVector.z, 1.0f);
+   //  float4 col = float4(viewVector.x, viewVector.y, viewVector.z, 1.0f);
     //return col;
        
     //return float4(viewVector,1.0f);
@@ -238,6 +238,8 @@ float4 main(InputType input) : SV_TARGET
     //input.
     
     float shininess = 2.0f;
+    
+    //init_perm();
     
     //output.worldPosition = mul(input.position, worldMatrix).xyz;
     
@@ -271,17 +273,19 @@ float4 main(InputType input) : SV_TARGET
         
         //float distance_to_currentPos = distance_from_sphere(value, float3(0.0, 0.0f, 0.6f), 1.0f);
         
-        //float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f),1.0f);
+        //float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
         
         //float distance_to_currentPos = distance_from_plane(currentPos, normalize(float3(0.0021f, 0.0045f, 0.001f)), 200.0f);
         
         //float distance_to_currentPos = distance_from_box(currentPos, float3(0.3f, 0.3f, 1.0f));
         
-        float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f));
+        //float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f));
         
         
         //float2 st = input.tex.xy / Resoloution.xy;
-        //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f),st);
+        float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, input.position.x, input.position.y, input.position.z);
+        
+        //return float4(distance_to_currentPos, distance_to_currentPos, distance_to_currentPos,1.0f);
         
         //float distance_to_currentPos = min(min(min(Random_Sphere(i, f, float3(0, 0, 0), float3(0.0f, 0.0f, 0.6f)),
         //        Random_Sphere(i, f, float3(0, 0, 100), float3(0.0f, 0.0f, 0.6f))),
@@ -308,8 +312,8 @@ float4 main(InputType input) : SV_TARGET
             float3 SDF_Position = /*currentPos * distance_to_currentPos;*/ float3(0.0f, 0.0f, 0.6f);
             
             float4 col = float4(1.0f, 0.5f, 0.5f, 1.0f);
-            float4 col2 = phongIllumination(shininess, viewVector, EndPoint, currentPos, (float3x3) World, camPos, p);
-            col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
+            //float4 col2 = phongIllumination(shininess, viewVector, EndPoint, currentPos, (float3x3) World, camPos, p);
+            //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             return col;
         }
             
