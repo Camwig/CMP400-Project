@@ -249,10 +249,17 @@ float4 main(InputType input) : SV_TARGET
     
     //NewView = normalize(NewView);
     
+    float3 EndPoint = float3(-1000,-10000,-10000);
+    
     for (int i = 0; i < num_of_steps; i++)
     {
         
         float3 currentPos = camPos + total_distance * viewVector; /*CameraForwardDirection*/
+        
+        if(i==0)
+        {
+            EndPoint = float3(viewVector.x - camPos.x, viewVector.y - camPos.y, viewVector.z - camPos.z);
+        }
         
         //float3 currentPos = (camPos * newCoords) + total_distance * CameraForwardDirection; /*CameraForwardDirection*/;
             
@@ -270,14 +277,11 @@ float4 main(InputType input) : SV_TARGET
         
         //float distance_to_currentPos = distance_from_box(currentPos, float3(0.3f, 0.3f, 1.0f));
         
-        //float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f));
+        float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f));
         
         
-        float2 st = input.tex.xy / Resoloution.xy;
-        
-        //float3 i = floor(currentPos);
-        //float3 f = frac(currentPos);
-        float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f),st);
+        //float2 st = input.tex.xy / Resoloution.xy;
+        //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f),st);
         
         //float distance_to_currentPos = min(min(min(Random_Sphere(i, f, float3(0, 0, 0), float3(0.0f, 0.0f, 0.6f)),
         //        Random_Sphere(i, f, float3(0, 0, 100), float3(0.0f, 0.0f, 0.6f))),
@@ -301,11 +305,11 @@ float4 main(InputType input) : SV_TARGET
         {
             float3 p = currentPos + (distance_to_currentPos);
             
-            float3 SDF_Position = /*currentPos * distance_to_currentPos;*/ float3(5.0f, 0.0f, 5.0f);
+            float3 SDF_Position = /*currentPos * distance_to_currentPos;*/ float3(0.0f, 0.0f, 0.6f);
             
             float4 col = float4(1.0f, 0.5f, 0.5f, 1.0f);
-            //float4 col2 = phongIllumination(shininess, viewVector, SDF_Position, currentPos, (float3x3) World, camPos, p);
-            //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
+            float4 col2 = phongIllumination(shininess, viewVector, EndPoint, currentPos, (float3x3) World, camPos, p);
+            col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             return col;
         }
             

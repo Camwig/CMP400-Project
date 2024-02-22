@@ -240,7 +240,6 @@ float3 estimateNormal(float3 p, float3x3 World)
     //return normalize(Final_Normal);
     
     float Epsilon = 0.002f;
-    
     float3 Final_Normal = (float3(
     distance_from_quad(float3(p.x + Epsilon /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x - Epsilon /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)),
     distance_from_quad(float3(p.x /*0.00001f*/, p.y + Epsilon, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y - Epsilon, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)),
@@ -248,7 +247,6 @@ float3 estimateNormal(float3 p, float3x3 World)
     ));
     
     Final_Normal = mul(Final_Normal, World);
-    
     return normalize(Final_Normal);
     
     //float3 Final_Normal = (float3(
@@ -273,7 +271,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float4 Light1Pos = float4(5.0f, 10.5f, 5.0f, 1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float4 Light1Pos = float4(0.0f, 5.0f, 0.0f, 1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
@@ -289,7 +287,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     //light1Vector /= Campos;
     
-    float3 light1Direction = (float3(0.0f, -0.8f, 1.0f));
+    float3 light1Direction = (float3(0.0f, -1.0f, 0.0f));
    
     float3 Normal = estimateNormal(p,World); /*float3(0.0f, 0.0f, 1.0f);*/
     
