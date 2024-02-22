@@ -42,6 +42,8 @@ float Distance_between_3Dpoints_2_(float3 b, float3 a)
     return d;
 }
 
+
+
 float distance_from_sphere(float3 p, float3 c, float r)
 {
     float answer = Distance_between_3Dpoints_2_(p,c);
@@ -59,7 +61,13 @@ float distance_from_sphere(float3 p, float3 c, float r)
     return answer;
 }
 
-float Random_Sphere(float3 i,float3 f, float3 c,float3 Coords)
+//This works but its only between one and zero and its clamped between 0 and 1 and also I need a seed that doesnt mess with the sphere that much
+float random(float2 st)
+{
+    return frac(sin(dot(st.xy, float2(12.9898, 78.233))) * 43758.5453123);
+}
+
+float Random_Sphere(float3 p,float3 Coords,float2 st)
 {
     //NEED TO REPLACE WITH SOMETHING BETTER BUT THIS WILL DO FOR NOW!!!!
     
@@ -70,8 +78,8 @@ float Random_Sphere(float3 i,float3 f, float3 c,float3 Coords)
     //float Rad = 0.3f * w * w;
     //-----------------------------------------------------------------
     
-    float answer = Distance_between_3Dpoints_2_(f - c, Coords);
-    answer = answer - 0.5f;
+    float answer = Distance_between_3Dpoints_2_(p, Coords);
+    answer = answer - (random(st));
     return answer;
 }
 
