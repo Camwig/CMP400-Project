@@ -96,7 +96,7 @@ float4 main(InputType input) : SV_TARGET
         //float2 st = input.tex.xy / Resoloution.xy;
         float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, input.position.x, input.position.y, input.position.z);
         
-        //return float4(distance_to_currentPos, distance_to_currentPos, distance_to_currentPos,1.0f);
+        return float4(distance_to_currentPos, distance_to_currentPos, distance_to_currentPos,1.0f);
         
         //float distance_to_currentPos = min(min(min(Random_Sphere(i, f, float3(0, 0, 0), float3(0.0f, 0.0f, 0.6f)),
         //        Random_Sphere(i, f, float3(0, 0, 100), float3(0.0f, 0.0f, 0.6f))),

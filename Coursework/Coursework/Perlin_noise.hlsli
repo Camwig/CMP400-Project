@@ -13,11 +13,11 @@
 //    return t * t * t * (t * (t * 6 - 15) + 10);
 //} //Here is our nice easing/interpolation function
        
-//inline double lerp(
-//double t, double a, double b)
-//{
-//    return a + t * (b - a);
-//} //This is a standard linear interpolation, where the "t" value is generated from the fade() function above
+inline double lerp(
+double t, double a, double b)
+{
+    return a + t * (b - a);
+} //This is a standard linear interpolation, where the "t" value is generated from the fade() function above
 
 //inline double fadeDerivative(double t)
 //{
@@ -30,7 +30,25 @@
 //    return b * dt;
 //} //Hmmmm
 
-//const double grad(int hash, double x, double y, double z);
+const double grad(int hash, double x, double y, double z)
+{
+    /*int opening_time = (day == SUNDAY) ? 12 : 9;*/
+    
+    //Both above and below or equal
+    
+    /*int opening_time;
+
+    if (day == SUNDAY)
+        opening_time = 12;
+    else
+        opening_time = 9;
+    */
+    
+    int h = hash & 15;
+    double u = h < 8 ? x : y;
+    double v = h < 4 ? y : h == 12 || h == 14 ? x : z;
+    return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
+}
         
 //const double grad(int hash, double x, double y);
 ///*
@@ -117,6 +135,15 @@ const int p[512] =
             138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180,
 };
 
+//const int Init()
+//{
+//    for (int i = 0; i < 256; i++)
+//    {
+//        p[256 + i] = p[i];
+//    }
+//    return 1;
+//}
+
 
 // To remove the need for index wrapping, double the permutation table length
 //static int perm[512];
@@ -155,6 +182,53 @@ static double fade(double t)
     // Classic Perlin noise, 3D version
 static double noise(double x, double y, double z)
 {
+    
+    // Find unit grid cell containing point
+    int X = floor(x);
+    int Y = floor(y);
+    int Z = floor(z);
+    
+    // Get relative xyz coordinates of point within that cell
+    x = x - X;
+    y = y - Y;
+    z = z - Z;
+    
+    // Wrap the integer cells at 255 (smaller integer period can be introduced here)
+    X = X & 255;
+    Y = Y & 255;
+    Z = Z & 255;
+    
+    // Compute the fade curve value for each of x, y, z
+    double u = fade(x);
+    double v = fade(y);
+    double w = fade(z);
+ 
+//---------------------------------------------------------------------
+    
+    
+    int A = p[X] + Y, AA = p[A] + Z, AB = p[A + 1] + Z,
+        B = p[X + 1] + Y, BA = p[B] + Z, BB = p[B + 1] + Z;
+    
+    
+    return lerp(w, lerp(v, lerp(u, grad(p[AA], x, y, z), // AND ADD
+                                     grad(p[BA], x - 1, y, z)), // BLENDED
+                             lerp(u, grad(p[AB], x, y - 1, z), // RESULTS
+                                     grad(p[BB], x - 1, y - 1, z))), // FROM  8
+                     lerp(v, lerp(u, grad(p[AA + 1], x, y, z - 1), // CORNERS
+                                     grad(p[BA + 1], x - 1, y, z - 1)), // OF CUBE
+                             lerp(u, grad(p[AB + 1], x, y - 1, z - 1),
+                                     grad(p[BB + 1], x - 1, y - 1, z - 1))));
+    
+    //double Result1 = lerp(w, lerp(u, grad(p[AA], x, y, z)));
+
+}
+
+/*
+
+    // Classic Perlin noise, 3D version
+static double noise(double x, double y, double z)
+{
+    
     // Find unit grid cell containing point
     int X = floor(x);
     int Y = floor(y);
@@ -181,14 +255,14 @@ static double noise(double x, double y, double z)
     int gi111 = p[X + 1 + p[Y + 1 + p[Z + 1]]] % 12;
     
     // The gradients of each corner are now:
-    // g000 = grad3[gi000];
-    // g001 = grad3[gi001];
-    // g010 = grad3[gi010];
-    // g011 = grad3[gi011];
-    // g100 = grad3[gi100];
-    // g101 = grad3[gi101];
-    // g110 = grad3[gi110];
-    // g111 = grad3[gi111];
+    //g000 = grad3[gi000];
+    //g001 = grad3[gi001];
+    //g010 = grad3[gi010];
+    //g011 = grad3[gi011];
+    //g100 = grad3[gi100];
+    //g101 = grad3[gi101];
+    //g110 = grad3[gi110];
+    //g111 = grad3[gi111];
     
     // Calculate noise contributions from each of the eight corners
     double n000 = dot3(grad3[gi000], x, y, z);
@@ -217,6 +291,8 @@ static double noise(double x, double y, double z)
     
     // Interpolate the two last results along z
     double nxyz = mix(nxy0, nxy1, w);
-    return (nxyz*10);
+    return (nxyz * 10);
+
 }
 
+*/
