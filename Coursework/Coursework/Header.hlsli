@@ -52,7 +52,7 @@ float distance_from_sphere(float3 p, float3 c, float r)
     answer = answer - r;
     
     //Add these to the answer for diffrent effects
-    //float d2 = (sin(5 * p.x) * sin(5 * p.y) * sin(5 * p.z));
+    float d2 = (sin(5 * p.x) * sin(5 * p.y) * sin(5 * p.z));
     //float bums = p.y - (p.x * ((20 - p.x) / 100));
     
     //return (distance(p, c) - r);
@@ -67,9 +67,9 @@ float Random_Sphere(float3 p, float3 c, float r,float x,float y,float z)
     float answer = Distance_between_3Dpoints_2_(p, c);
     answer = answer - r;
     
-    //float d2 = (cos(5 * p.x) * cos(5 * p.y) * cos(5 * p.z));
+    float d2 = (cos(5 * p.x) * cos(5 * p.y) * cos(5 * p.z));
     
-    //answer = answer + noise(double(x * 0.053f), double(y * 0.053f), double(z * 0.053f));
+    answer = answer + noise(double(x * 0.053f), double(y * 0.053f), double(z * 0.053f));
     return answer;
 }
 
