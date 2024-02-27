@@ -149,6 +149,9 @@ void App1::PerlinGeneration()
 {
 	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
 
+	float screenSizeY = (float)PerlinTexture->getTextureHeight();
+	float screenSizeX = (float)PerlinTexture->getTextureWidth();
+
 	PerlinTexture->setRenderTarget(renderer->getDeviceContext());
 	PerlinTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
 
@@ -162,7 +165,7 @@ void App1::PerlinGeneration()
 	orthoMesh->sendData(renderer->getDeviceContext());
 
 	//Replace with the Perlin texture
-	perlinShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
+	perlinShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(),screenSizeY,screenSizeX);
 	perlinShader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 
 	renderer->setZBuffer(true);

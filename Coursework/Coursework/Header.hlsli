@@ -72,13 +72,13 @@ float Random_Sphere(float3 p, float3 c, float r,float x,float y,float z,inout bo
     //answer = /*answer +*/ noise(double(x * 0.053f), double(y * 0.053f), double(z * 0.053f));
     //answer = color(float3(x,y,z));
     
-    if(!Perlin)
-    {
-        float3 xyz = float3(float2(x, y), -sqrt(answer));
-        float n = color(xyz * 4.0f);
-        Result = mix3(0.0f, 0.5 + 0.5 * n, smoothstep(0.0, 0.003, answer)) * float3(1, 1, 1);
-        Perlin = true;
-    }
+    //if(!Perlin)
+    //{
+    //    float3 xyz = float3(float2(x, y), -sqrt(answer));
+    //    float n = color(xyz * 4.0f);
+    //    Result = mix3(0.0f, 0.5 + 0.5 * n, smoothstep(0.0, 0.003, answer)) * float3(1, 1, 1);
+    //    Perlin = true;
+    //}
     
     return answer * Result;
 }

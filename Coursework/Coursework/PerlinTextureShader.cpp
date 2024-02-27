@@ -23,6 +23,12 @@ PerlinTextureShader::~PerlinTextureShader()
 		matrixBuffer = 0;
 	}
 
+	if (screenSizeBuffer)
+	{
+		screenSizeBuffer->Release();
+		screenSizeBuffer = 0;
+	}
+
 	// Release the layout.
 	if (layout)
 	{
@@ -39,6 +45,7 @@ void PerlinTextureShader::initShader(const wchar_t* vsFilename, const wchar_t* p
 {
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_SAMPLER_DESC samplerDesc;
+	D3D11_BUFFER_DESC screenSizeBufferDesc;
 
 	// Load (+ compile) shader files
 	loadVertexShader(vsFilename);
@@ -69,15 +76,25 @@ void PerlinTextureShader::initShader(const wchar_t* vsFilename, const wchar_t* p
 	// Create the texture sampler state.
 	renderer->CreateSamplerState(&samplerDesc, &sampleState);
 
+	// Setup the description of the screen size.
+	screenSizeBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	screenSizeBufferDesc.ByteWidth = sizeof(ScreenSizeBuffer);
+	screenSizeBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	screenSizeBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	screenSizeBufferDesc.MiscFlags = 0;
+	screenSizeBufferDesc.StructureByteStride = 0;
+	renderer->CreateBuffer(&screenSizeBufferDesc, NULL, &screenSizeBuffer);
+
 }
 
 
-void PerlinTextureShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture)
+void PerlinTextureShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, float height, float width)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	XMMATRIX tworld, tview, tproj;
+	ScreenSizeBuffer* screen_;
 
 	// Transpose the matrices to prepare them for the shader.
 	tworld = XMMatrixTranspose(worldMatrix);
@@ -92,6 +109,14 @@ void PerlinTextureShader::setShaderParameters(ID3D11DeviceContext* deviceContext
 	dataPtr->projection = tproj;
 	deviceContext->Unmap(matrixBuffer, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
+
+	screen_ = (ScreenSizeBuffer*)mappedResource.pData;
+	screen_->screenheight = height;
+	screen_->screenWidth = width;
+	screen_->padding = XMFLOAT3(1.0f, 1.f, 1.f);
+	screen_->padding2 = XMFLOAT3(1.0f, 1.f, 1.f);
+	deviceContext->Unmap(screenSizeBuffer, 0);
+	deviceContext->PSSetConstantBuffers(0, 1, &screenSizeBuffer);
 
 	// Set shader texture and sampler resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);
