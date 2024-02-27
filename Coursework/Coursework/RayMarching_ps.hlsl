@@ -100,25 +100,7 @@ float4 main(InputType input) : SV_TARGET
 
         float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z);
         
-        return float4(distance_to_currentPos, distance_to_currentPos, distance_to_currentPos,1.0f);
-        
-        //float distance_to_currentPos = min(min(min(Random_Sphere(i, f, float3(0, 0, 0), float3(0.0f, 0.0f, 0.6f)),
-        //        Random_Sphere(i, f, float3(0, 0, 100), float3(0.0f, 0.0f, 0.6f))),
-        //    min(Random_Sphere(i, f, float3(0, 100, 0), float3(0.0f, 0.0f, 0.6f)),
-        //        Random_Sphere(i, f, float3(0, 100, 10), float3(0.0f, 0.0f, 0.6f)))),
-        //min(min(Random_Sphere(i, f, float3(100, 0, 0), float3(0.0f, 0.0f, 0.6f)),
-        //        Random_Sphere(i, f, float3(100, 0, 10), float3(0.0f, 0.0f, 0.6f))),
-        //    min(Random_Sphere(i, f, float3(100, 100, 0), float3(0.0f, 0.0f, 0.6f)),
-        //        Random_Sphere(i, f, float3(100, 100, 10), float3(0.0f, 0.0f, 0.6f)))));
-        
-        /*    return min(min(min(sph(i,f,vec3(0,0,0)),
-                       sph(i,f,vec3(0,0,1))),
-                   min(sph(i,f,vec3(0,1,0)),
-                       sph(i,f,vec3(0,1,1)))),
-               min(min(sph(i,f,vec3(1,0,0)),
-                       sph(i,f,vec3(1,0,1))),
-                   min(sph(i,f,vec3(1,1,0)),
-                       sph(i,f,vec3(1,1,1)))));*/
+        //return float4(distance_to_currentPos, distance_to_currentPos, distance_to_currentPos,1.0f);
             
         if (distance_to_currentPos < 0.01f)
         {

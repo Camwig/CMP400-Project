@@ -70,7 +70,7 @@ float Random_Sphere(float3 p, float3 c, float r,float x,float y,float z)
     float d2 = (cos(5 * p.x) * cos(5 * p.y) * cos(5 * p.z));
     
     //answer = /*answer +*/ noise(double(x * 0.053f), double(y * 0.053f), double(z * 0.053f));
-    answer = color(float2(x,y));
+    answer += color(float3(x,y,z));
     return answer;
 }
 
