@@ -7,7 +7,7 @@ App1::App1()
 
 }
 
-void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight, Input *in, bool VSYNC, bool FULL_SCREEN)
+void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight, Input* in, bool VSYNC, bool FULL_SCREEN)
 {
 	// Call super/parent init function (required!)
 	BaseApplication::init(hinstance, hwnd, screenWidth, screenHeight, in, VSYNC, FULL_SCREEN);
@@ -25,6 +25,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	shader = new RayMarchingShader(renderer->getDevice(), hwnd);
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
 
+	PerlinTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 	renderTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 	DownSampletexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 	FinalTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
@@ -54,7 +55,7 @@ bool App1::frame()
 	{
 		return false;
 	}
-	
+
 	// Render the graphics.
 	result = render();
 	if (!result)
@@ -114,6 +115,32 @@ void App1::gui()
 	// Render UI
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+void App1::PerlinGeneration()
+{
+	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
+
+	PerlinTexture->setRenderTarget(renderer->getDeviceContext());
+	PerlinTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
+
+	worldMatrix = renderer->getWorldMatrix();
+	baseViewMatrix = camera->getOrthoViewMatrix();
+	orthoMatrix = renderTexture->getOrthoMatrix();
+
+	// Render for Horizontal Blur
+	renderer->setZBuffer(false);
+
+	//sampleMesh->sendData(renderer->getDeviceContext());
+
+	//Replace with the Perlin texture
+	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
+	textureShader->render(renderer->getDeviceContext(), 0);
+
+	//renderer->setZBuffer(true);
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	renderer->setBackBufferRenderTarget();
 }
 
 void App1::firstPass()
@@ -182,7 +209,7 @@ void App1::RenderedPass()
 
 	orthoMesh->sendData(renderer->getDeviceContext());
 	//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
-	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, DownSampletexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, sy,sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(),timer->getTime());
+	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, DownSampletexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), timer->getTime());
 	shader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 
 	renderer->setZBuffer(true);

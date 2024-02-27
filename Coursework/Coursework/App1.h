@@ -27,6 +27,7 @@ protected:
 	void RenderedPass();
 	void finalPass();
 	void firstPass();
+	void PerlinGeneration();
 
 	//Initial SDF Render
 	//float distance_from_sphere(XMFLOAT3 p, XMFLOAT3 c, float r);
@@ -41,6 +42,8 @@ private:
 
 	OrthoMesh* orthoMesh;
 	OrthoMesh* sampleMesh;
+
+	RenderTexture* PerlinTexture;
 
 	RenderTexture* renderTexture;
 
