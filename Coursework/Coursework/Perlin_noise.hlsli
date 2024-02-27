@@ -481,6 +481,11 @@ float4 mix(float4 a, float4 b, float4 t)
     return (1 - t) * a + t * b;
 }
 
+float mix3(float a, float b, float t)
+{
+    return (1 - t) * a + t * b;
+}
+
 float3 mod289(float3 x)
 {
     return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -651,6 +656,7 @@ float color(float3 xyz)
 {
     return cnoise(10.5 * xyz);
 }
+
 //void mainImage(out vec4 fragColor, in vec2 fragCoord)
 //{
 //    vec2 p = (fragCoord.xy / iResolution.y) * 2.0 - 1.0;

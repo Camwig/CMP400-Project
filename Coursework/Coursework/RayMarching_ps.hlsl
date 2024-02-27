@@ -64,6 +64,10 @@ float4 main(InputType input) : SV_TARGET
     
     float3 EndPoint = float3(-1000,-10000,-10000);
     
+    bool Perlin = false;
+
+    float3 Result = float3(0.0, 0.0, 0.0);
+    
     for (int i = 0; i < num_of_steps; i++)
     {
         
@@ -98,9 +102,14 @@ float4 main(InputType input) : SV_TARGET
         
         //float2 p = ()
 
-        float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z);
+        float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z,Perlin,Result);
         
-        //return float4(distance_to_currentPos, distance_to_currentPos, distance_to_currentPos,1.0f);
+        
+        //float3 xyz = float3(newCoords.xy, -sqrt(distance_to_currentPos));
+        //float n = color(xyz * 4.0f);
+        //float3 Result = mix3(0.0f, 0.5 + 0.5 * n, smoothstep(0.0, 0.003, distance_to_currentPos)) * float3(1, 1, 1);
+        
+        //return float4(Result.x, Result.y, Result.z, 1.0f);
             
         if (distance_to_currentPos < 0.01f)
         {
