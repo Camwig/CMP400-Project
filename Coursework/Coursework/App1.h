@@ -8,6 +8,7 @@
 
 #include "RayMarchingShader.h"
 #include "TextureShader.h"
+#include "PerlinTextureShader.h"
 
 class App1 : public BaseApplication
 {
@@ -39,6 +40,8 @@ protected:
 private:
 	RayMarchingShader* shader;
 	TextureShader* textureShader;
+	PerlinTextureShader* perlinShader;
+	
 
 	OrthoMesh* orthoMesh;
 	OrthoMesh* sampleMesh;

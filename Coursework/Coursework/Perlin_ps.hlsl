@@ -16,7 +16,7 @@ struct InputType
 float4 main(InputType input) : SV_TARGET
 {
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
-    float4 textureColor = texture0.Sample(Sampler0, input.tex);
+    float4 textureColor = float4(0.0, 1.0, 0.0, 1.0); /*texture0.Sample(Sampler0, input.tex);*/
 
     return textureColor;
 }

@@ -24,6 +24,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	shader = new RayMarchingShader(renderer->getDevice(), hwnd);
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
+	perlinShader = new PerlinTextureShader(renderer->getDevice(), hwnd);
 
 	PerlinTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 	renderTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
@@ -91,8 +92,9 @@ bool App1::render()
 	//renderer->setBackBufferRenderTarget();
 
 	firstPass();
-	SamplePass();
-	RenderedPass();
+	PerlinGeneration();
+	//SamplePass();
+	//RenderedPass();
 	finalPass();
 
 	//gui();
@@ -119,32 +121,6 @@ void App1::gui()
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
-void App1::PerlinGeneration()
-{
-	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
-
-	PerlinTexture->setRenderTarget(renderer->getDeviceContext());
-	PerlinTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
-
-	worldMatrix = renderer->getWorldMatrix();
-	baseViewMatrix = camera->getOrthoViewMatrix();
-	orthoMatrix = renderTexture->getOrthoMatrix();
-
-	// Render for Horizontal Blur
-	renderer->setZBuffer(false);
-
-	//sampleMesh->sendData(renderer->getDeviceContext());
-
-	//Replace with the Perlin texture
-	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
-	textureShader->render(renderer->getDeviceContext(), 0);
-
-	//renderer->setZBuffer(true);
-
-	// Reset the render target back to the original back buffer and not the render to texture anymore.
-	renderer->setBackBufferRenderTarget();
-}
-
 void App1::firstPass()
 {
 	// Clear the scene. (default blue colour)
@@ -167,6 +143,34 @@ void App1::firstPass()
 
 	renderer->setBackBufferRenderTarget();
 }
+
+//--------------------------------------------------
+void App1::PerlinGeneration()
+{
+	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
+
+	PerlinTexture->setRenderTarget(renderer->getDeviceContext());
+	PerlinTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
+
+	worldMatrix = renderer->getWorldMatrix();
+	baseViewMatrix = camera->getOrthoViewMatrix();
+	orthoMatrix = renderTexture->getOrthoMatrix();
+
+	// Render for Horizontal Blur
+	renderer->setZBuffer(false);
+
+	orthoMesh->sendData(renderer->getDeviceContext());
+
+	//Replace with the Perlin texture
+	perlinShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
+	perlinShader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
+
+	renderer->setZBuffer(true);
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	renderer->setBackBufferRenderTarget();
+}
+//--------------------------------------------------
 
 void App1::SamplePass()
 {
@@ -233,7 +237,7 @@ void App1::finalPass()
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
 
 	orthoMesh->sendData(renderer->getDeviceContext());
-	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, FinalTexture->getShaderResourceView());
+	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, PerlinTexture/*FinalTexture*/->getShaderResourceView());
 	textureShader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 	renderer->setZBuffer(true);
 
