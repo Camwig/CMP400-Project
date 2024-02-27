@@ -92,9 +92,13 @@ float4 main(InputType input) : SV_TARGET
         
         //float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f));
         
+        //vec2 p = (fragCoord.xy / iResolution.y) * 2.0 - 1.0;
+        //vec3 xyz = vec3(p, 0);
+        //float n = color(xyz.xy * 4.0);
         
-        //float2 st = input.tex.xy / Resoloution.xy;
-        float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, input.position.x, input.position.y, input.position.z);
+        //float2 p = ()
+
+        float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z);
         
         return float4(distance_to_currentPos, distance_to_currentPos, distance_to_currentPos,1.0f);
         
