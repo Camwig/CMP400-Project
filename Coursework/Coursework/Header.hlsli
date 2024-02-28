@@ -62,7 +62,7 @@ float distance_from_sphere(float3 p, float3 c, float r)
     return answer;
 }
 
-float Random_Sphere(float3 p, float3 c, float r,float x,float y,float z,inout bool Perlin,inout float3 Result)
+float Random_Sphere(float3 p, float3 c, float r,float x,float y,float z,float height)
 {   
     float answer = Distance_between_3Dpoints_2_(p, c);
     answer = answer - r;
@@ -80,7 +80,7 @@ float Random_Sphere(float3 p, float3 c, float r,float x,float y,float z,inout bo
     //    Perlin = true;
     //}
     
-    return answer * Result;
+    return answer + height /** Result*/;
 }
 
 float distance_from_Elipsoid_bound(float3 p, float3 c, float r)

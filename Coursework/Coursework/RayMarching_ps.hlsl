@@ -1,6 +1,7 @@
 #include "Header.hlsli"
 
 Texture2D shaderTexture : register(t0);
+Texture2D PerlinTexture : register(t1);
 SamplerState SampleType : register(s0);
 
 cbuffer CameraBuffer : register(b0)
@@ -68,6 +69,13 @@ float4 main(InputType input) : SV_TARGET
 
     float3 Result = float3(0.0, 0.0, 0.0);
     
+    float4 textureColour = PerlinTexture.Sample(SampleType, input.tex);
+    
+    float height = PerlinTexture.SampleLevel(SampleType, input.tex, 0).x;
+    
+    height = height * 1.0f;
+    //return height * 30.0f;
+    
     for (int i = 0; i < num_of_steps; i++)
     {
         
@@ -102,7 +110,7 @@ float4 main(InputType input) : SV_TARGET
         
         //float2 p = ()
 
-        float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z,Perlin,Result);
+        float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z,height);
         
         
         //float3 xyz = float3(newCoords.xy, -sqrt(distance_to_currentPos));
@@ -120,7 +128,7 @@ float4 main(InputType input) : SV_TARGET
             float4 col = float4(1.0f, 0.5f, 0.5f, 1.0f);
             //float4 col2 = phongIllumination(shininess, viewVector, EndPoint, currentPos, (float3x3) World, camPos, p);
             //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
-            return col;
+            return col * textureColour;
         }
             
         if (total_distance > 1000.0f)

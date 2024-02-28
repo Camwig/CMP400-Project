@@ -93,8 +93,8 @@ bool App1::render()
 
 	firstPass();
 	PerlinGeneration();
-	//SamplePass();
-	//RenderedPass();
+	SamplePass();
+	RenderedPass();
 	finalPass();
 
 	//gui();
@@ -162,11 +162,11 @@ void App1::PerlinGeneration()
 	// Render for Horizontal Blur
 	renderer->setZBuffer(false);
 
-	orthoMesh->sendData(renderer->getDeviceContext());
+	sampleMesh->sendData(renderer->getDeviceContext());
 
 	//Replace with the Perlin texture
 	perlinShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(),screenSizeY,screenSizeX);
-	perlinShader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
+	perlinShader->render(renderer->getDeviceContext(), sampleMesh->getIndexCount());
 
 	renderer->setZBuffer(true);
 
@@ -218,7 +218,7 @@ void App1::RenderedPass()
 
 	orthoMesh->sendData(renderer->getDeviceContext());
 	//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
-	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, DownSampletexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), timer->getTime());
+	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, DownSampletexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), timer->getTime(), PerlinTexture->getShaderResourceView());
 	shader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 
 	renderer->setZBuffer(true);
@@ -240,7 +240,7 @@ void App1::finalPass()
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
 
 	orthoMesh->sendData(renderer->getDeviceContext());
-	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, PerlinTexture/*FinalTexture*/->getShaderResourceView());
+	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, FinalTexture->getShaderResourceView());
 	textureShader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 	renderer->setZBuffer(true);
 
