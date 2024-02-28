@@ -80,7 +80,7 @@ float Random_Sphere(float3 p, float3 c, float r,float x,float y,float z,float he
     //    Perlin = true;
     //}
     
-    return answer + height /** Result*/;
+    return answer /** Result*/;
 }
 
 float distance_from_Elipsoid_bound(float3 p, float3 c, float r)
@@ -306,6 +306,6 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     //Viewvector is wrong
     //colour *= calcSpecular(light1Vector, Normal, -ViewVector, float4(1, 1, 1, 1), shininess);
     
-    //return colour;
-    return float4(Normal, 1.0f);
+    return colour;
+    //return float4(Normal, 1.0f);
 }
