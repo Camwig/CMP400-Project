@@ -98,8 +98,8 @@ bool App1::render()
 		PerlinGeneration();
 		started = true;
 	}
-	SamplePass();
-	RenderedPass();
+	//SamplePass();
+	//RenderedPass();
 	finalPass();
 
 	//gui();
@@ -245,7 +245,7 @@ void App1::finalPass()
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
 
 	orthoMesh->sendData(renderer->getDeviceContext());
-	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, FinalTexture->getShaderResourceView());
+	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, PerlinTexture/*FinalTexture*/->getShaderResourceView());
 	textureShader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 	renderer->setZBuffer(true);
 
