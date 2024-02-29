@@ -48,6 +48,8 @@ private:
 
 	RenderTexture*/*ID3D10Texture3D**/ PerlinTexture;
 
+	ID3D11Texture3D* PerlinTexture_2;
+
 	RenderTexture* renderTexture;
 
 	RenderTexture* FinalTexture;
