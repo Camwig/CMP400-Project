@@ -27,6 +27,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	perlinShader = new PerlinTextureShader(renderer->getDevice(), hwnd);
 
 	PerlinTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
+	//PerlinTexture = new ID3D10Texture3D();
 	renderTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 	DownSampletexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 	FinalTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
@@ -92,7 +93,11 @@ bool App1::render()
 	//renderer->setBackBufferRenderTarget();
 
 	firstPass();
-	PerlinGeneration();
+	if (!started)
+	{
+		PerlinGeneration();
+		started = true;
+	}
 	SamplePass();
 	RenderedPass();
 	finalPass();

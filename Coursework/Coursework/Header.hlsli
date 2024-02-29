@@ -70,7 +70,7 @@ float Random_Sphere(float3 p, float3 c, float r,float x,float y,float z,float he
     //float d2 = (cos(5 * p.x) * cos(5 * p.y) * cos(5 * p.z));
     
     //answer = /*answer +*/ noise(double(x * 0.053f), double(y * 0.053f), double(z * 0.053f));
-    //answer = color(float3(x,y,z));
+    //answer -= color(float3(x,y,z));
     
     //if(!Perlin)
     //{
@@ -246,7 +246,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float4 Light1Pos = float4(0.0f, 1.0f, 0.6f, 2.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float4 Light1Pos = float4(0.0f, 1.0f, 0.6f, 1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
@@ -279,9 +279,9 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     light1Vector = normalize(light1Vector);
     
-    colour = ambientLight + attenuation * calculateLighting(light1Direction, Normal, float4(1.0f, 1.0f, 1.0f, 0.0f), Light1Pos);
+    colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, float4(1.0f, 1.0f, 1.0f, 0.0f), Light1Pos);
     
-    colour *= calcSpecular(-light1Direction, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
+    colour *= calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
     
     return colour;
     //return float4(Normal, 1.0f);

@@ -46,7 +46,7 @@ private:
 	OrthoMesh* orthoMesh;
 	OrthoMesh* sampleMesh;
 
-	RenderTexture* PerlinTexture;
+	RenderTexture*/*ID3D10Texture3D**/ PerlinTexture;
 
 	RenderTexture* renderTexture;
 
@@ -56,6 +56,8 @@ private:
 
 	float sx;
 	float sy;
+
+	bool started = false;
 };
 
 #endif
