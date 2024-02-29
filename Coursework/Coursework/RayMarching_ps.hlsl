@@ -59,6 +59,8 @@ float4 main(InputType input) : SV_TARGET
     float4 v = float4(xcoord, ycoord, 1, 0);
     float3 viewVector = normalize(mul(v, View));
     
+    float3 Test = mul(viewVector, World);
+    
     viewVector = normalize(mul(viewVector,World));
     
     float shininess = 2.0f;
@@ -69,7 +71,7 @@ float4 main(InputType input) : SV_TARGET
     
     float4 textureColour = PerlinTexture.Sample(SampleType, input.tex);
     
-    float height = PerlinTexture.SampleLevel(SampleType, input.tex, 0).x;
+    float height = PerlinTexture.Sample(SampleType, input.tex, 0).x;
     
     height = mul(height, World);
     
@@ -80,7 +82,9 @@ float4 main(InputType input) : SV_TARGET
         height = 0.001f;
     }
     
-    float3 EndPoint = float3(viewVector.x - camPos.x, viewVector.y - camPos.y, viewVector.z - camPos.z);
+    float3 EndPoint = float3(Test.x /*- camPos.x*/, Test.y /*- camPos.y*/, Test.z /*- camPos.z*/);
+    
+    //EndPoint = mul(EndPoint, World);
     
     float3 new_vector = float3(camPos.xyz - EndPoint.xyz);
     
@@ -92,9 +96,9 @@ float4 main(InputType input) : SV_TARGET
         
         float3 currentPos = camPos + total_distance * viewVector; /*CameraForwardDirection*/
         
-        //if(i==0)
+        //if (i == 0)
         //{
-        //    EndPoint = float3(viewVector.x - camPos.x, viewVector.y - camPos.y, viewVector.z - camPos.z);
+        //    EndPoint = float3(viewVector.x - currentPos.x, viewVector.y - currentPos.y, viewVector.z - currentPos.z);
         //}
         
         //float3 currentPos = (camPos * newCoords) + total_distance * CameraForwardDirection; /*CameraForwardDirection*/;
@@ -109,6 +113,13 @@ float4 main(InputType input) : SV_TARGET
         
         float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
         
+        //if (i == 0)
+        //{
+            //EndPoint = float3(Test.x /*- camPos.x*/, Test.y /*- camPos.y*/, Test.z /*- camPos.z*/);
+            //EndPoint += distance_to_currentPos;
+            //EndPoint = mul(EndPoint, World);
+        //}
+        
         //float distance_to_currentPos = distance_from_plane(currentPos, normalize(float3(0.0021f, 0.0045f, 0.001f)), 200.0f);
         
         //float distance_to_currentPos = distance_from_box(currentPos, float3(0.3f, 0.3f, 1.0f));
@@ -122,7 +133,7 @@ float4 main(InputType input) : SV_TARGET
         //float2 p = ()
 
         //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z, height);
-        distance_to_currentPos -= (0.38f*height);
+        //distance_to_currentPos -= (0.38f*height);
         
         
         //float3 xyz = float3(newCoords.xy, -sqrt(distance_to_currentPos));
@@ -138,9 +149,9 @@ float4 main(InputType input) : SV_TARGET
             float3 SDF_Position = /*currentPos * distance_to_currentPos;*/ float3(0.0f, 0.0f, 0.6f);
             
             float4 col = float4(1.0f, 0.5f, 0.5f, 1.0f);
-            //float4 col2 = phongIllumination(shininess, new_vector, EndPoint, currentPos, World, camPos, p);
-            //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
-            return col * textureColour;
+            float4 col2 = phongIllumination(shininess, new_vector, EndPoint, currentPos, World, camPos, p);
+            col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
+            return col /** textureColour*/;
         }
             
         if (total_distance > 1000.0f)
