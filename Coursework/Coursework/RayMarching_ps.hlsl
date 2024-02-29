@@ -63,8 +63,6 @@ float4 main(InputType input) : SV_TARGET
     
     float shininess = 2.0f;
     
-    float3 EndPoint = float3(-1000,-10000,-10000);
-    
     bool Perlin = false;
 
     float3 Result = float3(0.0, 0.0, 0.0);
@@ -75,11 +73,16 @@ float4 main(InputType input) : SV_TARGET
     
     height = height * 1.0f;
     
-    if(height <0.0f)
+    if (height < 0.0f)
     {
         height = 0.001f;
     }
     
+    float3 EndPoint = float3(viewVector.x - camPos.x, viewVector.y - camPos.y, viewVector.z - camPos.z);
+    
+    float3 new_vector = float3(camPos.xyz - EndPoint.xyz);
+    
+    new_vector = normalize(new_vector);
     //return height * 30.0f;
     
     for (int i = 0; i < num_of_steps; i++)
@@ -87,10 +90,10 @@ float4 main(InputType input) : SV_TARGET
         
         float3 currentPos = camPos + total_distance * viewVector; /*CameraForwardDirection*/
         
-        if(i==0)
-        {
-            EndPoint = float3(viewVector.x - camPos.x, viewVector.y - camPos.y, viewVector.z - camPos.z);
-        }
+        //if(i==0)
+        //{
+        //    EndPoint = float3(viewVector.x - camPos.x, viewVector.y - camPos.y, viewVector.z - camPos.z);
+        //}
         
         //float3 currentPos = (camPos * newCoords) + total_distance * CameraForwardDirection; /*CameraForwardDirection*/;
             
@@ -117,7 +120,7 @@ float4 main(InputType input) : SV_TARGET
         //float2 p = ()
 
         float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z, height);
-        distance_to_currentPos -= (0.05*height);
+        //distance_to_currentPos -= (1.0f*height);
         
         
         //float3 xyz = float3(newCoords.xy, -sqrt(distance_to_currentPos));
@@ -133,7 +136,7 @@ float4 main(InputType input) : SV_TARGET
             float3 SDF_Position = /*currentPos * distance_to_currentPos;*/ float3(0.0f, 0.0f, 0.6f);
             
             float4 col = float4(1.0f, 0.5f, 0.5f, 1.0f);
-            float4 col2 = phongIllumination(shininess, viewVector, EndPoint, currentPos, (float3x3) World, camPos, p);
+            float4 col2 = phongIllumination(shininess, new_vector, EndPoint, currentPos, World, camPos, p);
             col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             return col /** textureColour*/;
         }
@@ -143,6 +146,7 @@ float4 main(InputType input) : SV_TARGET
             break;
         }
 
+        //Check this is proper sphere tracing
         total_distance += /*0.1f*/distance_to_currentPos;
     }
     

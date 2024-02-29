@@ -204,37 +204,14 @@ float4 calcAttenuation(float distance, float constantfactor, float linearFactor,
 
 //--------------------------------------------------------------------------------
 
-float3 estimateNormal(float3 p, float3x3 World)
-{   
-    //const float2 k = float2(1, -1);
-    
-    ////Epsilon is not working properly
-    //const float E = 0.0001f; /*0.0001f;*/
-    
-    //float Additive_x = k.xyy * 0.0001f;
-    //float Additive_y = k.yyx * 0.0001f;
-    //float Additive_z = k.yxy * 0.0001f;
-    //float Additive_w = k.xxx * 0.0001f;
-    
-    //float3 Normal_x = k.xyy * (distance_from_sphere(float3(p + Additive_x), float3(0.0f, 0.0f, 0.6f), 1.0f));
-    //float3 Normal_y = k.yyx * (distance_from_sphere(float3(p + Additive_y), float3(0.0f, 0.0f, 0.6f), 1.0f));
-    //float3 Normal_z = k.yxy * (distance_from_sphere(float3(p + Additive_z), float3(0.0f, 0.0f, 0.6f), 1.0f));
-    ////float3 Normal_w = k.xxx * (distance_from_sphere(float3(p + Additive_w), float3(0.0f, 0.0f, 0.6f), 1.0f));
-    
-    //float3 Final_Normal = Normal_x + Normal_y + Normal_z;
-    
-    //Final_Normal = mul(Final_Normal, World);
-    //return normalize(Final_Normal);
-    
-    //return Final_Normal;
-    
+float3 estimateNormal(float3 p, float4x4 World)
+{
     
     float3 Final_Normal = (float3(
     distance_from_sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x - 0.002f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
     distance_from_sphere(float3(p.x, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
     distance_from_sphere(float3(p.x, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f)
     ));
-    
     Final_Normal = mul(Final_Normal, World);
     return normalize(Final_Normal);
     
@@ -244,7 +221,6 @@ float3 estimateNormal(float3 p, float3x3 World)
     //distance_from_quad(float3(p.x /*0.00001f*/, p.y + Epsilon, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y - Epsilon, p.z), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)),
     //distance_from_quad(float3(p.x /*0.00001f*/, p.y, p.z + Epsilon), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f)) - distance_from_quad(float3(p.x /*0.00001f*/, p.y, p.z - Epsilon), float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f))
     //));
-    
     //Final_Normal = mul(Final_Normal, World);
     //return normalize(Final_Normal);
     
@@ -260,7 +236,7 @@ float3 estimateNormal(float3 p, float3x3 World)
     
 }
 
-float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float3x3 World, float3 Campos, float3 Test)
+float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float4x4 World, float3 Campos, float3 Test)
 {
     float4 ambientLight = float4(0.5, 0.5, 0.5, 1.0f);
     float4 colour = float4(0.0f, 0.0f, 0.0f,0.0f);
@@ -270,7 +246,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float4 Light1Pos = float4(5.0f, 1.0f, 5.0f, 1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float4 Light1Pos = float4(0.0f, 1.0f, 0.6f, 2.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
@@ -282,6 +258,8 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     float3 Result_pos = mul(Position, World);
     
     //Somewhere the camera is being multpiled onto the light vector and I cannot tell you where
+    
+    //So the lightVector is still wrong which is why this is still failing to figure out point lights
     light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - Result_pos /*eye*/);
     
     //light1Vector /= Campos;
@@ -301,10 +279,9 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     light1Vector = normalize(light1Vector);
     
-    colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, float4(1.0f, 1.0f, 1.0f, 0.0f), Light1Pos);
+    colour = ambientLight + attenuation * calculateLighting(light1Direction, Normal, float4(1.0f, 1.0f, 1.0f, 0.0f), Light1Pos);
     
-    //Viewvector is wrong
-    //colour *= calcSpecular(light1Vector, Normal, -ViewVector, float4(1, 1, 1, 1), shininess);
+    colour *= calcSpecular(-light1Direction, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
     
     return colour;
     //return float4(Normal, 1.0f);
