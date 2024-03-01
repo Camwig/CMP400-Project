@@ -133,7 +133,7 @@ float4 main(InputType input) : SV_TARGET
         //float2 p = ()
 
         float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z, height);
-        //distance_to_currentPos -= (0.38f*height);
+        distance_to_currentPos -= (0.38f*height);
         
         
         //float3 xyz = float3(newCoords.xy, -sqrt(distance_to_currentPos));
@@ -149,9 +149,9 @@ float4 main(InputType input) : SV_TARGET
             float3 SDF_Position = /*currentPos * distance_to_currentPos;*/ float3(0.0f, 0.0f, 0.6f);
             
             float4 col = float4(1.0f, 0.5f, 0.5f, 1.0f);
-            float4 col2 = phongIllumination(shininess, new_vector, SDF_Position, currentPos, World, camPos, p);
-            col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
-            return col /** textureColour*/;
+            //float4 col2 = phongIllumination(shininess, new_vector, SDF_Position, currentPos, World, camPos, p);
+            //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
+            return col * textureColour;
         }
             
         if (total_distance > 1000.0f)

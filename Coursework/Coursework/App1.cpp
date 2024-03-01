@@ -37,21 +37,21 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	//PerlinGeneration();
 
 
-	D3D11_TEXTURE3D_DESC desc;
-	desc.Width = 256;
-	desc.Height = 256;
-	desc.Depth = 256;
-	desc.MipLevels = 1;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	desc.MiscFlags = 0;
+	//D3D11_TEXTURE3D_DESC desc;
+	//desc.Width = 256;
+	//desc.Height = 256;
+	//desc.Depth = 256;
+	//desc.MipLevels = 1;
+	//desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	//desc.Usage = D3D11_USAGE_DEFAULT;
+	//desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//desc.MiscFlags = 0;
 
-	ID3D11Device* pd3dDevice;
-	pd3dDevice = renderer->getDevice();
-	ID3D11Texture3D* pTexture = NULL;
-	pd3dDevice->CreateTexture3D(&desc, NULL, &pTexture);
+	//ID3D11Device* pd3dDevice;
+	//pd3dDevice = renderer->getDevice();
+	//ID3D11Texture3D* pTexture = NULL;
+	//pd3dDevice->CreateTexture3D(&desc, NULL, &pTexture);
 }
 
 
@@ -111,20 +111,20 @@ bool App1::render()
 
 	//renderer->setBackBufferRenderTarget();
 
-	firstPass();
+	//firstPass();
 	if (!started)
 	{
 		PerlinGeneration();
 		started = true;
 	}
-	SamplePass();
+	//SamplePass();
 	RenderedPass();
 	finalPass();
 
 	//gui();
 
 	// Present the rendered scene to the screen.
-	renderer->endScene();
+	//renderer->endScene();
 
 	return true;
 }
@@ -145,28 +145,28 @@ void App1::gui()
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
-void App1::firstPass()
-{
-	// Clear the scene. (default blue colour)
-//renderer->beginScene(0.39f, 0.58f, 0.92f, 1.0f);
-
-// Set the render target to be the render to texture and clear it
-	renderTexture->setRenderTarget(renderer->getDeviceContext());
-	renderTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
-
-	// Generate the view matrix based on the camera's position.
-	camera->update();
-
-	// Get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
-	XMMATRIX worldMatrix = renderer->getWorldMatrix();
-	XMMATRIX viewMatrix = camera->getViewMatrix();
-	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
-
-	//shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, camera->getPosition(), camera->getForwardVector(),0.0f);
-	//shader->render(renderer->getDeviceContext(),0);
-
-	renderer->setBackBufferRenderTarget();
-}
+//void App1::firstPass()
+//{
+//	// Clear the scene. (default blue colour)
+////renderer->beginScene(0.39f, 0.58f, 0.92f, 1.0f);
+//
+//// Set the render target to be the render to texture and clear it
+//	renderTexture->setRenderTarget(renderer->getDeviceContext());
+//	renderTexture->clearRenderTarget(renderer->getDeviceContext(), 1.0f, 0.0f, 1.0f, 1.0f);
+//
+//	// Generate the view matrix based on the camera's position.
+//	camera->update();
+//
+//	// Get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
+//	XMMATRIX worldMatrix = renderer->getWorldMatrix();
+//	XMMATRIX viewMatrix = camera->getViewMatrix();
+//	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
+//
+//	//shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, camera->getPosition(), camera->getForwardVector(),0.0f);
+//	//shader->render(renderer->getDeviceContext(),0);
+//
+//	renderer->setBackBufferRenderTarget();
+//}
 
 //--------------------------------------------------
 void App1::PerlinGeneration()
@@ -201,29 +201,29 @@ void App1::PerlinGeneration()
 }
 //--------------------------------------------------
 
-void App1::SamplePass()
-{
-	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
-
-	DownSampletexture->setRenderTarget(renderer->getDeviceContext());
-	DownSampletexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
-
-	worldMatrix = renderer->getWorldMatrix();
-	baseViewMatrix = camera->getOrthoViewMatrix();
-	orthoMatrix = renderTexture->getOrthoMatrix();
-
-	// Render for Horizontal Blur
-	renderer->setZBuffer(false);
-
-	sampleMesh->sendData(renderer->getDeviceContext());
-	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
-	textureShader->render(renderer->getDeviceContext(), sampleMesh->getIndexCount());
-
-	renderer->setZBuffer(true);
-
-	// Reset the render target back to the original back buffer and not the render to texture anymore.
-	renderer->setBackBufferRenderTarget();
-}
+//void App1::SamplePass()
+//{
+//	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
+//
+//	DownSampletexture->setRenderTarget(renderer->getDeviceContext());
+//	DownSampletexture->clearRenderTarget(renderer->getDeviceContext(), 1.0f, 1.0f, 1.0f, 1.0f);
+//
+//	worldMatrix = renderer->getWorldMatrix();
+//	baseViewMatrix = camera->getOrthoViewMatrix();
+//	orthoMatrix = renderTexture->getOrthoMatrix();
+//
+//	// Render for Horizontal Blur
+//	renderer->setZBuffer(false);
+//
+//	sampleMesh->sendData(renderer->getDeviceContext());
+//	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
+//	textureShader->render(renderer->getDeviceContext(), sampleMesh->getIndexCount());
+//
+//	renderer->setZBuffer(true);
+//
+//	// Reset the render target back to the original back buffer and not the render to texture anymore.
+//	renderer->setBackBufferRenderTarget();
+//}
 
 void App1::RenderedPass()
 {
@@ -233,7 +233,7 @@ void App1::RenderedPass()
 	float screenSizeX = (float)FinalTexture->getTextureWidth();
 
 	FinalTexture->setRenderTarget(renderer->getDeviceContext());
-	FinalTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
+	FinalTexture->clearRenderTarget(renderer->getDeviceContext(), 1.0f, 0.0f, 0.0f, 1.0f);
 
 	worldMatrix = renderer->getWorldMatrix();
 	baseViewMatrix = camera->getOrthoViewMatrix();
@@ -266,7 +266,7 @@ void App1::finalPass()
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
 
 	orthoMesh->sendData(renderer->getDeviceContext());
-	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix,FinalTexture->getShaderResourceView());
+	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, FinalTexture->getShaderResourceView());
 	textureShader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 	renderer->setZBuffer(true);
 
