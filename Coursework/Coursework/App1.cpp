@@ -27,15 +27,31 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	perlinShader = new PerlinTextureShader(renderer->getDevice(), hwnd);
 
 	PerlinTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
-	//ID3D11Device::CreateTexture3D();
-	//PerlinTexture = new ID3D10Texture3D();
-	//PerlinTexture_2 = new D3D11_TEX3D_RTV();
-	//PerlinTexture_2 = new ID3D11Texture3D();
+
+	//ID3D11Device::CreateRenderTargetView(D3D11_BIND_RENDER_TARGET);
+
 	renderTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 	DownSampletexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 	FinalTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 
 	//PerlinGeneration();
+
+
+	D3D11_TEXTURE3D_DESC desc;
+	desc.Width = 256;
+	desc.Height = 256;
+	desc.Depth = 256;
+	desc.MipLevels = 1;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	desc.MiscFlags = 0;
+
+	ID3D11Device* pd3dDevice;
+	pd3dDevice = renderer->getDevice();
+	ID3D11Texture3D* pTexture = NULL;
+	pd3dDevice->CreateTexture3D(&desc, NULL, &pTexture);
 }
 
 
