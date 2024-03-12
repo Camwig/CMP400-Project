@@ -134,6 +134,21 @@ void D3D::createRenderTargetView()
 	backBufferPtr = 0;
 }
 
+//-------------------------------------
+
+// Creates the default render target view. (back buffer).
+void D3D::createTDRenderTargetView()
+{
+	ID3D11Texture2D* backBufferPtr;
+	// Configure back buffer
+	swapChain->GetBuffer(0, __uuidof(ID3D11Texture3D), (LPVOID*)&backBufferPtr);
+	device->CreateRenderTargetView(backBufferPtr, NULL, &renderTargetView);
+	backBufferPtr->Release();
+	backBufferPtr = 0;
+}
+
+//-------------------------------------
+
 // Creates a default depth buffer
 void D3D::createDepthBuffer()
 {

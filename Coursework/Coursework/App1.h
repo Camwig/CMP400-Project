@@ -32,6 +32,8 @@ protected:
 	void firstPass();
 	void PerlinGeneration();
 
+	void FillTDText();
+
 	//Initial SDF Render
 	//float distance_from_sphere(XMFLOAT3 p, XMFLOAT3 c, float r);
 	//
@@ -51,7 +53,7 @@ private:
 
 	RenderTexture*/*ID3D10Texture3D**/ PerlinTexture;
 
-	//ThreeD_Render
+	TDRenderTarget * TD_Text;
 
 	
 

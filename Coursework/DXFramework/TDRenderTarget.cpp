@@ -1,7 +1,7 @@
-#include "ThreeD_RenderTarget.h"
+#include "TDRenderTarget.h"
 
 // Initialise texture object based on provided dimensions. Usually to match window.
-ThreeD_RenderTarget::ThreeD_RenderTarget(ID3D11Device* device, int ltextureWidth, int ltextureHeight, float screenNear, float screenFar)
+TDRenderTarget::TDRenderTarget(ID3D11Device* device, int ltextureWidth, int ltextureHeight, float screenNear, float screenFar)
 {
 
 	//D3D11_TEXTURE3D_DESC desc;
@@ -120,7 +120,7 @@ ThreeD_RenderTarget::ThreeD_RenderTarget(ID3D11Device* device, int ltextureWidth
 }
 
 // Release resources.
-ThreeD_RenderTarget::~ThreeD_RenderTarget()
+TDRenderTarget::~TDRenderTarget()
 {
 	if (depthStencilView)
 	{
@@ -155,14 +155,14 @@ ThreeD_RenderTarget::~ThreeD_RenderTarget()
 
 // Set this renderTexture as the current render target.
 // All rendering is now store here, rather than the back buffer.
-void ThreeD_RenderTarget::setRenderTarget(ID3D11DeviceContext* deviceContext)
+void TDRenderTarget::setRenderTarget(ID3D11DeviceContext* deviceContext)
 {
 	deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 	deviceContext->RSSetViewports(1, &viewport);
 }
 
 // Clear render texture to specified colour. Similar to clearing the back buffer, ready for the next frame.
-void ThreeD_RenderTarget::clearRenderTarget(ID3D11DeviceContext* deviceContext, float red, float green, float blue, float alpha)
+void TDRenderTarget::clearRenderTarget(ID3D11DeviceContext* deviceContext, float red, float green, float blue, float alpha)
 {
 	float color[4];
 	color[0] = red;
@@ -175,27 +175,27 @@ void ThreeD_RenderTarget::clearRenderTarget(ID3D11DeviceContext* deviceContext, 
 	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-ID3D11ShaderResourceView* ThreeD_RenderTarget::getShaderResourceView()
+ID3D11ShaderResourceView* TDRenderTarget::getShaderResourceView()
 {
 	return shaderResourceView;
 }
 
-XMMATRIX ThreeD_RenderTarget::getProjectionMatrix()
+XMMATRIX TDRenderTarget::getProjectionMatrix()
 {
 	return projectionMatrix;
 }
 
-XMMATRIX ThreeD_RenderTarget::getOrthoMatrix()
+XMMATRIX TDRenderTarget::getOrthoMatrix()
 {
 	return orthoMatrix;
 }
 
-int ThreeD_RenderTarget::getTextureWidth()
+int TDRenderTarget::getTextureWidth()
 {
 	return textureWidth;
 }
 
-int ThreeD_RenderTarget::getTextureHeight()
+int TDRenderTarget::getTextureHeight()
 {
 	return textureHeight;
 }

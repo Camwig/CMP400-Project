@@ -33,6 +33,9 @@
 #include "Light.h"
 #include "RenderTexture.h"
 #include "ShadowMap.h"
+//-------------------------------------
+#include "TDRenderTarget.h"
+//-------------------------------------
 
 // imGUI includes
 //#include "imgui.h"

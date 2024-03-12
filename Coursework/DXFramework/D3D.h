@@ -80,6 +80,9 @@ private:
 	void createDevice();
 	void createSwapchain();
 	void createRenderTargetView();
+	//-------------------------------------
+	void createTDRenderTargetView();
+	//-------------------------------------
 	void createDepthBuffer();
 	void createStencilBuffer();
 	void createDefaultRasterState();

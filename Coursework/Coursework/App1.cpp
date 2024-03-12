@@ -34,6 +34,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	DownSampletexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 	FinalTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 
+	TD_Text = new TDRenderTarget(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
+
 	//PerlinGeneration();
 
 
@@ -111,15 +113,17 @@ bool App1::render()
 
 	//renderer->setBackBufferRenderTarget();
 
+	FillTDText();
+
 	//firstPass();
-	if (!started)
-	{
-		PerlinGeneration();
-		started = true;
-	}
-	//SamplePass();
-	RenderedPass();
-	finalPass();
+	//if (!started)
+	//{
+	//	PerlinGeneration();
+	//	started = true;
+	//}
+	////SamplePass();
+	//RenderedPass();
+	//finalPass();
 
 	//gui();
 
@@ -143,6 +147,12 @@ void App1::gui()
 	// Render UI
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+void App1::FillTDText()
+{
+	TD_Text->setRenderTarget(renderer->getDeviceContext());
+	TD_Text->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 1.0f, 0.0f, 1.0f);
 }
 
 void App1::firstPass()
@@ -266,7 +276,7 @@ void App1::finalPass()
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
 
 	orthoMesh->sendData(renderer->getDeviceContext());
-	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, FinalTexture->getShaderResourceView());
+	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, /*FinalTexture*/TD_Text->getShaderResourceView());
 	textureShader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 	renderer->setZBuffer(true);
 

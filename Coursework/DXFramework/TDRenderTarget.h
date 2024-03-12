@@ -1,13 +1,13 @@
-#ifndef _THREED_RENDERTEXTURE_H_
-#define _THREED_RENDERTEXTURE_H_
+
+#ifndef _TDRENDERTEXTURE_H_
+#define _TDRENDERTEXTURE_H_
 
 #include <d3d11.h>
 #include <directxmath.h>
 
 using namespace DirectX;
 
-#pragma once
-class ThreeD_RenderTarget
+class TDRenderTarget
 {
 public:
 	void* operator new(size_t i)
@@ -23,8 +23,8 @@ public:
 	/** \brief Initialises render textures
 	*	Required renderer device, specified width and height of texture/target, and near + far planes
 	*/
-	ThreeD_RenderTarget(ID3D11Device* device, int textureWidth, int textureHeight, float screenNear, float screenDepth);
-	~ThreeD_RenderTarget();
+	TDRenderTarget(ID3D11Device* device, int textureWidth, int textureHeight, float screenNear, float screenDepth);
+	~TDRenderTarget();
 
 	void setRenderTarget(ID3D11DeviceContext* deviceContext);		///< Set this render texture as the render target
 	void clearRenderTarget(ID3D11DeviceContext* deviceContext, float red, float green, float blue, float alpha);	///< Empties the render texture, provide device context and RGBA (background colour)
