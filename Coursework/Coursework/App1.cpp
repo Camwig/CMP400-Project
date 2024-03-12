@@ -114,6 +114,7 @@ bool App1::render()
 	//renderer->setBackBufferRenderTarget();
 
 	FillTDText();
+	finalPass();
 
 	//firstPass();
 	//if (!started)
@@ -153,6 +154,8 @@ void App1::FillTDText()
 {
 	TD_Text->setRenderTarget(renderer->getDeviceContext());
 	TD_Text->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 1.0f, 0.0f, 1.0f);
+
+	renderer->setBackBufferRenderTarget();
 }
 
 void App1::firstPass()
@@ -277,6 +280,7 @@ void App1::finalPass()
 
 	orthoMesh->sendData(renderer->getDeviceContext());
 	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, /*FinalTexture*/TD_Text->getShaderResourceView());
+	//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, FinalTexture->getShaderResourceView());
 	textureShader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 	renderer->setZBuffer(true);
 

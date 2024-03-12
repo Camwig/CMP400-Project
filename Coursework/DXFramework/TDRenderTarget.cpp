@@ -54,34 +54,64 @@ TDRenderTarget::TDRenderTarget(ID3D11Device* device, int ltextureWidth, int ltex
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
+
+	//Should pass this in
+	textureDesc.Depth = 256;
 	
 	// Create the render target texture.
+
+	//Fails to create the texture?
+
 	result = device->CreateTexture3D(&textureDesc, NULL, &renderTargetTexture);
+
+	if (result != S_OK)
+	{
+		int i = 0;
+	}
 
 	// Setup the description of the render target view.
 	renderTargetViewDesc.Format = textureDesc.Format;
-	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	renderTargetViewDesc.Texture3D.MipSlice = 0;
+	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE3D;
+	renderTargetViewDesc.Texture3D.MipSlice = 1;
+	//-----------------------------------
+	renderTargetViewDesc.Texture3D.FirstWSlice = 1;
+	renderTargetViewDesc.Texture3D.WSize = 1;
+	renderTargetViewDesc.Texture2D.MipSlice = 0;
+	//renderTargetViewDesc.Buffer = 
+
+	//renderTargetViewDesc.
 	
 	// Create the render target view.
 	result = device->CreateRenderTargetView(renderTargetTexture, &renderTargetViewDesc, &renderTargetView);
 
+	if (result != S_OK)
+	{
+		int i = 0;
+	}
+
 	// Setup the description of the shader resource view.
 	shaderResourceViewDesc.Format = textureDesc.Format;
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE3D;
+	shaderResourceViewDesc.Texture3D.MostDetailedMip = 0;
+	shaderResourceViewDesc.Texture3D.MipLevels = 1;
 
 	// Create the shader resource view.
 	result = device->CreateShaderResourceView(renderTargetTexture, &shaderResourceViewDesc, &shaderResourceView);
+
+	if (result != S_OK)
+	{
+		int i = 0;
+	}
 
 	// Set up the description of the depth buffer.
 	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
 	depthBufferDesc.Width = textureWidth;
 	depthBufferDesc.Height = textureHeight;
+	depthBufferDesc.Depth = 256;
 	depthBufferDesc.MipLevels = 1;
 	//depthBufferDesc.ArraySize = 1;
 	//depthBufferDesc.
+	//Using the incorrect format I just need to figure out the correct one
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	//depthBufferDesc.SampleDesc.Count = 1;
 	//depthBufferDesc.SampleDesc.Quality = 0;
@@ -90,8 +120,16 @@ TDRenderTarget::TDRenderTarget(ID3D11Device* device, int ltextureWidth, int ltex
 	depthBufferDesc.CPUAccessFlags = 0;
 	depthBufferDesc.MiscFlags = 0;
 
+	//depthBufferDesc.
+
 	// Create the texture for the depth buffer using the filled out description.
 	result = device->CreateTexture3D(&depthBufferDesc, NULL, &depthStencilBuffer);
+
+	if (result != S_OK)
+	{
+		int i = 0;
+	}
+
 
 	// Set up the depth stencil view description.
 	ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
@@ -103,6 +141,11 @@ TDRenderTarget::TDRenderTarget(ID3D11Device* device, int ltextureWidth, int ltex
 
 	// Create the depth stencil view.
 	result = device->CreateDepthStencilView(depthStencilBuffer, &depthStencilViewDesc, &depthStencilView);
+
+	if (result != S_OK)
+	{
+		int i = 0;
+	}
 
 	// Setup the viewport for rendering.
 	viewport.Width = (float)textureWidth;
