@@ -41,7 +41,7 @@ private:
 	ID3D11Texture3D* renderTargetTexture;
 	ID3D11RenderTargetView* renderTargetView;
 	ID3D11ShaderResourceView* shaderResourceView;
-	ID3D11Texture3D* depthStencilBuffer;
+	ID3D11Texture2D* depthStencilBuffer;
 	ID3D11DepthStencilView* depthStencilView;
 	D3D11_VIEWPORT viewport;
 	XMMATRIX projectionMatrix;
