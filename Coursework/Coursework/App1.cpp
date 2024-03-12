@@ -145,28 +145,28 @@ void App1::gui()
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
-//void App1::firstPass()
-//{
-//	// Clear the scene. (default blue colour)
-////renderer->beginScene(0.39f, 0.58f, 0.92f, 1.0f);
-//
-//// Set the render target to be the render to texture and clear it
-//	renderTexture->setRenderTarget(renderer->getDeviceContext());
-//	renderTexture->clearRenderTarget(renderer->getDeviceContext(), 1.0f, 0.0f, 1.0f, 1.0f);
-//
-//	// Generate the view matrix based on the camera's position.
-//	camera->update();
-//
-//	// Get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
-//	XMMATRIX worldMatrix = renderer->getWorldMatrix();
-//	XMMATRIX viewMatrix = camera->getViewMatrix();
-//	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
-//
-//	//shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, camera->getPosition(), camera->getForwardVector(),0.0f);
-//	//shader->render(renderer->getDeviceContext(),0);
-//
-//	renderer->setBackBufferRenderTarget();
-//}
+void App1::firstPass()
+{
+	// Clear the scene. (default blue colour)
+//renderer->beginScene(0.39f, 0.58f, 0.92f, 1.0f);
+
+// Set the render target to be the render to texture and clear it
+	renderTexture->setRenderTarget(renderer->getDeviceContext());
+	renderTexture->clearRenderTarget(renderer->getDeviceContext(), 1.0f, 0.0f, 1.0f, 1.0f);
+
+	// Generate the view matrix based on the camera's position.
+	camera->update();
+
+	// Get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
+	XMMATRIX worldMatrix = renderer->getWorldMatrix();
+	XMMATRIX viewMatrix = camera->getViewMatrix();
+	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
+
+	//shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, camera->getPosition(), camera->getForwardVector(),0.0f);
+	//shader->render(renderer->getDeviceContext(),0);
+
+	renderer->setBackBufferRenderTarget();
+}
 
 //--------------------------------------------------
 void App1::PerlinGeneration()
@@ -183,7 +183,7 @@ void App1::PerlinGeneration()
 
 	worldMatrix = renderer->getWorldMatrix();
 	baseViewMatrix = camera->getOrthoViewMatrix();
-	orthoMatrix = renderTexture->getOrthoMatrix();
+	orthoMatrix = PerlinTexture->getOrthoMatrix();
 
 	// Render for Horizontal Blur
 	renderer->setZBuffer(false);
@@ -237,14 +237,14 @@ void App1::RenderedPass()
 
 	worldMatrix = renderer->getWorldMatrix();
 	baseViewMatrix = camera->getOrthoViewMatrix();
-	orthoMatrix = DownSampletexture->getOrthoMatrix();
+	orthoMatrix = FinalTexture->getOrthoMatrix();
 
 	// Render for Horizontal Blur
 	renderer->setZBuffer(false);
 
 	orthoMesh->sendData(renderer->getDeviceContext());
 	//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
-	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, DownSampletexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), timer->getTime(), PerlinTexture->getShaderResourceView());
+	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), timer->getTime(), PerlinTexture->getShaderResourceView());
 	shader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 
 	renderer->setZBuffer(true);

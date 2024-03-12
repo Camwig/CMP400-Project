@@ -10,6 +10,8 @@
 #include "TextureShader.h"
 #include "PerlinTextureShader.h"
 
+
+
 class App1 : public BaseApplication
 {
 public:
@@ -24,7 +26,7 @@ protected:
 	bool render();
 	void gui();
 
-	void SamplePass();
+	//void SamplePass();
 	void RenderedPass();
 	void finalPass();
 	void firstPass();
@@ -38,6 +40,7 @@ protected:
 	//float Distance_between_3Dpoints_2_(XMFLOAT3 a, XMFLOAT3 b);
 
 private:
+
 	RayMarchingShader* shader;
 	TextureShader* textureShader;
 	PerlinTextureShader* perlinShader;
@@ -47,6 +50,10 @@ private:
 	OrthoMesh* sampleMesh;
 
 	RenderTexture*/*ID3D10Texture3D**/ PerlinTexture;
+
+	//ThreeD_Render
+
+	
 
 	ID3D11Texture3D* PerlinTexture_2;
 

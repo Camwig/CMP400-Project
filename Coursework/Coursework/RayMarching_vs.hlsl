@@ -25,15 +25,15 @@ cbuffer CameraBuffer : register(b1)
 struct InputType
 {
     float4 position : POSITION;
-    //float4 colour : COLOR;
     float2 tex : TEXCOORD0;
+    float3 normal : NORMAL;
 };
 
 struct OutputType
 {
     float4 position : SV_POSITION;
-    //float4 colour : COLOR;
     float2 tex : TEXCOORD0;
+    float3 normal : NORMAL;
     float3 worldPosition : TEXCOORD1;
     float3 viewVector : TEXCOORD2;
 };
