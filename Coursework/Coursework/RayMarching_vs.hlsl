@@ -42,6 +42,19 @@ OutputType main(InputType input)
 {
     OutputType output;
     
+    //float3x3 TextureTrans =
+    //{
+    //    0.5f, 0.0f, 0.0f,
+    //                         0.0f, 0.05f, 0.0f,
+    //                         0.5f, 0.5f, 1.0f
+    //};
+    
+    //float3 Coord = (0.5f, 0.5f, 0.0f);
+    
+    //Coord = mul(Coord, TextureTrans);
+    
+    //input.tex = Coord.xy / Coord.z;
+    
     float4 worldPosition = mul(input.position, worldMatrix);
     output.viewVector = CameraOrigin.xyz - worldPosition.xyz;
     output.viewVector = normalize(output.viewVector);
@@ -56,6 +69,10 @@ OutputType main(InputType input)
 
     //output.colour = input.colour;
     output.tex = input.tex;
+    
+    // Calculate the normal vector against the world matrix only and normalise.
+    output.normal = mul(input.normal, (float3x3) worldMatrix);
+    output.normal = normalize(output.normal);
 
     output.worldPosition = mul(input.position, worldMatrix).xyz;
 	

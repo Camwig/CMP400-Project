@@ -69,18 +69,20 @@ float4 main(InputType input) : SV_TARGET
 
     float3 Result = float3(0.0, 0.0, 0.0);
     
+    
     float4 textureColour = PerlinTexture.Sample(SampleType, input.tex);
     
-    float height = PerlinTexture.Sample(SampleType, input.tex, 0).x;
+    float3 height = PerlinTexture.Sample(SampleType, input.tex,0);
     
-    height = mul(height, World);
+    
+    //height = mul(height, World);
     
     //height = height * 1.0f;
     
-    if (height < 0.0f)
-    {
-        height = 0.001f;
-    }
+    //if (height < 0.0f)
+    //{
+    //    height = 0.001f;
+    //}
     
     float3 EndPoint = float3(Test.x /*- camPos.x*/, Test.y /*- camPos.y*/, Test.z /*- camPos.z*/);
     
@@ -125,6 +127,7 @@ float4 main(InputType input) : SV_TARGET
         //float distance_to_currentPos = distance_from_box(currentPos, float3(0.3f, 0.3f, 1.0f));
         
         //float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f));
+        float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f,10.0f, 0.0f), float3(10.0f, 10.0f, 0.0f), float3(10.0f, 0.0f, 0.0f));
         
         //vec2 p = (fragCoord.xy / iResolution.y) * 2.0 - 1.0;
         //vec3 xyz = vec3(p, 0);
@@ -132,8 +135,8 @@ float4 main(InputType input) : SV_TARGET
         
         //float2 p = ()
 
-        float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z, height);
-        distance_to_currentPos -= (0.38f*height);
+        //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z, height.r);
+        //distance_to_currentPos -= (0.38f*height.r);
         
         
         //float3 xyz = float3(newCoords.xy, -sqrt(distance_to_currentPos));
