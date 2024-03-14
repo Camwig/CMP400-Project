@@ -55,6 +55,7 @@ private:
 
 	TDRenderTarget * TD_Text;
 
+	SphereMesh* mesh;
 	
 
 	ID3D11Texture3D* PerlinTexture_2;
@@ -69,6 +70,7 @@ private:
 	float sy;
 
 	bool started = false;
+	bool VertexBased = false;
 };
 
 #endif

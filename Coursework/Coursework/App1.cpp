@@ -34,7 +34,10 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	DownSampletexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 	FinalTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 
+	mesh = new SphereMesh(renderer->getDevice(), renderer->getDeviceContext());
+
 	started = false;
+	VertexBased = true;
 
 	//TD_Text = new TDRenderTarget(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 
@@ -275,16 +278,34 @@ void App1::finalPass()
 
 	// RENDER THE RENDER TEXTURE SCENE
 	// Requires 2D rendering and an ortho mesh.
-	renderer->setZBuffer(false);
-	XMMATRIX worldMatrix = renderer->getWorldMatrix();
-	XMMATRIX orthoMatrix = renderer->getOrthoMatrix();  // ortho matrix for 2D rendering
-	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
 
-	orthoMesh->sendData(renderer->getDeviceContext());
-	//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, /*FinalTexture*/TD_Text->getShaderResourceView());
-	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, FinalTexture->getShaderResourceView());
-	textureShader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
-	renderer->setZBuffer(true);
+	if (!VertexBased)
+	{
+		renderer->setZBuffer(false);
+		XMMATRIX worldMatrix = renderer->getWorldMatrix();
+		XMMATRIX orthoMatrix = renderer->getOrthoMatrix();  // ortho matrix for 2D rendering
+		XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
+
+		orthoMesh->sendData(renderer->getDeviceContext());
+		//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, /*FinalTexture*/TD_Text->getShaderResourceView());
+		textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, FinalTexture->getShaderResourceView());
+		textureShader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
+		renderer->setZBuffer(true);
+	}
+	else
+	{
+		camera->update();
+
+		// Get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
+		XMMATRIX worldMatrix = renderer->getWorldMatrix();
+		XMMATRIX viewMatrix = camera->getViewMatrix();
+		XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
+
+		// Send geometry data, set shader parameters, render object with shader
+		mesh->sendData(renderer->getDeviceContext());
+		textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView());
+		textureShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
+	}
 
 	// Render GUI
 	gui();
