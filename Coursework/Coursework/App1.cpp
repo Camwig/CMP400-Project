@@ -26,6 +26,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
 	perlinShader = new PerlinTextureShader(renderer->getDevice(), hwnd);
 
+	vertex_shader = new VertexManipulatorShader(renderer->getDevice(), hwnd);
+
 	PerlinTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 
 	//ID3D11Device::CreateRenderTargetView(D3D11_BIND_RENDER_TARGET);
@@ -303,8 +305,8 @@ void App1::finalPass()
 
 		// Send geometry data, set shader parameters, render object with shader
 		mesh->sendData(renderer->getDeviceContext());
-		textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView());
-		textureShader->render(renderer->getDeviceContext(), mesh->getIndexCount());
+		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView());
+		vertex_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 	}
 
 	// Render GUI

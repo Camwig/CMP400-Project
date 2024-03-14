@@ -9,7 +9,7 @@
 #include "RayMarchingShader.h"
 #include "TextureShader.h"
 #include "PerlinTextureShader.h"
-
+#include "VertexManipulatorShader.h"
 
 
 class App1 : public BaseApplication
@@ -47,6 +47,7 @@ private:
 	TextureShader* textureShader;
 	PerlinTextureShader* perlinShader;
 	
+	VertexManipulatorShader* vertex_shader;
 
 	OrthoMesh* orthoMesh;
 	OrthoMesh* sampleMesh;
