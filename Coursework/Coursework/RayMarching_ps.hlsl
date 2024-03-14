@@ -143,6 +143,7 @@ float4 main(InputType input) : SV_TARGET
 
         float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z, height.r);
         
+        //Inital values for the perlin noise to be generated from
         float n = color(float3(newCoords.x, newCoords.y, newCoords.z));
         
         if (n < 0.0f)
