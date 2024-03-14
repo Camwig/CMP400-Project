@@ -69,22 +69,28 @@ float4 main(InputType input) : SV_TARGET
 
     float3 Result = float3(0.0, 0.0, 0.0);
     
-    
-    float4 textureColour = PerlinTexture.Sample(SampleType, input.tex);
-    
-    float3 height = PerlinTexture.Sample(SampleType, input.tex,0);
+    float height = PerlinTexture.Sample(SampleType, input.tex,0);
     
     
     //height = mul(height, World);
     
     //height = height * 1.0f;
     
-    //if (height < 0.0f)
-    //{
-    //    height = 0.001f;
-    //}
+    if (height < 0.0f)
+    {
+        height = 0.001f;
+    }
     
-    float3 EndPoint = float3(Test.x /*- camPos.x*/, Test.y /*- camPos.y*/, Test.z /*- camPos.z*/);
+    float3 Startpoint = camPos /** viewVector*/;
+    
+    float3 EndPoint = float3(Test.x - Startpoint.x, Test.y - Startpoint.y, Test.z - Startpoint.z);
+    
+    
+    //Need to figure out how to move from input.tex equivilent of the SDF shape
+    //float4 textureColour = PerlinTexture.Sample(SampleType, EndPoint.xy);
+    
+    float4 textureColour = PerlinTexture.Sample(SampleType, input.tex.xy);
+    
     
     //EndPoint = mul(EndPoint, World);
     
@@ -113,7 +119,7 @@ float4 main(InputType input) : SV_TARGET
         
         //float distance_to_currentPos = distance_from_sphere(value, float3(0.0, 0.0f, 0.6f), 1.0f);
         
-        //float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
+        //float distance_to_currentPos2 = distance_from_sphere(currentPos, EndPoint, 1.0f);
         
         //if (i == 0)
         //{
@@ -127,7 +133,7 @@ float4 main(InputType input) : SV_TARGET
         //float distance_to_currentPos = distance_from_box(currentPos, float3(0.3f, 0.3f, 1.0f));
         
         //float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f));
-        float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f,10.0f, 0.0f), float3(10.0f, 10.0f, 0.0f), float3(10.0f, 0.0f, 0.0f));
+        //float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f,10.0f, 0.0f), float3(10.0f, 10.0f, 0.0f), float3(10.0f, 0.0f, 0.0f));
         
         //vec2 p = (fragCoord.xy / iResolution.y) * 2.0 - 1.0;
         //vec3 xyz = vec3(p, 0);
@@ -135,7 +141,16 @@ float4 main(InputType input) : SV_TARGET
         
         //float2 p = ()
 
-        //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z, height.r);
+        float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z, height.r);
+        
+        float n = color(float3(newCoords.x, newCoords.y, newCoords.z));
+        
+        if (n < 0.0f)
+        {
+            n = 0.001f;
+        }
+        
+        distance_to_currentPos -= (n);
         //distance_to_currentPos -= (0.38f*height.r);
         
         
@@ -144,9 +159,12 @@ float4 main(InputType input) : SV_TARGET
         //float3 Result = mix3(0.0f, 0.5 + 0.5 * n, smoothstep(0.0, 0.003, distance_to_currentPos)) * float3(1, 1, 1);
         
         //return float4(Result.x, Result.y, Result.z, 1.0f);
+        
+        //float distance_to_currentPos2 = distance_from_Line(currentPos, float3(camPos.x,camPos.y,camPos.z + 1.0f), EndPoint, 0.1f);
             
         if (distance_to_currentPos < 0.01f)
         {
+            
             float3 p = currentPos + (distance_to_currentPos);
             
             float3 SDF_Position = /*currentPos * distance_to_currentPos;*/ float3(0.0f, 0.0f, 0.6f);
@@ -154,7 +172,7 @@ float4 main(InputType input) : SV_TARGET
             float4 col = float4(1.0f, 0.5f, 0.5f, 1.0f);
             //float4 col2 = phongIllumination(shininess, new_vector, SDF_Position, currentPos, World, camPos, p);
             //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
-            return col * textureColour;
+            return col /** textureColour*/;
         }
             
         if (total_distance > 1000.0f)

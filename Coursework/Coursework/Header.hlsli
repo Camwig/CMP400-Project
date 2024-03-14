@@ -124,6 +124,23 @@ float distance_from_plane(float3 p,float3 n, float h)
      dot(nor,pa)*dot(nor,pa)/dot2(nor) );
 }*/
 
+/*float sdCapsule( vec3 p, vec3 a, vec3 b, float r )
+{
+  vec3 pa = p - a, ba = b - a;
+  float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
+  return length( pa - ba*h ) - r;
+}*/
+
+float distance_from_Line(float3 p, float3 a, float3 b, float r)
+{
+    float3 pa = p - a, ba = b - a;
+    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0f, 1.0f);
+    float output = Distance_between_3Dpoints_(pa - ba * h);
+    output = output - r;
+    return output;
+
+}
+
 float dot2(float3 v)
 {
     return dot(v, v);
