@@ -98,4 +98,7 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	// Set shader texture and sampler resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);
 	deviceContext->PSSetSamplers(0, 1, &sampleState);
+
+	deviceContext->VSSetShaderResources(0, 1, &texture);
+	deviceContext->VSSetSamplers(0, 1, &sampleState);
 }

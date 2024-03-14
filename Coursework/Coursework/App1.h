@@ -56,7 +56,8 @@ private:
 
 	TDRenderTarget * TD_Text;
 
-	SphereMesh* mesh;
+	//SphereMesh* mesh;
+	PlaneMesh* plane;
 	
 
 	ID3D11Texture3D* PerlinTexture_2;

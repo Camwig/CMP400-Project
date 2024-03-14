@@ -1,6 +1,9 @@
 // texture vertex shader
 // Basic shader for rendering textured geometry
 
+Texture2D texture0 : register(t0);
+SamplerState sampler0 : register(s0);
+
 cbuffer MatrixBuffer : register(b0)
 {
     matrix worldMatrix;
@@ -25,6 +28,20 @@ struct OutputType
 OutputType main(InputType input)
 {
     OutputType output;
+    
+    //    //output.position = input.position;
+    //input.position.y += getHeight(input.tex, texture0, sampler0, height);
+    
+    /*float getHeight(float2 _uv, Texture2D texture0, SamplerState sampler0, float offset)
+{
+    //Sample the height map texture and then multiplies it by the offset value
+    //Which then returns the height value
+    float3 height = texture0.SampleLevel(sampler0, _uv, 0).x;
+    return height.r * offset;
+}*/
+    
+    float3 height = texture0.SampleLevel(sampler0, input.tex, 0).x;
+    input.position.y += height.r * 30.f;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
     output.position = mul(input.position, worldMatrix);

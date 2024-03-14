@@ -36,7 +36,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	DownSampletexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 	FinalTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 
-	mesh = new SphereMesh(renderer->getDevice(), renderer->getDeviceContext());
+	//mesh = new SphereMesh(renderer->getDevice(), renderer->getDeviceContext());
+	plane = new PlaneMesh(renderer->getDevice(), renderer->getDeviceContext());
 
 	started = false;
 	VertexBased = true;
@@ -122,15 +123,16 @@ bool App1::render()
 
 	//FillTDText();
 	//finalPass();
-
-	firstPass();
+	if(!VertexBased)
+		firstPass();
 	if (!started)
 	{
 		PerlinGeneration();
 		started = true;
 	}
 	//SamplePass();
-	RenderedPass();
+	if(!VertexBased)
+		RenderedPass();
 	finalPass();
 
 	//gui();
@@ -304,9 +306,9 @@ void App1::finalPass()
 		XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
 
 		// Send geometry data, set shader parameters, render object with shader
-		mesh->sendData(renderer->getDeviceContext());
+		plane->sendData(renderer->getDeviceContext());
 		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView());
-		vertex_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
+		vertex_shader->render(renderer->getDeviceContext(), plane->getIndexCount());
 	}
 
 	// Render GUI
