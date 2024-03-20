@@ -277,7 +277,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     //The lightposition doesnt work as it should not entirley sure
     //float4 Light1Pos = float4(0.0f, 1.0f, 0.6f, 1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
-    float4 Light1Pos = float4(5.0f, 5.0f, 5.0f, 1.0f);
+    float4 Light1Pos = float4(3.0f, 5.0f, 5.0f, 1.0f);
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
     float3 light1Vector = float3(0.0f, 0.0f, 0.0f);
@@ -285,7 +285,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     //Do this without camera matrix applied
     
     //It has to be this but I have no idea where 
-    float3 Result_pos = mul(Position, World);
+    float3 Result_pos = mul(p, World);
     
     //Somewhere the camera is being multpiled onto the light vector and I cannot tell you where
     
