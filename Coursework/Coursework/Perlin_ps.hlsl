@@ -39,7 +39,7 @@ float4 main(InputType input) : SV_TARGET
     
     //float3 xyz = (newCoords.xy, 0);
     
-    float n = color(float3(newCoords.x,newCoords.y,newCoords.z));
+    float n = color2(float3(newCoords.x,newCoords.y,newCoords.z));
     
     //float3 Result = float3(0.5 + 0.5 * float3(n,n,n));
     

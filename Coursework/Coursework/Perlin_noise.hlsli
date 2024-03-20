@@ -583,7 +583,7 @@ float cnoise(float3 P)
 }
 
 // demo code:
-float color(float3 xyz)
+float color2(float3 xyz)
 {
     return cnoise(10.5 * xyz);
 }

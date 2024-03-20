@@ -117,7 +117,7 @@ float4 main(InputType input) : SV_TARGET
         
         //float3 value = currentPos - 25*(round(currentPos/25.0f));
         
-        //float distance_to_currentPos = distance_from_sphere(value, float3(0.0, 0.0f, 0.6f), 1.0f);
+        //float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
         
         //float distance_to_currentPos2 = distance_from_sphere(currentPos, EndPoint, 1.0f);
         
@@ -144,14 +144,16 @@ float4 main(InputType input) : SV_TARGET
         //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z, height.r);
         
         //Inital values for the perlin noise to be generated from
-        //float n = color(float3(newCoords.x, newCoords.y, newCoords.z));
+        float multiple = 0.05f;
+        float3 Input = float3(currentPos.x * multiple, currentPos.y * multiple, currentPos.z * multiple);
+        float n = color2(Input);
         
-        //if (n < 0.0f)
-        //{
-        //    n = 0.001f;
-        //}
+        if (n < 0.0f)
+        {
+            n = 0.001f;
+        }
         
-        //distance_to_currentPos -= (n);
+        distance_to_currentPos -= (n*0.5);
         //distance_to_currentPos -= (0.38f*height.r);
         
         
@@ -173,7 +175,7 @@ float4 main(InputType input) : SV_TARGET
             float4 col = float4(1.0f, 0.5f, 0.5f, 1.0f);
             //float4 col2 = phongIllumination(shininess, new_vector, SDF_Position, currentPos, World, camPos, p);
             //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
-            return col * textureColour;
+            return col /** textureColour*/;
         }
             
         if (total_distance > 1000.0f)
