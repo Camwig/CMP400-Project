@@ -37,6 +37,16 @@ float4 main(InputType input) : SV_TARGET
     
     float4 newCoords = float4((2.0 * xc / Resoloution.x - 1.0f) /** CameraForwardDirection.x*/, (-2.0 * yc / Resoloution.y + 1.0f), 1.0f, 0.0f);
     
+    //float xcoord = newCoords.x / Projection[0][0];
+    //float ycoord = newCoords.y / Projection[1][1];
+    
+    //float4 v = float4(xcoord, ycoord, 1, 0);
+    //float3 viewVector = normalize(mul(v, View));
+    
+    //viewVector = normalize(mul(viewVector, World));
+    
+    //float3 currentPos = camPos * viewVector; /*CameraForwardDirection*/
+    
     //float3 xyz = (newCoords.xy, 0);
     
     float n = color2(float3(newCoords.x,newCoords.y,newCoords.z));
