@@ -119,7 +119,7 @@ float4 main(InputType input) : SV_TARGET
         
         //float3 value = currentPos - 25*(round(currentPos/25.0f));
         
-        //float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
+        float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
         
         //float distance_to_currentPos2 = distance_from_sphere(currentPos, EndPoint, 1.0f);
         
@@ -134,7 +134,7 @@ float4 main(InputType input) : SV_TARGET
         
         //float distance_to_currentPos = distance_from_box(currentPos, float3(0.3f, 0.3f, 1.0f));
         
-        float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f));
+        //float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f));
         
         //float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f,10.0f, 0.0f), float3(10.0f, 10.0f, 0.0f), float3(10.0f, 0.0f, 0.0f));
         
@@ -182,7 +182,7 @@ float4 main(InputType input) : SV_TARGET
             //SDF_Position -= (n * 0.5f);
             
             float4 col = float4(1.0f, 0.5f, 0.5f, 1.0f);
-            float4 col2 = phongIllumination(shininess, viewVector, SDF_Position, currentPos, World, camPos, new_vector, noise);
+            float4 col2 = phongIllumination(shininess, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, World, camPos, new_vector, noise);
             col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             return col /** textureColour*/;
         }
