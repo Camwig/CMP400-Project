@@ -55,10 +55,10 @@ OutputType main(InputType input)
     float3 Input = float3(input.normal.x * multiple, input.normal.y * multiple, input.normal.z * multiple);
     n = color(Input);
     
-    if(n<= -1.0f)
-    {
-        n = 0.0;
-    }
+    //if(n<= -1.0f)
+    //{
+    //    n = 0.0;
+    //}
     
     
     //float3 n = texture0.SampleLevel(sampler0, input.tex, 0).x;
