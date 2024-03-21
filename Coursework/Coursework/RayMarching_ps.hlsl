@@ -38,6 +38,8 @@ struct InputType
 
 float4 main(InputType input) : SV_TARGET
 {
+    //bool UpdatePerlin = true;
+    
     
     float3 camPos = CameraOrigin;
     
@@ -63,7 +65,7 @@ float4 main(InputType input) : SV_TARGET
     
     viewVector = normalize(mul(viewVector,World));
     
-    float shininess = 10.0f;
+    float shininess = 20.0f;
     
     bool Perlin = false;
 
@@ -119,7 +121,8 @@ float4 main(InputType input) : SV_TARGET
         
         //float3 value = currentPos - 25*(round(currentPos/25.0f));
         
-        float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
+        //float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
+        //UpdatePerlin = false;
         
         //float distance_to_currentPos2 = distance_from_sphere(currentPos, EndPoint, 1.0f);
         
@@ -146,16 +149,16 @@ float4 main(InputType input) : SV_TARGET
 
         //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z, height.r);
         
-        float multiple = 0.25f;
-        float3 Input = float3(currentPos.x * multiple, currentPos.y * multiple, currentPos.z * multiple);
-        float n = color2(Input);
+        //float multiple = 0.25f;
+        //float3 Input = float3(currentPos.x * multiple, currentPos.y * multiple, currentPos.z * multiple);
+        //float n = color2(Input);
         
-        if (n < 0.0f)
-        {
-            n = 0.001f;
-        }
+        //if (n < 0.0f)
+        //{
+        //    n = 0.001f;
+        //}
         
-        float noise = n * 0.25f;
+        float noise = /*n*/1 * 0.25f;
         
         //distance_to_currentPos -= noise;
         
@@ -170,6 +173,8 @@ float4 main(InputType input) : SV_TARGET
         //return float4(Result.x, Result.y, Result.z, 1.0f);
         
         //float distance_to_currentPos2 = distance_from_Line(currentPos, float3(camPos.x,camPos.y,camPos.z + 1.0f), EndPoint, 0.1f);
+        
+        float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
             
         if (distance_to_currentPos < 0.01f)
         {
@@ -182,7 +187,7 @@ float4 main(InputType input) : SV_TARGET
             //SDF_Position -= (n * 0.5f);
             
             float4 col = float4(1.0f, 0.5f, 0.5f, 1.0f);
-            float4 col2 = phongIllumination(shininess, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, World, camPos, new_vector, noise);
+            float4 col2 = phongIllumination(shininess, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, World, camPos, new_vector);
             col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             return col /** textureColour*/;
         }
@@ -197,7 +202,7 @@ float4 main(InputType input) : SV_TARGET
     }
     
     //float4 col = float4(viewVector.x, viewVector.y, viewVector.z, 1.0f);
-    float4 col = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 col = float4(0.39f, 0.58f, 0.92f, 1.0f);
     return col;
     
     /*

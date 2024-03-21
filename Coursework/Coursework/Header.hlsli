@@ -62,36 +62,19 @@ float distance_from_sphere(float3 p, float3 c, float r)
     return answer;
 }
 
-float Random_Sphere(float3 p, float3 c, float r,float x,float y,float z,float height)
+float Random_Sphere(float3 p, float3 c, float r)
 {   
     float answer = Distance_between_3Dpoints_2_(p, c);
     answer = answer - r;
     
-    //float n = 0.0f;
+    float n = 0.0f;
     
-    //float multiple = 0.25f;
-    //float3 Input = float3(x * multiple, y * multiple, z * multiple);
-    //n = color2(Input);
+
+    float multiple = 0.25f;
+    float3 Input = float3(p.x * multiple, p.y * multiple, p.z * multiple);
+    n = color2(Input);
         
-    //if (n < 0.0f)
-    //{
-    //    n = 0.001f;
-    //}
-        
-    //answer -= (n * 0.5);
-    
-    //float d2 = (cos(5 * p.x) * cos(5 * p.y) * cos(5 * p.z));
-    
-    //answer = /*answer +*/ noise(double(x * 0.053f), double(y * 0.053f), double(z * 0.053f));
-    //answer -= color(float3(x,y,z));
-    
-    //if(!Perlin)
-    //{
-    //    float3 xyz = float3(float2(x, y), -sqrt(answer));
-    //    float n = color(xyz * 4.0f);
-    //    Result = mix3(0.0f, 0.5 + 0.5 * n, smoothstep(0.0, 0.003, answer)) * float3(1, 1, 1);
-    //    Perlin = true;
-    //}
+    answer -= (n * 0.5);
     
     return answer /** Result*/;
 }
@@ -236,14 +219,25 @@ float4 calcAttenuation(float distance, float constantfactor, float linearFactor,
 
 float3 estimateNormal(float3 p, float4x4 World)
 {
+
     
     float3 Final_Normal = (float3(
-    distance_from_sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x - 0.002f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
-    distance_from_sphere(float3(p.x, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
-    distance_from_sphere(float3(p.x, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f)
+    Random_Sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - Random_Sphere(float3(p.x - 0.002f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    Random_Sphere(float3(p.x, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - Random_Sphere(float3(p.x, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    Random_Sphere(float3(p.x, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f) - Random_Sphere(float3(p.x, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f)
     ));
     Final_Normal = mul(Final_Normal, World);
     return normalize(Final_Normal);
+    
+    
+    
+    //float3 Final_Normal = (float3(
+    //distance_from_sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x - 0.002f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    //distance_from_sphere(float3(p.x, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    //distance_from_sphere(float3(p.x, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f) - distance_from_sphere(float3(p.x, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f)
+    //));
+    //Final_Normal = mul(Final_Normal, World);
+    //return normalize(Final_Normal);
     
     //float Epsilon = 0.002f;
     //float3 Final_Normal = (float3(
@@ -266,7 +260,7 @@ float3 estimateNormal(float3 p, float4x4 World)
     
 }
 
-float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float4x4 World, float3 Campos, float3 Test,float noise)
+float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float4x4 World, float3 Campos, float3 Test)
 {
     float4 ambientLight = float4(0.5, 0.5, 0.5, 1.0f);
     float4 colour = float4(0.0f, 0.0f, 0.0f,0.0f);
@@ -276,7 +270,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float4 Light1Pos = float4(0.0f, 1.0f, 0.6f, 1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    float4 Light1Pos = float4(0.0f, 3.0f, 0.6f, 1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     //float4 Light1Pos = float4(3.0f, 5.0f, 5.0f, 1.0f);
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
@@ -285,7 +279,11 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     //Do this without camera matrix applied
     
     //It has to be this but I have no idea where 
-    float3 Result_pos = mul(p, World);
+    
+    //Use position for shapes that are not spheres or at least quads
+    //Spheres use their origin coordinates
+    
+    float3 Result_pos = mul(Position, World);
     
     //Somewhere the camera is being multpiled onto the light vector and I cannot tell you where
     
@@ -309,7 +307,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     light1Vector = normalize(light1Vector);
     
-    colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, float4(1.0f, 1.0f, 1.0f, 0.0f), Light1Pos);
+    colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, float4(0.0f, 1.0f, 0.0f, 0.0f), Light1Pos);
     
     colour += calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
     
