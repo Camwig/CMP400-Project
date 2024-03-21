@@ -1,6 +1,8 @@
 // texture vertex shader
 // Basic shader for rendering textured geometry
 
+#include "Perlin_noise.hlsli"
+
 Texture2D texture0 : register(t0);
 SamplerState sampler0 : register(s0);
 
@@ -41,7 +43,16 @@ OutputType main(InputType input)
 }*/
     
     float3 height = texture0.SampleLevel(sampler0, input.tex, 0).x;
-    input.position.y += height.r * 30.f;
+    input.position.xyz += height * 1.f;
+    
+    //float n = 0.0f;
+    
+
+    //float multiple = 0.25f;
+    //float3 Input = float3(input.position.x * multiple, input.position.y * multiple, input.position.z * multiple);
+    //n = color(Input);
+    
+    //input.position += n * 0.25;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
     output.position = mul(input.position, worldMatrix);

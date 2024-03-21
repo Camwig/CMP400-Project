@@ -56,7 +56,7 @@ private:
 
 	TDRenderTarget * TD_Text;
 
-	//SphereMesh* mesh;
+	SphereMesh* mesh;
 	PlaneMesh* plane;
 	
 
