@@ -93,7 +93,7 @@ float Random_Sphere(float3 p, float3 c, float r)
     
     float n = 0.0f;
     
-    float multiple = 0.25f;
+    float multiple = 0.5f;
     float3 Input = float3(p.x * multiple, p.y * multiple, p.z * multiple);
     n = color2(Input);
     
@@ -103,7 +103,7 @@ float Random_Sphere(float3 p, float3 c, float r)
     }
     */
         
-    answer -= (n * 0.5);
+    answer -= (n * 0.1);
     
     return answer /** Result*/;
 }
@@ -346,7 +346,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     light1Vector = normalize(light1Vector);
     
-    colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, float4(0.0f, 1.0f, 0.0f, 0.0f), Light1Pos);
+    colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, float4(0.5f, 0.5f, 0.5f, 0.5f), Light1Pos);
     
     colour += calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
     

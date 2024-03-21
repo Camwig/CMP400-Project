@@ -189,7 +189,7 @@ float4 main(InputType input) : SV_TARGET
             new_vector = float3(currentPos.x + distance_to_currentPos * viewVector.x, currentPos.y + distance_to_currentPos * viewVector.y, currentPos.z + distance_to_currentPos * viewVector.z);
             //SDF_Position -= (n * 0.5f);
             
-            float4 col = float4(1.0f, 0.5f, 0.5f, 1.0f);
+            float4 col = float4(0.3f, 0.15f, 0.0f, 0.0f);
             float4 col2 = phongIllumination(shininess, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, World, camPos, new_vector);
             col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             return col /** textureColour*/;
