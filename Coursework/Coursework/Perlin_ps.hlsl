@@ -43,6 +43,11 @@ float4 main(InputType input) : SV_TARGET
     
     //float3 Result = float3(0.5 + 0.5 * float3(n,n,n));
     
+    if(n<=0)
+    {
+        n = 0.001f;
+    }
+    
     return float4(n, n, n, 1.0f);
     
     //float3 xyz = float3(float2(x, y), -sqrt(answer));

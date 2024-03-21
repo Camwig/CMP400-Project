@@ -42,22 +42,28 @@ OutputType main(InputType input)
     return height.r * offset;
 }*/
     
-    float3 height = texture0.SampleLevel(sampler0, input.tex, 0).x;
-    input.position.xyz += height * 1.f;
-    
-    //float n = 0.0f;
-    
-
-    //float multiple = 0.25f;
-    //float3 Input = float3(input.position.x * multiple, input.position.y * multiple, input.position.z * multiple);
-    //n = color(Input);
-    
-    //input.position += n * 0.25;
+    //float3 height = texture0.SampleLevel(sampler0, input.tex, 0).x;
+    //input.position.xyz += height * 1.f;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
     output.position = mul(input.position, worldMatrix);
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
+    
+    float n = 0.0f;
+    float multiple = 0.25f;
+    float3 Input = float3(input.normal.x * multiple, input.normal.y * multiple, input.normal.z * multiple);
+    n = color(Input);
+    
+    if(n<= -1.0f)
+    {
+        n = 0.0;
+    }
+    
+    
+    //float3 n = texture0.SampleLevel(sampler0, input.tex, 0).x;
+    
+    output.position.xyz += (n * input.normal)*0.5f;
 
 	// Store the texture coordinates for the pixel shader.
     output.tex = input.tex;
