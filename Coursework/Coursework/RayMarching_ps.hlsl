@@ -65,23 +65,25 @@ float4 main(InputType input) : SV_TARGET
     
     viewVector = normalize(mul(viewVector,World));
     
+    Test = viewVector;
+    
     float shininess = 20.0f;
     
     bool Perlin = false;
 
     float3 Result = float3(0.0, 0.0, 0.0);
     
-    float height = PerlinTexture.Sample(SampleType, input.tex,0);
+    float4 height = PerlinTexture.Sample(SampleType, input.tex,0);
     
     
     //height = mul(height, World);
     
     //height = height * 1.0f;
     
-    if (height < 0.0f)
-    {
-        height = 0.001f;
-    }
+    //if (height < 0.0f)
+    //{
+    //    height = 0.001f;
+    //}
     
     float3 Startpoint = camPos /** viewVector*/;
     
@@ -89,7 +91,6 @@ float4 main(InputType input) : SV_TARGET
     
     
     //Need to figure out how to move from input.tex equivilent of the SDF shape
-    //float4 textureColour = PerlinTexture.Sample(SampleType, EndPoint.xy);
     
     float4 textureColour = PerlinTexture.Sample(SampleType, input.tex.xy);
     
@@ -158,7 +159,7 @@ float4 main(InputType input) : SV_TARGET
         //    n = 0.001f;
         //}
         
-        float noise = /*n*/1 * 0.25f;
+        //float noise = n * 0.25f;
         
         //distance_to_currentPos -= noise;
         
@@ -175,9 +176,11 @@ float4 main(InputType input) : SV_TARGET
         //float distance_to_currentPos2 = distance_from_Line(currentPos, float3(camPos.x,camPos.y,camPos.z + 1.0f), EndPoint, 0.1f);
         
         float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
+        //float distance_to_currentPos = New_Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
             
         if (distance_to_currentPos < 0.01f)
         {
+            
             /*new_vector = (camPos + total_distance) + distance_to_currentPos * viewVector*/;
             float3 p = currentPos + (distance_to_currentPos);
             

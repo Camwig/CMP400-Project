@@ -62,17 +62,46 @@ float distance_from_sphere(float3 p, float3 c, float r)
     return answer;
 }
 
+float New_Random_Sphere(float3 p, float3 c, float r)
+{
+    float answer = Distance_between_3Dpoints_2_(p, c);
+    answer = answer - r;
+    
+    if (answer < 1.0f)
+    {
+        float multiple = 0.5f;
+        float3 Input = float3(p.x * multiple, p.y * multiple, p.z * multiple);
+        float n = color2(Input);
+        
+        //if (n < 0.0f)
+        //{
+        //    n = 0.001f;
+        //}
+        
+        float noise = n * 0.1f;
+        
+        answer -= noise;
+    }
+    
+    return answer /** Result*/;
+}
+
 float Random_Sphere(float3 p, float3 c, float r)
-{   
+{
     float answer = Distance_between_3Dpoints_2_(p, c);
     answer = answer - r;
     
     float n = 0.0f;
     
-
     float multiple = 0.25f;
     float3 Input = float3(p.x * multiple, p.y * multiple, p.z * multiple);
     n = color2(Input);
+    
+    /*  if (n < 0.0f)
+    {
+        n = 0.001f;
+    }
+    */
         
     answer -= (n * 0.5);
     
@@ -219,7 +248,17 @@ float4 calcAttenuation(float distance, float constantfactor, float linearFactor,
 
 float3 estimateNormal(float3 p, float4x4 World)
 {
-
+    
+    
+    //float3 Final_Normal = (float3(
+    //New_Random_Sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - New_Random_Sphere(float3(p.x - 0.002f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    //New_Random_Sphere(float3(p.x, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - New_Random_Sphere(float3(p.x, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    //New_Random_Sphere(float3(p.x, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f) - New_Random_Sphere(float3(p.x, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f)
+    //));
+    //Final_Normal = mul(Final_Normal, World);
+    //return normalize(Final_Normal);
+    
+    
     
     float3 Final_Normal = (float3(
     Random_Sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - Random_Sphere(float3(p.x - 0.002f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),

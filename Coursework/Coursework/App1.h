@@ -69,6 +69,8 @@ private:
 	float sy;
 
 	bool started = false;
+
+	float applied_noise=0.0f;
 };
 
 #endif

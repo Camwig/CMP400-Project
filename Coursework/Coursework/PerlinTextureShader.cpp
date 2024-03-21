@@ -23,6 +23,12 @@ PerlinTextureShader::~PerlinTextureShader()
 		matrixBuffer = 0;
 	}
 
+	if (cameraBuffer)
+	{
+		cameraBuffer->Release();
+		cameraBuffer = 0;
+	}
+
 	if (screenSizeBuffer)
 	{
 		screenSizeBuffer->Release();
@@ -44,6 +50,7 @@ PerlinTextureShader::~PerlinTextureShader()
 void PerlinTextureShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilename)
 {
 	D3D11_BUFFER_DESC matrixBufferDesc;
+	D3D11_BUFFER_DESC cameraBufferDesc;
 	D3D11_SAMPLER_DESC samplerDesc;
 	D3D11_BUFFER_DESC screenSizeBufferDesc;
 
@@ -71,6 +78,14 @@ void PerlinTextureShader::initShader(const wchar_t* vsFilename, const wchar_t* p
 	screenSizeBufferDesc.StructureByteStride = 0;
 	renderer->CreateBuffer(&screenSizeBufferDesc, NULL, &screenSizeBuffer);
 
+	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	cameraBufferDesc.ByteWidth = sizeof(MatrixBufferType);
+	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cameraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cameraBufferDesc.MiscFlags = 0;
+	cameraBufferDesc.StructureByteStride = 0;
+	renderer->CreateBuffer(&cameraBufferDesc, NULL, &cameraBuffer);
+
 	 //Create a texture sampler state description.
 	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -88,13 +103,15 @@ void PerlinTextureShader::initShader(const wchar_t* vsFilename, const wchar_t* p
 }
 
 
-void PerlinTextureShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, float height, float width)
+void PerlinTextureShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, float height, float width, XMFLOAT3 cameraPos, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	XMMATRIX tworld, tview, tproj;
 	ScreenSizeBuffer* screen_;
+
+	CameraBuffer* camPtr;
 
 	// Transpose the matrices to prepare them for the shader.
 	tworld = XMMatrixTranspose(worldMatrix);
@@ -110,14 +127,26 @@ void PerlinTextureShader::setShaderParameters(ID3D11DeviceContext* deviceContext
 	deviceContext->Unmap(matrixBuffer, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
 
+	deviceContext->Map(cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	camPtr = (CameraBuffer*)mappedResource.pData;
+	camPtr->CameraOrigin = cameraPos;
+	camPtr->padding = 0.0f;
+	deviceContext->Unmap(cameraBuffer, 0);
+	deviceContext->PSSetConstantBuffers(0, 1, &cameraBuffer);
+
 	deviceContext->Map(screenSizeBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	screen_ = (ScreenSizeBuffer*)mappedResource.pData;
 	screen_->screenheight = height;
 	screen_->screenWidth = width;
 	screen_->padding = XMFLOAT3(1.0f, 1.f, 1.f);
 	screen_->padding2 = XMFLOAT3(1.0f, 1.f, 1.f);
+
+	screen_->Projection = projection2;
+	screen_->View = view2;
+	screen_->World = world2;
+
 	deviceContext->Unmap(screenSizeBuffer, 0);
-	deviceContext->PSSetConstantBuffers(0, 1, &screenSizeBuffer);
+	deviceContext->PSSetConstantBuffers(1, 1, &screenSizeBuffer);
 
 	// Set shader texture and sampler resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);
