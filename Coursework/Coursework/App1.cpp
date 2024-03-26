@@ -250,6 +250,8 @@ void App1::RenderedPass()
 	FinalTexture->setRenderTarget(renderer->getDeviceContext());
 	FinalTexture->clearRenderTarget(renderer->getDeviceContext(), 1.0f, 0.0f, 0.0f, 1.0f);
 
+	//Past here it seems to have issues with debugging
+
 	worldMatrix = renderer->getWorldMatrix();
 	baseViewMatrix = camera->getOrthoViewMatrix();
 	orthoMatrix = FinalTexture->getOrthoMatrix();

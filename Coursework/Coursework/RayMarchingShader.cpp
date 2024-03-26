@@ -52,7 +52,7 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 	D3D11_SAMPLER_DESC samplerDesc;
 
 	// Load (+ compile) shader files
-	loadColourVertexShader(vsFilename);
+	loadVertexShader(vsFilename);
 	loadPixelShader(psFilename);
 
 	// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
@@ -83,7 +83,7 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 	renderer->CreateSamplerState(&samplerDesc, &sampleState);
 
 	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	cameraBufferDesc.ByteWidth = sizeof(MatrixBufferType);
+	cameraBufferDesc.ByteWidth = sizeof(CameraBufferType);
 	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cameraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cameraBufferDesc.MiscFlags = 0;
@@ -108,7 +108,7 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	MatrixBufferType* dataPtr;
 	XMMATRIX tworld, tview, tproj;
 
-	CameraBuffer* camPtr;
+	CameraBufferType* camPtr;
 	ScreenSizeBuffer* screen_;
 
 	// Transpose the matrices to prepare them for the shader.
@@ -127,7 +127,7 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
 
 	deviceContext->Map(cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	camPtr = (CameraBuffer*)mappedResource.pData;
+	camPtr = (CameraBufferType*)mappedResource.pData;
 	camPtr->CameraOrigin = cameraPos;
 	camPtr->CameraForwardDirection = camForwardVec;
 	camPtr->distance_from_shape = distance_from_shap;

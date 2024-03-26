@@ -67,7 +67,7 @@ float4 main(InputType input) : SV_TARGET
     
     Test = viewVector;
     
-    float shininess = 20.0f;
+    float shininess = 10.0f;
     
     bool Perlin = false;
 

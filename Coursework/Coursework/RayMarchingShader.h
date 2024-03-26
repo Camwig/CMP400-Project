@@ -10,7 +10,7 @@ class RayMarchingShader: public BaseShader
 private:
 
 	//Will need a struct to be able to pass the data of the shape
-	struct CameraBuffer
+	struct CameraBufferType
 	{
 		XMFLOAT3 CameraOrigin;
 		float padding;
