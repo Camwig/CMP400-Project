@@ -139,7 +139,7 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	deviceContext->Unmap(cameraBuffer, 0);
 	deviceContext->PSSetConstantBuffers(0, 1, &cameraBuffer);
 
-	deviceContext->Unmap(cameraBuffer, 0);
+	//deviceContext->Unmap(cameraBuffer, 0);
 	deviceContext->VSSetConstantBuffers(1, 1, &cameraBuffer);
 
 	deviceContext->Map(screenSizeBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
