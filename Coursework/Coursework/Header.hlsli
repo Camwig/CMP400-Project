@@ -62,23 +62,54 @@ float distance_from_sphere(float3 p, float3 c, float r)
     return answer;
 }
 
-float New_Random_Sphere(float3 p, float3 c, float r)
+//Hurst value is clamped between 0 and 1
+float New_Random_Sphere(float3 p, float3 c, float r,int Octaves,float Hurst)
 {
     float answer = Distance_between_3Dpoints_2_(p, c);
     answer = answer - r;
     
-    if (answer < 1.0f)
+    float discrpency = 1.0f;
+    if(r < discrpency)
+        discrpency = r/2;
+    if(r >= discrpency)
+        discrpency = 0.5f;
+    
+
+    
+    if (answer <= discrpency)
     {
-        float multiple = 0.5f;
-        float3 Input = float3(p.x * multiple, p.y * multiple, p.z * multiple);
-        float n = color2(Input);
+        float Frequency = 0.5f;
+        float Amplitude = 0.1f;
+        float3 Input = float3(0,0,0);
+        float n = 0.0f; //color2(Input);
         
         //if (n < 0.0f)
         //{
         //    n = 0.001f;
         //}
         
-        float noise = n * 0.1f;
+        float noise = 0.0f;
+        
+        //if (Octaves <= 1)
+        //{
+        //    Frequency = 0.5f;
+        //    Input = float3(p.x * Frequency, p.y * Frequency, p.z * Frequency);
+        //    n = color2(Input);
+        //    noise = n * Amplitude;
+        //}
+        //else
+        //{
+            for (int i = 1; i <= Octaves; i++)
+            {
+                Frequency = (i * i)/10.f;
+                Input = float3(p.x * Frequency, p.y * Frequency, p.z * Frequency);
+                n = color2(Input);
+                Amplitude = pow(Frequency, Hurst);
+                noise += n * 0.1f/*(Amplitude/10.f)*/;
+            }
+        //}
+        
+        
         
         answer -= noise;
     }
@@ -246,7 +277,7 @@ float4 calcAttenuation(float distance, float constantfactor, float linearFactor,
 
 //--------------------------------------------------------------------------------
 
-float3 estimateNormal(float3 p, float4x4 World)
+float3 estimateNormal(float3 p, float4x4 World, int Octave, float Hurst)
 {
     
     
@@ -260,10 +291,18 @@ float3 estimateNormal(float3 p, float4x4 World)
     
     
     
+    //float3 Final_Normal = (float3(
+    //Random_Sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - Random_Sphere(float3(p.x - 0.002f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    //Random_Sphere(float3(p.x, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - Random_Sphere(float3(p.x, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
+    //Random_Sphere(float3(p.x, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f) - Random_Sphere(float3(p.x, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f)
+    //));
+    //Final_Normal = mul(Final_Normal, World);
+    //return normalize(Final_Normal);
+    
     float3 Final_Normal = (float3(
-    Random_Sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - Random_Sphere(float3(p.x - 0.002f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
-    Random_Sphere(float3(p.x, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f) - Random_Sphere(float3(p.x, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 1.0f),
-    Random_Sphere(float3(p.x, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f) - Random_Sphere(float3(p.x, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.6f), 1.0f)
+    New_Random_Sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 10.0f, Octave, Hurst) - New_Random_Sphere(float3(p.x - 0.002f, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 10.0f, Octave, Hurst),
+    New_Random_Sphere(float3(p.x, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 10.0f, Octave, Hurst) - New_Random_Sphere(float3(p.x, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 10.0f, Octave, Hurst),
+    New_Random_Sphere(float3(p.x, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.6f), 10.0f, Octave, Hurst) - New_Random_Sphere(float3(p.x, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.6f), 10.0f, Octave, Hurst)
     ));
     Final_Normal = mul(Final_Normal, World);
     return normalize(Final_Normal);
@@ -299,7 +338,7 @@ float3 estimateNormal(float3 p, float4x4 World)
     
 }
 
-float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float4x4 World, float3 Campos, float3 Test)
+float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float4x4 World, int Octave,float Hurst)
 {
     float4 ambientLight = float4(0.5, 0.5, 0.5, 1.0f);
     float4 colour = float4(0.0f, 0.0f, 0.0f,0.0f);
@@ -319,7 +358,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     //It has to be this but I have no idea where 
     
-    //Use position for shapes that are not spheres or at least quads
+    //Use current position for shapes that are not spheres or at least quads
     //Spheres use their origin coordinates
     
     float3 Result_pos = mul(Position, World);
@@ -333,7 +372,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     float3 light1Direction = (float3(0.0f, -1.0f, 0.0f));
    
-    float3 Normal = estimateNormal(p,World); /*float3(0.0f, 0.0f, 1.0f);*/
+    float3 Normal = estimateNormal(p,World,Octave,Hurst); /*float3(0.0f, 0.0f, 1.0f);*/
     
     //return float4(Normal.x,Normal.y,Normal.z,1.0f);
     

@@ -175,8 +175,10 @@ float4 main(InputType input) : SV_TARGET
         
         //float distance_to_currentPos2 = distance_from_Line(currentPos, float3(camPos.x,camPos.y,camPos.z + 1.0f), EndPoint, 0.1f);
         
-        float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
-        //float distance_to_currentPos = New_Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
+        //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
+        int Octave = 3;
+        float Hurst = 0.5f;
+        float distance_to_currentPos = New_Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 10.0f, Octave, Hurst);
             
         if (distance_to_currentPos < 0.01f)
         {
@@ -189,8 +191,8 @@ float4 main(InputType input) : SV_TARGET
             new_vector = float3(currentPos.x + distance_to_currentPos * viewVector.x, currentPos.y + distance_to_currentPos * viewVector.y, currentPos.z + distance_to_currentPos * viewVector.z);
             //SDF_Position -= (n * 0.5f);
             
-            float4 col = float4(0.3f, 0.15f, 0.0f, 0.0f);
-            float4 col2 = phongIllumination(shininess, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, World, camPos, new_vector);
+            float4 col = float4(0.00f, 0.40f, 0.07f, 0.0f);
+            float4 col2 = phongIllumination(shininess, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, World, Octave, Hurst);
             col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             return col /** textureColour*/;
         }
