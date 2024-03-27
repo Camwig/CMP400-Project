@@ -176,26 +176,55 @@ float4 main(InputType input) : SV_TARGET
         //float distance_to_currentPos2 = distance_from_Line(currentPos, float3(camPos.x,camPos.y,camPos.z + 1.0f), EndPoint, 0.1f);
         
         //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
-        int Octave = 3;
+        int Octave = 5;
         float Hurst = 0.5f;
-        float distance_to_currentPos = New_Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 10.0f, Octave, Hurst);
+        float distance_to_currentPos = New_Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 0.05f, Octave, Hurst);
+        
+        //float3 d = Distance_between_3DPoints_3_(currentPos, float3(0, 0, 0.6f));
+        
+        //float3 New_p = currentPos + d * viewVector;
+       
+        //distance_to_currentPos = Apply_Noise(currentPos, distance_to_currentPos, Octave, Hurst);
+        
+        //if (distance_to_currentPos < 0.25f)
+        //{
+        distance_to_currentPos = Apply_Noise(currentPos, distance_to_currentPos, Octave, Hurst);
+            if (distance_to_currentPos < 0.01f)
+            {
             
-        if (distance_to_currentPos < 0.01f)
-        {
             
             /*new_vector = (camPos + total_distance) + distance_to_currentPos * viewVector*/;
-            float3 p = currentPos + (distance_to_currentPos);
+                float3 p = currentPos + (distance_to_currentPos);
             
-            float3 SDF_Position = /*currentPos * distance_to_currentPos;*/ float3(5.0f, 0.0f, 5.0f);
+                float3 SDF_Position = /*currentPos * distance_to_currentPos;*/float3(5.0f, 0.0f, 5.0f);
             
-            new_vector = float3(currentPos.x + distance_to_currentPos * viewVector.x, currentPos.y + distance_to_currentPos * viewVector.y, currentPos.z + distance_to_currentPos * viewVector.z);
+                new_vector = float3(currentPos.x + distance_to_currentPos * viewVector.x, currentPos.y + distance_to_currentPos * viewVector.y, currentPos.z + distance_to_currentPos * viewVector.z);
             //SDF_Position -= (n * 0.5f);
             
-            float4 col = float4(0.00f, 0.40f, 0.07f, 0.0f);
+                float4 col = float4(0.00f, 0.40f, 0.07f, 0.0f);
             float4 col2 = phongIllumination(shininess, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, World, Octave, Hurst);
-            col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
-            return col /** textureColour*/;
-        }
+                col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
+                return col /** textureColour*/;
+            }
+        //}
+        
+        //if (distance_to_currentPos < 0.01f)
+        //{
+            
+            
+        //    /*new_vector = (camPos + total_distance) + distance_to_currentPos * viewVector*/;
+        //    float3 p = currentPos + (distance_to_currentPos);
+            
+        //    float3 SDF_Position = /*currentPos * distance_to_currentPos;*/ float3(5.0f, 0.0f, 5.0f);
+            
+        //    new_vector = float3(currentPos.x + distance_to_currentPos * viewVector.x, currentPos.y + distance_to_currentPos * viewVector.y, currentPos.z + distance_to_currentPos * viewVector.z);
+        //    //SDF_Position -= (n * 0.5f);
+            
+        //    float4 col = float4(0.00f, 0.40f, 0.07f, 0.0f);
+        //    float4 col2 = phongIllumination(shininess, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, World, Octave, Hurst);
+        //    col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
+        //    return col /** textureColour*/;
+        //}
             
         if (total_distance > 1000.0f)
         {

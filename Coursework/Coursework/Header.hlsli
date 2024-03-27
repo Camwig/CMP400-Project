@@ -43,6 +43,22 @@ float Distance_between_3Dpoints_2_(float3 b, float3 a)
     return d;
 }
 
+float3 Distance_between_3DPoints_3_(float3 b, float3 a)
+{
+    return distance(b, a);
+    
+    float x1 = b.x - a.x;
+    float y1 = b.y - a.y;
+    float z1 = b.z - a.z;
+    
+    float x = (pow((x1), 2.0));
+    float y = (pow((y1), 2.0));
+    float z = (pow((z1), 2.0));
+    
+    float3 d = float3(x,y,z);
+    return d;
+}
+
 
 
 float distance_from_sphere(float3 p, float3 c, float r)
@@ -68,53 +84,57 @@ float New_Random_Sphere(float3 p, float3 c, float r,int Octaves,float Hurst)
     float answer = Distance_between_3Dpoints_2_(p, c);
     answer = answer - r;
     
-    float discrpency = 1.0f;
-    if(r < discrpency)
-        discrpency = r/2;
-    if(r >= discrpency)
-        discrpency = 0.5f;
-    
-
-    
-    if (answer <= discrpency)
-    {
-        float Frequency = 0.5f;
-        float Amplitude = 0.1f;
-        float3 Input = float3(0,0,0);
-        float n = 0.0f; //color2(Input);
+    //float Frequency = 0.5f;
+    //float Amplitude = 0.1f;
+    //float3 Input = float3(0, 0, 0);
+    //float n = 0.0f; //color2(Input);
         
-        //if (n < 0.0f)
-        //{
-        //    n = 0.001f;
-        //}
+    //float noise = 0.0f;
         
-        float noise = 0.0f;
-        
-        //if (Octaves <= 1)
-        //{
-        //    Frequency = 0.5f;
-        //    Input = float3(p.x * Frequency, p.y * Frequency, p.z * Frequency);
-        //    n = color2(Input);
-        //    noise = n * Amplitude;
-        //}
-        //else
-        //{
-            for (int i = 1; i <= Octaves; i++)
-            {
-                Frequency = (i * i)/10.f;
-                Input = float3(p.x * Frequency, p.y * Frequency, p.z * Frequency);
-                n = color2(Input);
-                Amplitude = pow(Frequency, Hurst);
-                noise += n * 0.1f/*(Amplitude/10.f)*/;
-            }
-        //}
-        
-        
-        
-        answer -= noise;
-    }
+    //for (int i = 1; i <= Octaves; i++)
+    //{
+    //    //Should be passed in
+    //    Frequency = /*0.5f;*/(i * i) / 10.f;
+    //    Input = float3(p.x * Frequency, p.y * Frequency, p.z * Frequency);
+    //    n = color2(Input);
+    //    //Should be passed in
+    //    Amplitude = /*0.1f;*/pow(Frequency, Hurst);
+    //    if (i != 1)
+    //        Amplitude /= ((i) * (10 * i));
+    //    noise += n * Amplitude /*(Amplitude/10.f)*/;
+    //}
+    //answer -= noise;
     
     return answer /** Result*/;
+}
+
+float Apply_Noise(float3 p,float distance,int Octave,float Hurst)
+{
+    float Frequency = 0.5f;
+    float Amplitude = 0.1f;
+    float3 Input = float3(0, 0, 0);
+    float n = 0.0f; //color2(Input);
+        
+    float noise = 0.0f;
+    
+    //Use the position of sphere
+    //float3 d = Distance_between_3DPoints_3_(p, float3(0, 0, 0.6f));
+        
+    for (int i = 1; i <= Octave; i++)
+    {
+        //Should be passed in
+        Frequency = /*0.5f;*/ (i * i)/5.f;
+        Input = float3(p.x * Frequency, p.y * Frequency, p.z * Frequency);
+        n = color2(Input);
+        //Should be passed in
+        Amplitude = /*0.1f;*/ pow(Frequency, Hurst);
+        if(i != 1)
+            Amplitude /= ((i) * (9*i));
+        noise += n * Amplitude /*(Amplitude/10.f)*/;
+    }
+
+    float answer = distance - noise;
+    return answer;
 }
 
 float Random_Sphere(float3 p, float3 c, float r)
@@ -338,6 +358,35 @@ float3 estimateNormal(float3 p, float4x4 World, int Octave, float Hurst)
     
 }
 
+float3 estimateNormal_2(float3 p, float4x4 World, int Octave, float Hurst)
+{
+    float Input_11 = New_Random_Sphere(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 10.0f, Octave, Hurst);
+    Input_11 = Apply_Noise(float3(p.x + 0.002f /*0.00001f*/, p.y, p.z), Input_11, Octave, Hurst);
+    
+    float Input_12 = New_Random_Sphere(float3(p.x - 0.002f /*0.00001f*/, p.y, p.z), float3(0.0f, 0.0f, 0.6f), 10.0f, Octave, Hurst);
+    Input_12 = Apply_Noise(float3(p.x - 0.002f /*0.00001f*/, p.y, p.z), Input_12, Octave, Hurst);
+    
+    float Input_21 = New_Random_Sphere(float3(p.x, p.y + 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 10.0f, Octave, Hurst);
+    Input_21 = Apply_Noise(float3(p.x, p.y + 0.002f, p.z), Input_21, Octave, Hurst);
+    
+    float Input_22 = New_Random_Sphere(float3(p.x, p.y - 0.002f, p.z), float3(0.0f, 0.0f, 0.6f), 10.0f, Octave, Hurst);
+    Input_22 = Apply_Noise(float3(p.x, p.y - 0.002f, p.z), Input_22, Octave, Hurst);
+    
+    float Input_31 = New_Random_Sphere(float3(p.x, p.y, p.z + 0.002f), float3(0.0f, 0.0f, 0.6f), 10.0f, Octave, Hurst);
+    Input_31 = Apply_Noise(float3(p.x, p.y, p.z + 0.002f), Input_31, Octave, Hurst);
+    
+    float Input_32 = New_Random_Sphere(float3(p.x, p.y, p.z - 0.002f), float3(0.0f, 0.0f, 0.6f), 10.0f, Octave, Hurst);
+    Input_32 = Apply_Noise(float3(p.x, p.y, p.z - 0.002f), Input_32, Octave, Hurst);
+    
+    float3 Final_Normal = (float3(
+    Input_11 - Input_12,
+    Input_21 - Input_22,
+    Input_31 - Input_32
+    ));
+    Final_Normal = mul(Final_Normal, World);
+    return normalize(Final_Normal);
+}
+
 float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float4x4 World, int Octave,float Hurst)
 {
     float4 ambientLight = float4(0.5, 0.5, 0.5, 1.0f);
@@ -372,7 +421,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     float3 light1Direction = (float3(0.0f, -1.0f, 0.0f));
    
-    float3 Normal = estimateNormal(p,World,Octave,Hurst); /*float3(0.0f, 0.0f, 1.0f);*/
+    float3 Normal = estimateNormal_2(p,World,Octave,Hurst); /*float3(0.0f, 0.0f, 1.0f);*/
     
     //return float4(Normal.x,Normal.y,Normal.z,1.0f);
     
