@@ -59,11 +59,13 @@ float4 main(InputType input) : SV_TARGET
     
     //float3 xyz = (newCoords.xy, 0);
     
-    float n = color2(float3(currentPos.x * 0.5, currentPos.y * 0.5, currentPos.z * 0.5));
+    //float n = color2(float3(currentPos.x * 0.5, currentPos.y * 0.5, currentPos.z * 0.5));
+
+    float3 n = cnoise(10.5 * (currentPos*0.5f));
     
     //float3 Result = float3(0.5 + 0.5 * float3(n,n,n));
     
-    return float4(n, n, n, 1.0f);
+    return float4(n.x, n.y, n.z, 1.0f);
     
     //float3 xyz = float3(float2(x, y), -sqrt(answer));
     //float n = color(xyz * 4.0f);

@@ -13,3 +13,7 @@
 *	When looking at the sphere each point for the camera x,y and z has a coordinate
 	that corelates to the noise being broadcast onto the sphere. How do we get
 	this to happen less often?
+
+*	What about making use of something like a 3D sin wave instead meaning that for the same
+	position it will always be the same. But how would we select the correct spot.
+	Have a look at last years coursework maybe it has something
