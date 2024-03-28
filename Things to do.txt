@@ -9,6 +9,9 @@
 
 -Fix the vertex based perlin stuff and set that Fractional Brownain motion
 
+-Try and add smoothing to both if there is time! Added smoothing to vertex will try on
+ distance fields now. Nope computer not like
+
 -POSSIBLE EXTRA after improving general performance as much as I can could look into
  making use of the compute shader to try and improve efficecny by making use of group
  shared memeory.
