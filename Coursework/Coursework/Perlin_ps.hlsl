@@ -30,23 +30,23 @@ float4 main(InputType input) : SV_TARGET
 
     //Need to do what I did for the ray marching shader so it should get in the newcoords for this to generate properly
     
-    float2 Resoloution = float2(screenWidth, screenheight);
+    //float2 Resoloution = float2(screenWidth, screenheight);
     
-    float xc = input.tex.x * screenWidth;
-    float yc = input.tex.y * screenheight;
+    //float xc = input.tex.x * screenWidth;
+    //float yc = input.tex.y * screenheight;
     
-    float4 newCoords = float4((2.0 * xc / Resoloution.x - 1.0f) /** CameraForwardDirection.x*/, (-2.0 * yc / Resoloution.y + 1.0f), 1.0f, 0.0f);
+    //float4 newCoords = float4((2.0 * xc / Resoloution.x - 1.0f) /** CameraForwardDirection.x*/, (-2.0 * yc / Resoloution.y + 1.0f), 1.0f, 0.0f);
     
     //float3 xyz = (newCoords.xy, 0);
     
-    float n = color(float3(newCoords.x,newCoords.y,newCoords.z));
+    float n = color(float3(input.position.x, input.position.y, input.position.z));
     
     //float3 Result = float3(0.5 + 0.5 * float3(n,n,n));
     
-    if(n<=0)
-    {
-        n = 0.001f;
-    }
+    //if(n<=0)
+    //{
+    //    n = 0.001f;
+    //}
     
     return float4(n, n, n, 1.0f);
     

@@ -3,7 +3,8 @@
 
 #define NUM_LIGHTS 1
 
-#include "Perlin_noise.hlsli"
+//#include "Perlin_noise.hlsli"
+#include "Vertex_manipulation_header_.hlsli"
 
 Texture2D texture0 : register(t0);
 SamplerState sampler0 : register(s0);
@@ -46,6 +47,58 @@ struct OutputType
     float3 viewVector : TEXCOORD2;
     float4 lightViewPos : TEXCOORD3;
 };
+
+//void SmoothNoise()
+//{
+//     temp_map = new float [resolution*resolution];
+//	float temp;
+//	for (int j = 0; j < resolution; j++) {
+//		for (int i = 0; i < resolution; i++) {
+//			temp = 0.0f;
+//			temp += heightMap[(j * resolution) + i];
+//			if (j > 0)
+//			{
+//				temp += heightMap[((j - 1) * resolution) + i];
+//			}
+//			if (j < resolution-1)
+//			{
+//				temp += heightMap[((j + 1) * resolution) + i];
+//			}
+//			if (i < resolution-1)
+//			{
+//				temp += heightMap[(j * resolution) + (i + 1)];
+//			}
+//			if (i > 0)
+//			{
+//				temp += heightMap[(j * resolution) + (i - 1)];
+//			}
+//			if (i > 0 && j < resolution-1)
+//			{
+//				temp += heightMap[((j + 1) * resolution) + (i - 1)];
+//			}
+//			if (j > 0 && i < resolution-1)
+//			{
+//				temp += heightMap[((j - 1) * resolution) + (i + 1)];
+//			}
+//			if (i > 0 && j > 0)
+//			{
+//				temp += heightMap[((j - 1) * resolution) + (i - 1)];
+//			}
+//			if (i < resolution-1 && j < resolution-1)
+//			{
+//				temp += heightMap[((j + 1) * resolution) + (i + 1)];
+//			}
+//			temp = temp / 9;
+//			temp_map[(j * resolution) + i] = temp;
+//		}
+//	}
+
+//	for (int j = 0; j < (resolution); j++) {
+//		for (int i = 0; i < (resolution); i++) {
+//			heightMap[(j * resolution) + i] = temp_map[(j * resolution) + i];
+//		}
+//	}
+//}
 
 OutputType main(InputType input)
 {
@@ -98,20 +151,26 @@ OutputType main(InputType input)
     //Use the position of sphere
     //float3 d = Distance_between_3DPoints_3_(p, float3(0, 0, 0.6f));
         
-    for (int i = 1; i <= Ocatves; i++)
-    {
+    //for (int i = 1; i <= Ocatves; i++)
+    //{
         //Should be passed in
         Frequency = 0.5f;/*(i * i);*/
+        //Frequency = (i * i);
         Input = float3(input.position.x * Frequency, input.position.y * Frequency, input.position.z * Frequency);
         n = color(Input);
+        //n = Manipulate_shape_based_on_noise(texture0,sampler0,input.tex);
         //Should be passed in
-        Amplitude = 0.1f;/*pow(Frequency, -Hurst);*/
+        Amplitude = 1.1f;/*pow(Frequency, -Hurst);*/
+        //Amplitude = pow(Frequency, -Hurst);
         //if (i != 1)
         //    Amplitude /= ((i) * (9 * i));
         noise += n * Amplitude /*(Amplitude/10.f)*/;
-    }
+    //}
     
-    input.position.xyz += (noise * input.normal);
+    noise = Smooth_Noise(Input,2);
+    
+    //noise = noise/Ocatves;
+    input.position.xyz += (noise * input.normal) * 0.5f;
     
     	// Calculate the position of the vertex against the world, view, and projection matrices.
     output.position = mul(input.position, worldMatrix);

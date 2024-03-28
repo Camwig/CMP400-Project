@@ -117,5 +117,8 @@
     <None Include="Perlin_noise.hlsli">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Vertex_manipulation_header_.hlsli">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

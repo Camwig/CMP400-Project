@@ -273,6 +273,7 @@
   <ItemGroup>
     <None Include="Header.hlsli" />
     <None Include="Perlin_noise.hlsli" />
+    <None Include="Vertex_manipulation_header_.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

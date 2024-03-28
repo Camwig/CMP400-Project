@@ -81,6 +81,8 @@ private:
 	bool VertexBased = false;
 
 	Light* light[NUM_LIGHTS];
+
+	//D3DMatr#
 };
 
 #endif
