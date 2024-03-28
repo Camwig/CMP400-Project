@@ -65,15 +65,15 @@ float4 main(InputType input) : SV_TARGET
     
     viewVector = normalize(mul(viewVector,World));
     
-    Test = viewVector;
+    //Test = viewVector;
     
     float shininess = 10.0f;
     
-    bool Perlin = false;
+    //bool Perlin = false;
 
-    float3 Result = float3(0.0, 0.0, 0.0);
+    //float3 Result = float3(0.0, 0.0, 0.0);
     
-    float4 height = PerlinTexture.Sample(SampleType, input.tex,0);
+    //float4 height = PerlinTexture.Sample(SampleType, input.tex,0);
     
     
     //height = mul(height, World);
@@ -85,21 +85,24 @@ float4 main(InputType input) : SV_TARGET
     //    height = 0.001f;
     //}
     
-    float3 Startpoint = camPos /** viewVector*/;
+    //float3 Startpoint = camPos /** viewVector*/;
     
-    float3 EndPoint = float3(Test.x - Startpoint.x, Test.y - Startpoint.y, Test.z - Startpoint.z);
+    //float3 EndPoint = float3(Test.x - Startpoint.x, Test.y - Startpoint.y, Test.z - Startpoint.z);
     
     
     //Need to figure out how to move from input.tex equivilent of the SDF shape
     
-    float4 textureColour = PerlinTexture.Sample(SampleType, input.tex.xy);
+    //float4 textureColour = PerlinTexture.Sample(SampleType, input.tex.xy);
     
     
     //EndPoint = mul(EndPoint, World);
     
-    float3 new_vector = float3(camPos.xyz - EndPoint.xyz);
+    //float3 new_vector = float3(camPos.xyz - EndPoint.xyz);
     
-    new_vector = normalize(new_vector);
+    //new_vector = normalize(new_vector);
+    
+    int Octave = 3;
+    float Hurst = 0.5f;
     
     //new_vector = viewVector;
     //return height * 30.0f;
@@ -176,11 +179,9 @@ float4 main(InputType input) : SV_TARGET
         //float distance_to_currentPos2 = distance_from_Line(currentPos, float3(camPos.x,camPos.y,camPos.z + 1.0f), EndPoint, 0.1f);
         
         //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
-        int Octave = 3;
-        float Hurst = 0.5f;
-        float distance_to_currentPos = New_Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 0.5f, Octave, Hurst);
+        float distance_to_currentPos = New_Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 2.5f, Octave, Hurst);
         
-        float3 d = Distance_between_3DPoints_3_(currentPos, float3(0, 0, 0.6f));
+        //float3 d = Distance_between_3DPoints_3_(currentPos, float3(0, 0, 0.6f));
         
         //float3 New_p = input.worldPosition.xyz;
         
@@ -204,7 +205,7 @@ float4 main(InputType input) : SV_TARGET
             
             float3 SDF_Position = /*currentPos * distance_to_currentPos;*/float3(5.0f, 0.0f, 5.0f);
             
-            new_vector = float3(currentPos.x + distance_to_currentPos * viewVector.x, currentPos.y + distance_to_currentPos * viewVector.y, currentPos.z + distance_to_currentPos * viewVector.z);
+            //new_vector = float3(currentPos.x + distance_to_currentPos * viewVector.x, currentPos.y + distance_to_currentPos * viewVector.y, currentPos.z + distance_to_currentPos * viewVector.z);
             //SDF_Position -= (n * 0.5f);
             
             float4 col = float4(0.00f, 0.40f, 0.07f, 0.0f);
