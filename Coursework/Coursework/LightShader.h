@@ -2,7 +2,7 @@
 
 #include "DXF.h"
 
-const int NUM_LIGHTS = 1;
+const int NUM_LIGHTS1 = 1;
 
 using namespace std;
 using namespace DirectX;
@@ -23,8 +23,8 @@ private:
 	struct LightBufferType
 	{
 		XMFLOAT4 ambient;
-		XMFLOAT4 diffuse[NUM_LIGHTS];
-		XMFLOAT4 position[NUM_LIGHTS];
+		XMFLOAT4 diffuse[NUM_LIGHTS1];
+		XMFLOAT4 position[NUM_LIGHTS1];
 		XMFLOAT4 direction;
 		float specularPower;
 		XMFLOAT3 padding;
@@ -32,8 +32,8 @@ private:
 
 	struct ExtraBufferType
 	{
-		XMMATRIX lightView[NUM_LIGHTS];
-		XMMATRIX lightProjection[NUM_LIGHTS];
+		XMMATRIX lightView[NUM_LIGHTS1];
+		XMMATRIX lightProjection[NUM_LIGHTS1];
 	};
 
 	struct CameraBufferType
@@ -46,7 +46,7 @@ public:
 	LightShader(ID3D11Device* device, HWND hwnd);
 	~LightShader();
 
-	void setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition);
+	void setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS1], XMFLOAT3 CameraPosition);
 
 private:
 	void initShader(const wchar_t* vs, const wchar_t* ps);
