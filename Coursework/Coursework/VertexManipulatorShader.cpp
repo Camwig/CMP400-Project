@@ -133,7 +133,7 @@ void VertexManipulatorShader::initShader(const wchar_t* vsFilename, const wchar_
 }
 
 
-void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition)
+void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition, float Ocatves, float Hurst)
 {
 	//HRESULT result;
 	//D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -195,6 +195,9 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	extra = (ExtraBufferType*)mappedResource.pData;
 	extra->lightView[0] = tLightViewMatrix1;
 	extra->lightProjection[0] = tLightProjectionMatrix1;
+	extra->Ocatves = Ocatves;
+	extra->Hurst = Hurst;
+	extra->padding = XMFLOAT2(0.0f,0.0f);
 	//dataPtr->lightView[1] = tLightViewMatrix2;
 	//dataPtr->lightProjection[1] = tLightProjectionMatrix2;
 	deviceContext->Unmap(extr_buffer, 0);

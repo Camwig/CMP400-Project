@@ -25,6 +25,9 @@ cbuffer ExtraBuffer : register(b2)
 {
     matrix lightViewMatrix[NUM_LIGHTS];
     matrix lightProjectionMatrix[NUM_LIGHTS];
+    float Ocatves;
+    float Hurst;
+    float2 padding2;
 }
 
 struct InputType
@@ -48,20 +51,67 @@ OutputType main(InputType input)
 {
     OutputType output;
     
-    float n = 0.0f;
-    float multiple = 0.25f;
-    float3 Input = float3(input.position.x * multiple, input.position.y * multiple, input.position.z * multiple);
-    n = color(Input);
+    //float n = 0.0f;
+    //float multiple = 0.25f;
+    //float3 Input = float3(input.position.x * multiple, input.position.y * multiple, input.position.z * multiple);
+    //n = color(Input);
     
     //if(n<= -1.0f)
     //{
     //    n = 0.0;
     //}
     
+    /*    float Frequency = 0.5f;
+    float Amplitude = 0.1f;
+    float3 Input = float3(0, 0, 0);
+    float n = 0.0f; //color2(Input);
+        
+    float noise = 0.0f;
+    
+    //Use the position of sphere
+    //float3 d = Distance_between_3DPoints_3_(p, float3(0, 0, 0.6f));
+        
+    for (int i = 1; i <= Octave; i++)
+    {
+        //Should be passed in
+        Frequency = /*0.5f;
+    (i * i) / 5.f;
+    Input = float3(p.x * Frequency, p.y * Frequency, p.z * Frequency);
+    n = color2(Input);
+        //Should be passed in
+    Amplitude = /*0.1f;/pow(Frequency, Hurst);
+    if (i != 1)
+        Amplitude /= ((i) * (9 * i));
+    noise += n * Amplitude /*(Amplitude/10.f);
+}*/
+    
     
     //float3 n = texture0.SampleLevel(sampler0, input.tex, 0).x;
     
-    input.position.xyz += (n * input.normal) * 0.5f;
+    float Frequency = 0.5f;
+    float Amplitude = 0.1f;
+    float3 Input = float3(0, 0, 0);
+    float n = 0.0f; //color2(Input);
+        
+    float noise = 0.0f;
+    
+    //Use the position of sphere
+    //float3 d = Distance_between_3DPoints_3_(p, float3(0, 0, 0.6f));
+        
+    for (int i = 1; i <= Ocatves; i++)
+    {
+        //Should be passed in
+        Frequency = 0.5f;/*(i * i);*/
+        Input = float3(input.position.x * Frequency, input.position.y * Frequency, input.position.z * Frequency);
+        n = color(Input);
+        //Should be passed in
+        Amplitude = 0.1f;/*pow(Frequency, -Hurst);*/
+        //if (i != 1)
+        //    Amplitude /= ((i) * (9 * i));
+        noise += n * Amplitude /*(Amplitude/10.f)*/;
+    }
+    
+    input.position.xyz += (noise * input.normal);
     
     	// Calculate the position of the vertex against the world, view, and projection matrices.
     output.position = mul(input.position, worldMatrix);

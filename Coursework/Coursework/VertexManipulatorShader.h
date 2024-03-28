@@ -25,6 +25,9 @@ private:
 	{
 		XMMATRIX lightView[NUM_LIGHTS];
 		XMMATRIX lightProjection[NUM_LIGHTS];
+		float Ocatves;
+		float Hurst;
+		XMFLOAT2 padding;
 	};
 
 	struct CameraBufferType
@@ -36,7 +39,7 @@ public:
 	VertexManipulatorShader(ID3D11Device* device, HWND hwnd);
 	~VertexManipulatorShader();
 
-	void setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition);
+	void setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition,float Ocatves,float Hurst);
 
 private:
 	void initShader(const wchar_t* vs, const wchar_t* ps);
