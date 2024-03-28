@@ -59,6 +59,89 @@ float3 Distance_between_3DPoints_3_(float3 b, float3 a)
     return d;
 }
 
+float3 Smooth_Noise(float3 Position, int repeat)
+{
+    float noise = 0.0f;
+    
+    for (int i = 1; i <= repeat; i++)
+    {
+        float3 Input = float3(Position.x, Position.y, Position.z);
+        noise += color2(Input);
+    
+        Input = float3(Position.x + 1, Position.y, Position.z);
+        noise += color2(Input);
+    
+        Input = float3(Position.x - 1, Position.y, Position.z);
+        noise += color2(Input);
+    
+        Input = float3(Position.x, Position.y - 1, Position.z);
+        noise += color2(Input);
+    
+        Input = float3(Position.x, Position.y + 1, Position.z);
+        noise += color2(Input);
+    
+        Input = float3(Position.x, Position.y, Position.z - 1);
+        noise += color2(Input);
+    
+        Input = float3(Position.x, Position.y, Position.z + 1);
+        noise += color2(Input);
+    
+    
+        Input = float3(Position.x, Position.y + 1, Position.z + 1);
+        noise += color2(Input);
+    
+        Input = float3(Position.x, Position.y - 1, Position.z - 1);
+        noise += color2(Input);
+    
+        Input = float3(Position.x, Position.y + 1, Position.z - 1);
+        noise += color2(Input);
+    
+        Input = float3(Position.x, Position.y - 1, Position.z + 1);
+        noise += color2(Input);
+    
+    
+    
+        Input = float3(Position.x + 1, Position.y, Position.z + 1);
+        noise += color2(Input);
+    
+        Input = float3(Position.x - 1, Position.y, Position.z - 1);
+        noise += color2(Input);
+    
+        Input = float3(Position.x + 1, Position.y, Position.z - 1);
+        noise += color2(Input);
+    
+        Input = float3(Position.x - 1, Position.y, Position.z + 1);
+        noise += color2(Input);
+    
+    
+    
+        Input = float3(Position.x + 1, Position.y + 1, Position.z + 1);
+        noise += color2(Input);
+    
+        Input = float3(Position.x - 1, Position.y - 1, Position.z - 1);
+        noise += color2(Input);
+    
+    
+    
+        Input = float3(Position.x - 1, Position.y + 1, Position.z + 1);
+        noise += color2(Input);
+    
+        Input = float3(Position.x + 1, Position.y - 1, Position.z + 1);
+        noise += color2(Input);
+    
+        Input = float3(Position.x + 1, Position.y + 1, Position.z - 1);
+        noise += color2(Input);
+    
+        Input = float3(Position.x - 1, Position.y - 1, Position.z + 1);
+        noise += color2(Input);
+    
+        noise = noise / 21.0f;
+    }
+    
+    return noise;
+    
+}
+
 
 
 float distance_from_sphere(float3 p, float3 c, float r)
@@ -132,6 +215,8 @@ float Apply_Noise(float3 p,float distance,int Octave,float Hurst)
             Amplitude /= ((i) * (9*i));
         noise += n * Amplitude /*(Amplitude/10.f)*/;
     }
+    
+    //noise = Smooth_Noise(Input, 1);
 
     float answer = distance - noise;
     
