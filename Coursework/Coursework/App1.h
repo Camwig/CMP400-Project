@@ -11,6 +11,10 @@
 #include "PerlinTextureShader.h"
 #include "VertexManipulatorShader.h"
 
+#include "LightShader.h"
+
+#define NUM_LIGHTS 1
+
 
 class App1 : public BaseApplication
 {
@@ -46,6 +50,8 @@ private:
 	RayMarchingShader* shader;
 	TextureShader* textureShader;
 	PerlinTextureShader* perlinShader;
+
+	LightShader* light_shader;
 	
 	VertexManipulatorShader* vertex_shader;
 
@@ -73,6 +79,8 @@ private:
 
 	bool started = false;
 	bool VertexBased = false;
+
+	Light* light[NUM_LIGHTS];
 };
 
 #endif

@@ -22,6 +22,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	orthoMesh = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth, screenHeight);	// Full screen size
 	sampleMesh = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth, screenHeight);
 
+	light_shader = new LightShader(renderer->getDevice(), hwnd);
+
 	shader = new RayMarchingShader(renderer->getDevice(), hwnd);
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
 	perlinShader = new PerlinTextureShader(renderer->getDevice(), hwnd);
@@ -41,6 +43,11 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	started = false;
 	VertexBased = true;
+
+	light[0] = new Light();
+	light[0]->setAmbientColour(1.0f, 1.0f, 1.0f, 1.0f);
+	light[0]->setDiffuseColour(0.0f, 1.0f, 0.0f, 1.0f);
+	light[0]->setPosition(0.0f, 4.0f, 0.0f);
 
 	//TD_Text = new TDRenderTarget(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 
@@ -309,6 +316,9 @@ void App1::finalPass()
 		mesh->sendData(renderer->getDeviceContext());
 		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView());
 		vertex_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
+
+		light_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition());
+		light_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 	}
 
 	// Render GUI
