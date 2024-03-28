@@ -1,4 +1,4 @@
-- Setup the Gui so I can set objects such as shapes octaves perlin position and size etc.
+- Setup the Gui so I can set objects such as shapes octaves perlin position and size etc. 
 	
 -Setup a system that can decide between diffrent functions to determine the distance field
  how I would do this immediatley isI could put these functions to calculate these objects 
