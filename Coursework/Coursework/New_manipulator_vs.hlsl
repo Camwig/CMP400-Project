@@ -154,13 +154,13 @@ OutputType main(InputType input)
     //for (int i = 1; i <= Ocatves; i++)
     //{
         //Should be passed in
-        Frequency = 0.5f;/*(i * i);*/
+        Frequency = 1.0f;/*(i * i);*/
         //Frequency = (i * i);
         Input = float3(input.position.x * Frequency, input.position.y * Frequency, input.position.z * Frequency);
         n = color(Input);
         //n = Manipulate_shape_based_on_noise(texture0,sampler0,input.tex);
         //Should be passed in
-        Amplitude = 1.1f;/*pow(Frequency, -Hurst);*/
+        Amplitude = 1.0f;/*pow(Frequency, -Hurst);*/
         //Amplitude = pow(Frequency, -Hurst);
         //if (i != 1)
         //    Amplitude /= ((i) * (9 * i));
@@ -170,7 +170,7 @@ OutputType main(InputType input)
     noise = Smooth_Noise(Input,2);
     
     //noise = noise/Ocatves;
-    input.position.xyz += (noise * input.normal) * 0.5f;
+    input.position.xyz += (noise * input.normal);
     
     	// Calculate the position of the vertex against the world, view, and projection matrices.
     output.position = mul(input.position, worldMatrix);
