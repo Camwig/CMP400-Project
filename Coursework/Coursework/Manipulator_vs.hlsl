@@ -27,6 +27,36 @@ struct OutputType
     float3 normal : NORMAL;
 };
 
+float3 CalcNormal(float3 n,float3 Normal)
+{
+    float tw = 256.0f;
+    float val;
+    texture0.GetDimensions(0, tw, tw, val);
+    float uvOff = 1.0f / 100.0f; //sub sampling half the min rate
+    float heightN = color(float3(n.x, n.y + uvOff, n.z)*Normal); /*getHeight(float2(uv.x, uv.y + uvOff))*/;
+    float heightS = color(float3(n.x, n.y - uvOff, n.z)*Normal); //getHeight(float2(uv.x, uv.y - uvOff));
+    float heightE = color(float3(n.x + uvOff, n.y, n.z)*Normal); //getHeight(float2(uv.x + uvOff, uv.y));
+    float heightW = color(float3(n.x - uvOff, n.y, n.z)*Normal); //getHeight(float2(uv.x - uvOff, uv.y));
+	
+    float worldstep = uvOff * 100.0f;
+    float3 tangent = normalize(float3(2.0f * worldstep, heightE - heightW, 0.0f));
+    float3 bi_tangent = normalize(float3(0.0f, heightN - heightS, 2.0f * worldstep));
+    
+    float3 Result_1 = cross(bi_tangent, tangent);
+    
+    float heightN_2 = color(float3(n.x, n.y, n.z + uvOff)*Normal); /*getHeight(float2(uv.x, uv.y + uvOff))*/;
+    float heightS_2 = color(float3(n.x, n.y, n.z - uvOff)*Normal); //getHeight(float2(uv.x, uv.y - uvOff));
+    float heightE_2 = color(float3(n.x + uvOff, n.y, n.z)*Normal); //getHeight(float2(uv.x + uvOff, uv.y));
+    float heightW_2 = color(float3(n.x - uvOff, n.y, n.z)*Normal); //getHeight(float2(uv.x - uvOff, uv.y));
+	
+    float3 tangent_2 = normalize(float3(2.0f * worldstep, heightE_2 - heightW_2, 0.0f));
+    float3 bi_tangent_2 = normalize(float3(0.0f, heightN_2 - heightS_2, 2.0f * worldstep));
+    
+    float3 Result_2 = cross(bi_tangent_2, tangent_2);
+    
+    return cross(Result_1, Result_2);
+}
+
 OutputType main(InputType input)
 {
     OutputType output;
@@ -55,6 +85,8 @@ OutputType main(InputType input)
     output.tex = input.tex;
 
 	// Calculate the normal vector against the world matrix only and normalise.
+    //input.normal = CalcNormal(Input,input.normal);
+    
     output.normal = mul(input.normal, (float3x3) worldMatrix);
     output.normal = normalize(output.normal);
 

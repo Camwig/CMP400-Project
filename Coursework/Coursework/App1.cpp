@@ -317,8 +317,8 @@ void App1::finalPass()
 		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView());
 		vertex_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
-		light_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition());
-		light_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
+		//light_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition());
+		//light_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 	}
 
 	// Render GUI

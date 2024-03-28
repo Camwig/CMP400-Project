@@ -30,6 +30,12 @@ private:
 		XMFLOAT3 padding;
 	};
 
+	struct ExtraBufferType
+	{
+		XMMATRIX lightView[NUM_LIGHTS];
+		XMMATRIX lightProjection[NUM_LIGHTS];
+	};
+
 	struct CameraBufferType
 	{
 		XMFLOAT3 cameraPosition;
@@ -50,4 +56,5 @@ private:
 	ID3D11Buffer* cameraBuffer;
 	ID3D11SamplerState* sampleState;
 	ID3D11Buffer* lightBuffer;
+	ID3D11Buffer* extr_buffer;
 };

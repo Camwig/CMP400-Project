@@ -21,8 +21,9 @@ struct InputType
     float4 position : SV_POSITION;
     float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
-    float3 worldPosition : TEXCOORD1;
-    float3 viewVectror : TEXCOOORD2;
+    float3 worldPosition : TEXCOOORD1;
+    float3 viewVector : TEXCOORD2;
+    float4 lightViewPos : TEXCOORD3;
 };
 
 // Calculate lighting intensity based on direction and normal. Combine with light colour.
@@ -83,7 +84,7 @@ float4 main(InputType input) : SV_TARGET
 	
                 lightColour[i] = ambient + attenuation * calculateLighting(lightVector, input.normal, diffuse[i], position[i]);
 	
-                lightColour[i] *= calcSpecular(lightVector, input.normal, input.viewVectror, float4(1, 1, 1, 1), specularPower);
+                lightColour[i] *= calcSpecular(lightVector, input.normal, input.viewVector, float4(1, 1, 1, 1), specularPower);
             }
             
             if (position[i].w == 2.0f)
@@ -96,15 +97,15 @@ float4 main(InputType input) : SV_TARGET
 	
                 lightColour[i] = ambient + attenuation * calculateLighting(float3(direction.x, direction.y, direction.z), input.normal, diffuse[i], position[i]);
 	
-                lightColour[i] *= calcSpecular(float3(direction.x, direction.y, direction.z), input.normal, input.viewVectror, float4(1, 1, 1, 1), specularPower);
+                lightColour[i] *= calcSpecular(float3(direction.x, direction.y, direction.z), input.normal, input.viewVector, float4(1, 1, 1, 1), specularPower);
             }
             
             final_colour *= lightColour[i];
 
         }
         
-        //return float4(input.normal.x, input.normal.y, input.normal.z, 1.0f);
+        return float4(input.normal.x, input.normal.y, input.normal.z, 1.0f);
         //return lightColour[0] * lightColour[1] * lightColour[2] * textureColour;
-        return final_colour * textureColour;
+        //return final_colour * textureColour;
     }
 }

@@ -47,6 +47,8 @@ void LightShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilenam
 	D3D11_SAMPLER_DESC samplerDesc;
 	D3D11_BUFFER_DESC lightBufferDesc;
 
+	D3D11_BUFFER_DESC extraBufferDesc;
+
 	// Load (+ compile) shader files
 	loadVertexShader(vsFilename);
 	loadPixelShader(psFilename);
@@ -59,6 +61,15 @@ void LightShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilenam
 	matrixBufferDesc.MiscFlags = 0;
 	matrixBufferDesc.StructureByteStride = 0;
 	renderer->CreateBuffer(&matrixBufferDesc, NULL, &matrixBuffer);
+
+
+	extraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	extraBufferDesc.ByteWidth = sizeof(ExtraBufferType);
+	extraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	extraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	extraBufferDesc.MiscFlags = 0;
+	extraBufferDesc.StructureByteStride = 0;
+	renderer->CreateBuffer(&extraBufferDesc, NULL, &extr_buffer);
 
 	//Create and setup the camera buffer
 	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -102,6 +113,7 @@ void LightShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	CameraBufferType* camPtr;
+	ExtraBufferType* extra;
 
 	XMMATRIX tworld, tview, tproj;
 
@@ -110,6 +122,13 @@ void LightShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const 
 	tworld = XMMatrixTranspose(worldMatrix);
 	tview = XMMatrixTranspose(viewMatrix);
 	tproj = XMMatrixTranspose(projectionMatrix);
+
+	//Defines and sets up each light view matrix along with the projection matrix
+	XMMATRIX tLightViewMatrix1 = XMMatrixTranspose(light[0]->getViewMatrix());
+	XMMATRIX tLightProjectionMatrix1 = XMMatrixTranspose(light[0]->getOrthoMatrix());
+	//XMMATRIX tLightViewMatrix2 = XMMatrixTranspose(light[1]->getViewMatrix());
+	//XMMATRIX tLightProjectionMatrix2 = XMMatrixTranspose(light[1]->getOrthoMatrix());
+
 	result = deviceContext->Map(matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	dataPtr = (MatrixBufferType*)mappedResource.pData;
 	dataPtr->world = tworld;// worldMatrix;
@@ -117,6 +136,16 @@ void LightShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const 
 	dataPtr->projection = tproj;
 	deviceContext->Unmap(matrixBuffer, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
+
+
+	result = deviceContext->Map(extr_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	extra = (ExtraBufferType*)mappedResource.pData;
+	extra->lightView[0] = tLightViewMatrix1;
+	extra->lightProjection[0] = tLightProjectionMatrix1;
+	//dataPtr->lightView[1] = tLightViewMatrix2;
+	//dataPtr->lightProjection[1] = tLightProjectionMatrix2;
+	deviceContext->Unmap(extr_buffer, 0);
+	deviceContext->VSSetConstantBuffers(2, 1, &extr_buffer);
 
 	deviceContext->Map(cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	camPtr = (CameraBufferType*)mappedResource.pData;
