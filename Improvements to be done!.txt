@@ -1,12 +1,12 @@
 1. Add GUI options:-
-	*Octaves
+	*Octaves DONE
 	*Shape (Do everything else first then this so I can not apply FBM Can remove later if needed))
-	*Size/dimensions
-	*Position
-	*Colour
+	*Size/dimensions DONE
+	*Position DONE
+	*Colour DONE
 	*Lighting
-	*Ray Tracing Steps
-	*Smoothing loops
+	*Ray Tracing Steps DONE
+	*Smoothing loops DONE
 
 2. Clean Up the code
 
