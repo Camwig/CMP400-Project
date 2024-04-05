@@ -261,7 +261,7 @@ void App1::RenderedPass()
 
 	orthoMesh->sendData(renderer->getDeviceContext());
 	//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
-	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), /*applied_noise*/timer->getTime(), PerlinTexture->getShaderResourceView());
+	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), /*applied_noise*/timer->getTime(), PerlinTexture->getShaderResourceView(),3,0.5f,2.5f,XMFLOAT3(0.0f,0.0f,0.6f),1,XMFLOAT4(0.00f, 0.40f, 0.07f, 0.0f),3000);
 	shader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 
 	renderer->setZBuffer(true);

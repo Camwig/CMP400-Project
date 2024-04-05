@@ -32,6 +32,12 @@ RayMarchingShader::~RayMarchingShader()
 		screenSizeBuffer = 0;
 	}
 
+	if (settingsBuffer)
+	{
+		settingsBuffer->Release();
+		settingsBuffer = 0;
+	}
+
 	// Release the layout.
 	if (layout)
 	{
@@ -49,6 +55,7 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_BUFFER_DESC cameraBufferDesc;
 	D3D11_BUFFER_DESC screenSizeBufferDesc;
+	D3D11_BUFFER_DESC settingsBufferDesc;
 	D3D11_SAMPLER_DESC samplerDesc;
 
 	// Load (+ compile) shader files
@@ -99,10 +106,18 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 	screenSizeBufferDesc.StructureByteStride = 0;
 	renderer->CreateBuffer(&screenSizeBufferDesc, NULL, &screenSizeBuffer);
 
+	settingsBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	settingsBufferDesc.ByteWidth = sizeof(SettingsBuffer);
+	settingsBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	settingsBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	settingsBufferDesc.MiscFlags = 0;
+	settingsBufferDesc.StructureByteStride = 0;
+	renderer->CreateBuffer(&settingsBufferDesc,NULL,&settingsBuffer);
+
 }
 
 
-void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2, float deltaTime, ID3D11ShaderResourceView* p_texture)
+void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2, float deltaTime, ID3D11ShaderResourceView* p_texture, float Octaves, float Hurst, float Radius, XMFLOAT3 Position, float SmoothSteps, XMFLOAT4 Colour, float Max_distance)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -110,6 +125,7 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 
 	CameraBufferType* camPtr;
 	ScreenSizeBuffer* screen_;
+	SettingsBuffer* settings_;
 
 	// Transpose the matrices to prepare them for the shader.
 	tworld = XMMatrixTranspose(worldMatrix);
@@ -155,6 +171,21 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 
 	deviceContext->Unmap(screenSizeBuffer, 0);
 	deviceContext->PSSetConstantBuffers(1, 1, &screenSizeBuffer);
+
+	deviceContext->Map(settingsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	settings_ = (SettingsBuffer*)mappedResource.pData;
+	settings_->Octaves = Octaves;
+	settings_->Hurst = Hurst;
+	settings_->radius = Radius;
+	settings_->Padding1 = 0.0f;
+	settings_->Position = Position;
+	settings_->SmoothSteps = SmoothSteps;
+	settings_->Colour = Colour;
+	settings_->MAx_Distance = Max_distance;
+	settings_->Padding2 = XMFLOAT3(0.0f,0.0f,0.0f);
+	deviceContext->Unmap(settingsBuffer, 0);
+	deviceContext->PSSetConstantBuffers(2, 1, &settingsBuffer);
+
 
 	// Set shader texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);

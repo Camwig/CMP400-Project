@@ -6,6 +6,7 @@
 	*Colour
 	*Lighting
 	*Ray Tracing Steps
+	*Smoothing loops
 
 2. Clean Up the code
 

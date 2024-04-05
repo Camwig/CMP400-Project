@@ -27,6 +27,19 @@ cbuffer ScreenSizeBuffer : register(b1)
     float4x4 View;
 };
 
+cbuffer SettingsBuffer : register(b2)
+{
+    float Octaves;
+    float Hurst;
+    float radius;
+    float Padding1;
+    float3 Position;
+    float SmoothSteps;
+    float4 Colour;
+    float MAx_Distance;
+    float3 Padding2;
+}
+
 struct InputType
 {
     float4 position : SV_POSITION;
