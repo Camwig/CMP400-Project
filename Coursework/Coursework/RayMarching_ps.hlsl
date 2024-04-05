@@ -57,7 +57,7 @@ float4 main(InputType input) : SV_TARGET
     float3 camPos = CameraOrigin;
     
     //float stepSize = 1000.0f;
-    int num_of_steps = 3000;
+    int num_of_steps = MAx_Distance;
     float total_distance = 0.0f;
     
     float2 Resoloution = float2(screenWidth, screenheight);
@@ -114,8 +114,8 @@ float4 main(InputType input) : SV_TARGET
     
     //new_vector = normalize(new_vector);
     
-    int Octave = 3;
-    float Hurst = 0.5f;
+    //int Octave = 3;
+    //float Hurst = 0.5f;
     
     //new_vector = viewVector;
     //return height * 30.0f;
@@ -192,7 +192,7 @@ float4 main(InputType input) : SV_TARGET
         //float distance_to_currentPos2 = distance_from_Line(currentPos, float3(camPos.x,camPos.y,camPos.z + 1.0f), EndPoint, 0.1f);
         
         //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
-        float distance_to_currentPos = New_Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 2.5f, Octave, Hurst);
+        float distance_to_currentPos = New_Random_Sphere(currentPos, Position, radius, Octaves, Hurst);
         
         //float3 d = Distance_between_3DPoints_3_(currentPos, float3(0, 0, 0.6f));
         
@@ -206,7 +206,7 @@ float4 main(InputType input) : SV_TARGET
         //{
         
         //I need to find a new input for the noise that is the position but also not constantly changing
-        distance_to_currentPos = Apply_Noise(currentPos, distance_to_currentPos, Octave, Hurst);
+        distance_to_currentPos = Apply_Noise(currentPos, distance_to_currentPos, Octaves, Hurst,SmoothSteps);
 
         
         if (distance_to_currentPos < 0.01f)
@@ -221,8 +221,8 @@ float4 main(InputType input) : SV_TARGET
             //new_vector = float3(currentPos.x + distance_to_currentPos * viewVector.x, currentPos.y + distance_to_currentPos * viewVector.y, currentPos.z + distance_to_currentPos * viewVector.z);
             //SDF_Position -= (n * 0.5f);
             
-            float4 col = float4(0.00f, 0.40f, 0.07f, 0.0f);
-            float4 col2 = phongIllumination(shininess, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, World, Octave, Hurst, float3(0.0, 0.0f, 0.6f));
+            float4 col = Colour;
+            float4 col2 = phongIllumination(shininess, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, World, Octaves, Hurst, Position,SmoothSteps);
             col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             return col /** textureColour*/;
         }
