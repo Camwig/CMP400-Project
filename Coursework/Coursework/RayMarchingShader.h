@@ -33,6 +33,12 @@ private:
 		XMMATRIX View;
 	};
 
+	//struct SettingsBuffer
+	//{
+	//	float Octaves;
+	//	float Hurst;
+	//};
+
 public:
 	RayMarchingShader(ID3D11Device* device, HWND hwnd);
 	~RayMarchingShader();

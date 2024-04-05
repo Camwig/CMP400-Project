@@ -1,0 +1,14 @@
+1. Add GUI options:-
+	*Octaves
+	*Shape (Do everything else first then this so I can not apply FBM Can remove later if needed))
+	*Size/dimensions
+	*Position
+	*Colour
+	*Lighting
+	*Ray Tracing Steps
+
+2. Clean Up the code
+
+3. Comment the code
+
+Extra. Look into the Compute Shader ONLY IF EVERYTHING ELSE IS DONE Including data!!!!

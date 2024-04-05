@@ -216,6 +216,7 @@ float Apply_Noise(float3 p,float distance,int Octave,float Hurst)
         noise += n * Amplitude /*(Amplitude/10.f)*/;
     }
     
+    //noise = smoothstep(-1, 1, noise);
     //noise = Smooth_Noise(Input, 1);
 
     float answer = distance - noise;
