@@ -147,6 +147,29 @@ void App1::gui()
 	ImGui::Text("FPS: %.2f", timer->getFPS());
 	ImGui::Checkbox("Wireframe mode", &wireframeToggle);
 
+	ImGui::SliderInt("Octaves", &Octaves, 0, 5);
+	ImGui::SliderFloat("Hurst", &Hurst, 0, 1);
+	ImGui::SliderFloat("Radius", &radius, 0, 10);
+
+	if (ImGui::CollapsingHeader("Position"))
+	{
+		ImGui::SliderFloat("X", &Position.x, 0, 10);
+		ImGui::SliderFloat("Y", &Position.y, 0, 10);
+		ImGui::SliderFloat("Z", &Position.z, 0, 10);
+	}
+
+	ImGui::SliderInt("Smooth Steps", &SmoothSteps, 0, 3);
+
+	if (ImGui::CollapsingHeader("Colour"))
+	{
+		ImGui::SliderFloat("R", &Colour.x, 0, 1);
+		ImGui::SliderFloat("G", &Colour.y, 0, 1);
+		ImGui::SliderFloat("B", &Colour.z, 0, 1);
+		ImGui::SliderFloat("A", &Colour.w, 0, 1);
+	}
+
+	ImGui::SliderInt("Ray Trace Maximum Distance", &MAx_Distance, 0, 5000);
+
 	// Render UI
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -261,7 +284,7 @@ void App1::RenderedPass()
 
 	orthoMesh->sendData(renderer->getDeviceContext());
 	//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
-	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), /*applied_noise*/timer->getTime(), PerlinTexture->getShaderResourceView(),3,0.5f,2.5f,XMFLOAT3(0.0f,0.0f,0.6f),2,XMFLOAT4(0.00f, 0.40f, 0.07f, 0.0f),3000);
+	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(), camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), /*applied_noise*/timer->getTime(), PerlinTexture->getShaderResourceView(),Octaves,Hurst,radius,Position,SmoothSteps,Colour,MAx_Distance);
 	shader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 
 	renderer->setZBuffer(true);
