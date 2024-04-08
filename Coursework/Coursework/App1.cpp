@@ -173,7 +173,7 @@ void App1::gui()
 		ImGui::SliderFloat("Z", &Position.z, -10, 10);
 	}
 
-	ImGui::SliderInt("Smooth Steps", &SmoothSteps, 0, 3);
+	ImGui::SliderInt("Smooth Steps", &SmoothSteps, 0, 6);
 
 	if (ImGui::CollapsingHeader("Colour"))
 	{

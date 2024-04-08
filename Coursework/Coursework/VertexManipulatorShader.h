@@ -25,9 +25,6 @@ private:
 	{
 		XMMATRIX lightView[NUM_LIGHTS];
 		XMMATRIX lightProjection[NUM_LIGHTS];
-		//float Ocatves;
-		//float Hurst;
-		//XMFLOAT2 padding;
 	};
 
 	struct SettingsBufferVs
@@ -35,24 +32,13 @@ private:
 		float Octaves;
 		float Hurst;
 		XMFLOAT2 Padding1;
-		//XMFLOAT3 Position;
 		float SmoothSteps;
 		XMFLOAT3 Padding2;
-		//XMFLOAT4 Colour;
-		//float MAx_Distance;
 	};
 
 	struct SettingsBufferPs
 	{
-		//float Octaves;
-		//float Hurst;
-		//float radius;
-		//float Padding1;
-		//XMFLOAT3 Position;
-		//float SmoothSteps;
-		//XMFLOAT3 Padding2;
 		XMFLOAT4 Colour;
-		//float MAx_Distance;
 	};
 
 	struct CameraBufferType

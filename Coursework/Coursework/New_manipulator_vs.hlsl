@@ -180,10 +180,10 @@ OutputType main(InputType input)
         noise += n * Amplitude /*(Amplitude/10.f)*/;
     }
     
-    //noise = Smooth_Noise(Input,2);
+    //noise = Smooth_Noise(noise,SmoothSteps);
     
     for (int k = 1; k <= SmoothSteps; k++)
-        noise = smoothstep(-1, 1, noise);
+        noise = smoothstep(-2.5, 2.5, noise);
     
     //noise = noise/Ocatves;
     input.position.xyz += (noise * input.normal);
