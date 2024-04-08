@@ -24,10 +24,16 @@ VertexManipulatorShader::~VertexManipulatorShader()
 		matrixBuffer = 0;
 	}
 
-	if (settingsBuffer)
+	if (settingsBufferVs)
 	{
-		settingsBuffer->Release();
-		settingsBuffer = 0;
+		settingsBufferVs->Release();
+		settingsBufferVs = 0;
+	}
+
+	if (settingsBufferPs)
+	{
+		settingsBufferPs->Release();
+		settingsBufferPs = 0;
 	}
 
 	// Release the layout.
@@ -83,6 +89,7 @@ void VertexManipulatorShader::initShader(const wchar_t* vsFilename, const wchar_
 
 	D3D11_BUFFER_DESC extraBufferDesc;
 	D3D11_BUFFER_DESC settingsBufferDesc;
+	D3D11_BUFFER_DESC settingsBufferDesc2;
 
 	// Load (+ compile) shader files
 	loadVertexShader(vsFilename);
@@ -139,16 +146,24 @@ void VertexManipulatorShader::initShader(const wchar_t* vsFilename, const wchar_
 	renderer->CreateBuffer(&lightBufferDesc, NULL, &lightBuffer);
 
 	settingsBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	settingsBufferDesc.ByteWidth = sizeof(SettingsBuffer);
+	settingsBufferDesc.ByteWidth = sizeof(SettingsBufferVs);
 	settingsBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	settingsBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	settingsBufferDesc.MiscFlags = 0;
 	settingsBufferDesc.StructureByteStride = 0;
-	renderer->CreateBuffer(&settingsBufferDesc, NULL, &settingsBuffer);
+	renderer->CreateBuffer(&settingsBufferDesc, NULL, &settingsBufferVs);
+
+	settingsBufferDesc2.Usage = D3D11_USAGE_DYNAMIC;
+	settingsBufferDesc2.ByteWidth = sizeof(SettingsBufferPs);
+	settingsBufferDesc2.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	settingsBufferDesc2.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	settingsBufferDesc2.MiscFlags = 0;
+	settingsBufferDesc2.StructureByteStride = 0;
+	renderer->CreateBuffer(&settingsBufferDesc2, NULL, &settingsBufferPs);
 }
 
 
-void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition, float Octaves, float Hurst, float Radius, XMFLOAT3 Position, float SmoothSteps, XMFLOAT4 Colour, float Max_distance)
+void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition, float Octaves, float Hurst,float SmoothSteps, XMFLOAT4 Colour)
 {
 	//HRESULT result;
 	//D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -183,7 +198,8 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	CameraBufferType* camPtr;
 	ExtraBufferType* extra;
 
-	SettingsBuffer* settings_;
+	SettingsBufferVs* settings_;
+	SettingsBufferPs* settings_2;
 
 	XMMATRIX tworld, tview, tproj;
 
@@ -250,20 +266,27 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	deviceContext->Unmap(lightBuffer, 0);
 	deviceContext->PSSetConstantBuffers(0, 1, &lightBuffer);
 
-	deviceContext->Map(settingsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	settings_ = (SettingsBuffer*)mappedResource.pData;
+	deviceContext->Map(settingsBufferVs, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	settings_ = (SettingsBufferVs*)mappedResource.pData;
 	settings_->Octaves = Octaves;
 	settings_->Hurst = Hurst;
-	settings_->radius = Radius;
-	settings_->Padding1 = 0.0f;
+	//settings_->radius = Radius;
+	settings_->Padding1 = XMFLOAT2(0.0f,0.0f);
 	//settings_->Position = Position;
 	settings_->SmoothSteps = SmoothSteps;
-	settings_->Colour = Colour;
+	//settings_->Colour = Colour;
 	//settings_->MAx_Distance = Max_distance;
 	settings_->Padding2 = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	deviceContext->Unmap(settingsBuffer, 0);
-	deviceContext->VSSetConstantBuffers(3, 1, &settingsBuffer);
-	deviceContext->PSSetConstantBuffers(1, 1, &settingsBuffer);
+	deviceContext->Unmap(settingsBufferVs, 0);
+	deviceContext->VSSetConstantBuffers(3, 1, &settingsBufferVs);
+	//deviceContext->PSSetConstantBuffers(1, 1, &settingsBufferVs);
+
+	deviceContext->Map(settingsBufferPs, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	settings_2 = (SettingsBufferPs*)mappedResource.pData;
+	settings_2->Colour = Colour;
+	deviceContext->Unmap(settingsBufferPs, 0);
+	//deviceContext->VSSetConstantBuffers(3, 1, &settingsBufferVs);
+	deviceContext->PSSetConstantBuffers(1, 1, &settingsBufferPs);
 
 	// Set shader texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);

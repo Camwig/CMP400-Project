@@ -19,15 +19,7 @@ cbuffer LightBuffer : register(b0)
 
 cbuffer SettingsBuffer : register(b1)
 {
-    float Octaves;
-    float Hurst;
-    float radius;
-    float Padding1;
-    //float3 Position;
-    float SmoothSteps;
     float4 Colour;
-    //float MAx_Distance;
-    float3 Padding2;
 }
 
 struct InputType

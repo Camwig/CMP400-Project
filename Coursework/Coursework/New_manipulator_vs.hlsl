@@ -35,11 +35,11 @@ cbuffer SettingsBuffer : register(b3)
 {
     float Octaves;
     float Hurst;
-    float radius;
-    float Padding1;
+    //float radius;
+    float2 Padding1;
     //float3 Position;
     float SmoothSteps;
-    float4 Colour;
+    //float4 Colour;
     //float MAx_Distance;
     float3 Padding2;
 }

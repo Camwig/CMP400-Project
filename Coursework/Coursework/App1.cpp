@@ -342,7 +342,7 @@ void App1::finalPass()
 
 		// Send geometry data, set shader parameters, render object with shader
 		mesh->sendData(renderer->getDeviceContext());
-		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition(), Octaves, Hurst, radius, Position, SmoothSteps, Colour, MAx_Distance);
+		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition(), Octaves, Hurst, SmoothSteps, Colour);
 		vertex_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 		//light_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition());
