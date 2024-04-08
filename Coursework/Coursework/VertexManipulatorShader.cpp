@@ -24,6 +24,12 @@ VertexManipulatorShader::~VertexManipulatorShader()
 		matrixBuffer = 0;
 	}
 
+	if (settingsBuffer)
+	{
+		settingsBuffer->Release();
+		settingsBuffer = 0;
+	}
+
 	// Release the layout.
 	if (layout)
 	{
@@ -76,6 +82,7 @@ void VertexManipulatorShader::initShader(const wchar_t* vsFilename, const wchar_
 	D3D11_BUFFER_DESC lightBufferDesc;
 
 	D3D11_BUFFER_DESC extraBufferDesc;
+	D3D11_BUFFER_DESC settingsBufferDesc;
 
 	// Load (+ compile) shader files
 	loadVertexShader(vsFilename);
@@ -130,10 +137,18 @@ void VertexManipulatorShader::initShader(const wchar_t* vsFilename, const wchar_
 	lightBufferDesc.MiscFlags = 0;
 	lightBufferDesc.StructureByteStride = 0;
 	renderer->CreateBuffer(&lightBufferDesc, NULL, &lightBuffer);
+
+	settingsBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	settingsBufferDesc.ByteWidth = sizeof(SettingsBuffer);
+	settingsBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	settingsBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	settingsBufferDesc.MiscFlags = 0;
+	settingsBufferDesc.StructureByteStride = 0;
+	renderer->CreateBuffer(&settingsBufferDesc, NULL, &settingsBuffer);
 }
 
 
-void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition, float Ocatves, float Hurst)
+void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition, float Octaves, float Hurst, float Radius, XMFLOAT3 Position, float SmoothSteps, XMFLOAT4 Colour, float Max_distance)
 {
 	//HRESULT result;
 	//D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -168,13 +183,15 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	CameraBufferType* camPtr;
 	ExtraBufferType* extra;
 
+	SettingsBuffer* settings_;
+
 	XMMATRIX tworld, tview, tproj;
 
 
 	// Transpose the matrices to prepare them for the shader.
-	tworld = XMMatrixTranspose(worldMatrix);
-	tview = XMMatrixTranspose(viewMatrix);
-	tproj = XMMatrixTranspose(projectionMatrix);
+	tworld = XMMatrixTranspose(world);
+	tview = XMMatrixTranspose(view);
+	tproj = XMMatrixTranspose(projection);
 
 	//Defines and sets up each light view matrix along with the projection matrix
 	XMMATRIX tLightViewMatrix1 = XMMatrixTranspose(light[0]->getViewMatrix());
@@ -195,9 +212,9 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	extra = (ExtraBufferType*)mappedResource.pData;
 	extra->lightView[0] = tLightViewMatrix1;
 	extra->lightProjection[0] = tLightProjectionMatrix1;
-	extra->Ocatves = Ocatves;
-	extra->Hurst = Hurst;
-	extra->padding = XMFLOAT2(0.0f,0.0f);
+	//extra->Ocatves = Octaves;
+	//extra->Hurst = Hurst;
+	//extra->padding = XMFLOAT2(0.0f,0.0f);
 	//dataPtr->lightView[1] = tLightViewMatrix2;
 	//dataPtr->lightProjection[1] = tLightProjectionMatrix2;
 	deviceContext->Unmap(extr_buffer, 0);
@@ -232,6 +249,20 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	lightPtr->padding = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	deviceContext->Unmap(lightBuffer, 0);
 	deviceContext->PSSetConstantBuffers(0, 1, &lightBuffer);
+
+	deviceContext->Map(settingsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	settings_ = (SettingsBuffer*)mappedResource.pData;
+	settings_->Octaves = Octaves;
+	settings_->Hurst = Hurst;
+	settings_->radius = Radius;
+	settings_->Padding1 = 0.0f;
+	settings_->Position = Position;
+	settings_->SmoothSteps = SmoothSteps;
+	settings_->Colour = Colour;
+	settings_->MAx_Distance = Max_distance;
+	settings_->Padding2 = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	deviceContext->Unmap(settingsBuffer, 0);
+	deviceContext->VSSetConstantBuffers(3, 1, &settingsBuffer);
 
 	// Set shader texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);

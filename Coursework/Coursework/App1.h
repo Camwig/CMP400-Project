@@ -74,6 +74,14 @@ private:
 
 	RenderTexture* DownSampletexture;
 
+	int Octaves = 3;
+	float Hurst = 0.5f;
+	float radius = 2.5f;
+	XMFLOAT3 Position = XMFLOAT3(0.0f, 0.0f, 0.6f);
+	int SmoothSteps = 2;
+	XMFLOAT4 Colour = XMFLOAT4(0.00f, 0.40f, 0.07f, 0.0f);
+	int MAx_Distance = 3000;
+
 	float sx;
 	float sy;
 

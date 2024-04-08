@@ -158,8 +158,32 @@ void App1::gui()
 	renderer->getDeviceContext()->DSSetShader(NULL, NULL, 0);
 
 	// Build UI
+	// Build UI
 	ImGui::Text("FPS: %.2f", timer->getFPS());
 	ImGui::Checkbox("Wireframe mode", &wireframeToggle);
+
+	ImGui::SliderInt("Octaves", &Octaves, 0, 5);
+	ImGui::SliderFloat("Hurst", &Hurst, 0, 1);
+	ImGui::SliderFloat("Radius", &radius, 0, 10);
+
+	if (ImGui::CollapsingHeader("Position"))
+	{
+		ImGui::SliderFloat("X", &Position.x, 0, 10);
+		ImGui::SliderFloat("Y", &Position.y, 0, 10);
+		ImGui::SliderFloat("Z", &Position.z, 0, 10);
+	}
+
+	ImGui::SliderInt("Smooth Steps", &SmoothSteps, 0, 3);
+
+	if (ImGui::CollapsingHeader("Colour"))
+	{
+		ImGui::SliderFloat("R", &Colour.x, 0, 1);
+		ImGui::SliderFloat("G", &Colour.y, 0, 1);
+		ImGui::SliderFloat("B", &Colour.z, 0, 1);
+		ImGui::SliderFloat("A", &Colour.w, 0, 1);
+	}
+
+	ImGui::SliderInt("Ray Trace Maximum Distance", &MAx_Distance, 0, 5000);
 
 	// Render UI
 	ImGui::Render();
@@ -316,7 +340,7 @@ void App1::finalPass()
 
 		// Send geometry data, set shader parameters, render object with shader
 		mesh->sendData(renderer->getDeviceContext());
-		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition(),1,0.5f);
+		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition(), Octaves, Hurst, radius, Position, SmoothSteps, Colour, MAx_Distance);
 		vertex_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 		//light_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition());

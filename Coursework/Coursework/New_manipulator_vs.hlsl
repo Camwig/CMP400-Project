@@ -26,9 +26,22 @@ cbuffer ExtraBuffer : register(b2)
 {
     matrix lightViewMatrix[NUM_LIGHTS];
     matrix lightProjectionMatrix[NUM_LIGHTS];
-    float Ocatves;
+    //float Ocatves;
+    //float Hurst;
+    //float2 padding2;
+}
+
+cbuffer SettingsBuffer : register(b3)
+{
+    float Octaves;
     float Hurst;
-    float2 padding2;
+    float radius;
+    float Padding1;
+    float3 Position;
+    float SmoothSteps;
+    float4 Colour;
+    float MAx_Distance;
+    float3 Padding2;
 }
 
 struct InputType
@@ -151,16 +164,16 @@ OutputType main(InputType input)
     //Use the position of sphere
     //float3 d = Distance_between_3DPoints_3_(p, float3(0, 0, 0.6f));
         
-   for (int i = 1; i <= Ocatves; i++)
+    for (int i = 1; i <= Octaves; i++)
    {
         //Should be passed in
-        Frequency = 1.0f;/*(i * i);*/
+        Frequency = /*1.0f;*/(i * i);
         //Frequency = (i * i);
         Input = float3(input.position.x * Frequency, input.position.y * Frequency, input.position.z * Frequency);
         n = color(Input);
         //n = Manipulate_shape_based_on_noise(texture0,sampler0,input.tex);
         //Should be passed in
-        Amplitude = 1.0f;/*pow(Frequency, -Hurst);*/
+        Amplitude = /*1.0f;*/pow(Frequency, -Hurst);
         //Amplitude = pow(Frequency, -Hurst);
         //if (i != 1)
         //    Amplitude /= ((i) * (9 * i));
@@ -169,7 +182,7 @@ OutputType main(InputType input)
     
     //noise = Smooth_Noise(Input,2);
     
-    for (int k = 0; k <= 2;k++)
+    for (int k = 0; k <= SmoothSteps; k++)
         noise = smoothstep(-1, 1, noise);
     
     //noise = noise/Ocatves;
