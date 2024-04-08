@@ -151,8 +151,8 @@ OutputType main(InputType input)
     //Use the position of sphere
     //float3 d = Distance_between_3DPoints_3_(p, float3(0, 0, 0.6f));
         
-    //for (int i = 1; i <= Ocatves; i++)
-    //{
+   for (int i = 1; i <= Ocatves; i++)
+   {
         //Should be passed in
         Frequency = 1.0f;/*(i * i);*/
         //Frequency = (i * i);
@@ -165,9 +165,12 @@ OutputType main(InputType input)
         //if (i != 1)
         //    Amplitude /= ((i) * (9 * i));
         noise += n * Amplitude /*(Amplitude/10.f)*/;
-    //}
+    }
     
-    noise = Smooth_Noise(Input,2);
+    //noise = Smooth_Noise(Input,2);
+    
+    for (int k = 0; k <= 2;k++)
+        noise = smoothstep(-1, 1, noise);
     
     //noise = noise/Ocatves;
     input.position.xyz += (noise * input.normal);
