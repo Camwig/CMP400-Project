@@ -256,13 +256,14 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	settings_->Hurst = Hurst;
 	settings_->radius = Radius;
 	settings_->Padding1 = 0.0f;
-	settings_->Position = Position;
+	//settings_->Position = Position;
 	settings_->SmoothSteps = SmoothSteps;
 	settings_->Colour = Colour;
-	settings_->MAx_Distance = Max_distance;
+	//settings_->MAx_Distance = Max_distance;
 	settings_->Padding2 = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	deviceContext->Unmap(settingsBuffer, 0);
 	deviceContext->VSSetConstantBuffers(3, 1, &settingsBuffer);
+	deviceContext->PSSetConstantBuffers(1, 1, &settingsBuffer);
 
 	// Set shader texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);

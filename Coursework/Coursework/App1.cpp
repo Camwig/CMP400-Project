@@ -162,15 +162,15 @@ void App1::gui()
 	ImGui::Text("FPS: %.2f", timer->getFPS());
 	ImGui::Checkbox("Wireframe mode", &wireframeToggle);
 
-	ImGui::SliderInt("Octaves", &Octaves, 0, 5);
+	ImGui::SliderInt("Octaves", &Octaves, 0, 12);
 	ImGui::SliderFloat("Hurst", &Hurst, 0, 1);
 	ImGui::SliderFloat("Radius", &radius, 0, 10);
 
 	if (ImGui::CollapsingHeader("Position"))
 	{
-		ImGui::SliderFloat("X", &Position.x, 0, 10);
-		ImGui::SliderFloat("Y", &Position.y, 0, 10);
-		ImGui::SliderFloat("Z", &Position.z, 0, 10);
+		ImGui::SliderFloat("X", &Position.x, -10, 10);
+		ImGui::SliderFloat("Y", &Position.y, -10, 10);
+		ImGui::SliderFloat("Z", &Position.z, -10, 10);
 	}
 
 	ImGui::SliderInt("Smooth Steps", &SmoothSteps, 0, 3);
@@ -336,7 +336,9 @@ void App1::finalPass()
 		XMMATRIX viewMatrix = camera->getViewMatrix();
 		XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
 
-		
+		worldMatrix = XMMatrixTranslation(Position.x, Position.y, Position.z);
+		XMMATRIX scaleMatrix = XMMatrixScaling(radius, radius, radius);
+		worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
 		// Send geometry data, set shader parameters, render object with shader
 		mesh->sendData(renderer->getDeviceContext());

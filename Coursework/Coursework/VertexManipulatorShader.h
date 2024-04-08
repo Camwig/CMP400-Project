@@ -36,11 +36,11 @@ private:
 		float Hurst;
 		float radius;
 		float Padding1;
-		XMFLOAT3 Position;
+		//XMFLOAT3 Position;
 		float SmoothSteps;
-		XMFLOAT4 Colour;
-		float MAx_Distance;
 		XMFLOAT3 Padding2;
+		XMFLOAT4 Colour;
+		//float MAx_Distance;
 	};
 
 	struct CameraBufferType

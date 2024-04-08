@@ -17,6 +17,19 @@ cbuffer LightBuffer : register(b0)
     float3 padding;
 };
 
+cbuffer SettingsBuffer : register(b1)
+{
+    float Octaves;
+    float Hurst;
+    float radius;
+    float Padding1;
+    //float3 Position;
+    float SmoothSteps;
+    float4 Colour;
+    //float MAx_Distance;
+    float3 Padding2;
+}
+
 struct InputType
 {
     float4 position : SV_POSITION;
@@ -60,7 +73,7 @@ float4 main(InputType input) : SV_TARGET
 {
     //Try implementing a for loop to loop through instead
 	
-    float4 textureColour = texture0.Sample(sampler0, input.tex);
+    float4 textureColour = Colour; //texture0.Sample(sampler0, input.tex);
     float3 lightVector;
     float attenuation;
     float4 lightColour[NUM_LIGHTS];

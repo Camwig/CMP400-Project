@@ -37,10 +37,10 @@ cbuffer SettingsBuffer : register(b3)
     float Hurst;
     float radius;
     float Padding1;
-    float3 Position;
+    //float3 Position;
     float SmoothSteps;
     float4 Colour;
-    float MAx_Distance;
+    //float MAx_Distance;
     float3 Padding2;
 }
 
@@ -182,7 +182,7 @@ OutputType main(InputType input)
     
     //noise = Smooth_Noise(Input,2);
     
-    for (int k = 0; k <= SmoothSteps; k++)
+    for (int k = 1; k <= SmoothSteps; k++)
         noise = smoothstep(-1, 1, noise);
     
     //noise = noise/Ocatves;
