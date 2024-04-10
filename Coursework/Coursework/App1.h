@@ -82,7 +82,7 @@ private:
 	XMFLOAT4 Colour = XMFLOAT4(0.00f, 0.40f, 0.07f, 0.0f);
 	int MAx_Distance = 3000;
 
-	XMFLOAT4 AmbientColour = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	XMFLOAT4 AmbientColour = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	XMFLOAT3 DiffuseColour = XMFLOAT3(1.0f, 0.0f, 0.0f);
 	XMFLOAT3 LightPosition = XMFLOAT3(0.0f, 4.0f, 0.0f);
 

@@ -92,7 +92,7 @@ float4 main(InputType input) : SV_TARGET
     
     //Test = viewVector;
     
-    float shininess = 10.0f;
+    //float shininess = 10.0f;
     
     //bool Perlin = false;
 
@@ -235,10 +235,15 @@ float4 main(InputType input) : SV_TARGET
             //SDF_Position -= (n * 0.5f);
             
             float4 col = Colour;
-            float4 col2 = float4(0.0f, 0.0f, 0.0f, 1.0f);
-            col2.xyz += phongIllumination(specularPower, viewVector, Position, currentPos, World, Octaves, Hurst,SmoothSteps,lightambient,lightposition[0],lightdirection[0],lightdiffuse[0]);
-            //col = float4(col.x + col2.x, col.y + col2.y, col.z + col2.z, col.w);
-            return col2*col /** textureColour*/;
+            float4 new_col = float4(0.0f, 0.0f, 0.0f, 1.0f);
+            float4 col2 = phongIllumination(specularPower, viewVector, Position, currentPos, World, Octaves, Hurst, Position, SmoothSteps, lightambient, lightposition[0], lightdirection[0], lightdiffuse[0]);
+            //col = col+col2
+            
+            new_col.xyz += col2;
+            
+            //float4 col2 = phongIllumination(shininess, viewVector, Position, currentPos, World, Octaves, Hurst, Position, SmoothSteps);
+            //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
+            return col + new_col /** textureColour*/;
         }
             
         if (total_distance > num_of_steps)

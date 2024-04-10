@@ -480,7 +480,67 @@ float3 estimateNormal_2(float3 p,float3 c, float4x4 World, int Octave, float Hur
     return normalize(Final_Normal);
 }
 
-float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 currentPos, float4x4 World, int Octave, float Hurst, float SmoothSteps, float4 ambientLight, float4 Light1Pos, float3 light1Direction,float4 lightColour)
+//float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 currentPos, float4x4 World, int Octave, float Hurst, float SmoothSteps, float4 ambientLight, float4 Light1Pos, float3 light1Direction,float4 lightColour)
+//{
+//    //float4 ambientLight = float4(0.5, 0.5, 0.5, 1.0f);
+//    float4 colour = float4(0.0f, 0.0f, 0.0f,0.0f);
+//    //ambientLight = ambientLight * k_a;
+//    //colour = ambientLight * k_a;
+    
+//    //The values in the sin and cos can be anything its for light position
+    
+//    //The lightposition doesnt work as it should not entirley sure
+//    //float4 Light1Pos = float4(0.0f, 3.0f, 0.6f, 1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+//    //float4 Light1Pos = float4(3.0f, 5.0f, 5.0f, 1.0f);
+//    //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
+    
+//    float3 light1Vector = float3(0.0f, 0.0f, 0.0f);
+    
+//    //Do this without camera matrix applied
+    
+//    //It has to be this but I have no idea where 
+    
+//    //Use current position for shapes that are not spheres or at least quads
+//    //Spheres use their origin coordinates
+    
+//    float3 Result_pos = mul(Position, World);
+    
+//    //Somewhere the camera is being multpiled onto the light vector and I cannot tell you where
+    
+//    //So the lightVector is still wrong which is why this is still failing to figure out point lights
+//    light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - Result_pos /*eye*/);
+    
+//    //light1Vector /= Campos;
+    
+//    //float3 light1Direction = (float3(0.0f, -1.0f, 0.0f));
+   
+//    float3 Normal = estimateNormal_2(currentPos, Position, World, Octave, Hurst, SmoothSteps); /*float3(0.0f, 0.0f, 1.0f);*/
+    
+//    //return float4(Normal.x,Normal.y,Normal.z,1.0f);
+    
+//    //Normal = mul(Normal, World);
+//    //Normal = normalize(Normal);
+    
+//    float attenuation = 0.0f;
+    
+//    attenuation = calcAttenuation(length(light1Vector), 0.5f, 0.125f, 0.0f); 
+    
+//    light1Vector = normalize(light1Vector);
+    
+//    colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, lightColour, Light1Pos);
+    
+//    //Need to also change this based on point or direction as vector needs to be negative for direction
+//    colour *= calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
+    
+//    /*float spe = pow(clamp( dot( reflect(rd,nor), lgt ), 0.0, 1.0 ),500.);*/
+//    //colour += pow(clamp(dot(reflect(ViewVector, Normal), Light1Pos), 0.0f, 1.0f), 500);
+    
+    
+//    return colour;
+//    //return float4(Normal, 1.0f);
+//}
+
+float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float4x4 World, int Octave, float Hurst, float3 Object_pos, float SmoothSteps, float4 ambientLight, float4 Light1Pos, float3 light1Direction, float4 lightColour)
 {
     //float4 ambientLight = float4(0.5, 0.5, 0.5, 1.0f);
     float4 colour = float4(0.0f, 0.0f, 0.0f,0.0f);
@@ -514,7 +574,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     //float3 light1Direction = (float3(0.0f, -1.0f, 0.0f));
    
-    float3 Normal = estimateNormal_2(currentPos, Position, World, Octave, Hurst, SmoothSteps); /*float3(0.0f, 0.0f, 1.0f);*/
+    float3 Normal = estimateNormal_2(p, Object_pos, World, Octave, Hurst,SmoothSteps); /*float3(0.0f, 0.0f, 1.0f);*/
     
     //return float4(Normal.x,Normal.y,Normal.z,1.0f);
     
@@ -529,8 +589,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, lightColour, Light1Pos);
     
-    //Need to also change this based on point or direction as vector needs to be negative for direction
-    colour *= calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
+    colour += calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
     
     /*float spe = pow(clamp( dot( reflect(rd,nor), lgt ), 0.0, 1.0 ),500.);*/
     //colour += pow(clamp(dot(reflect(ViewVector, Normal), Light1Pos), 0.0f, 1.0f), 500);

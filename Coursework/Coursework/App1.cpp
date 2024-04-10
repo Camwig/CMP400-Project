@@ -173,19 +173,19 @@ void App1::gui()
 
 	if (ImGui::CollapsingHeader("Position"))
 	{
-		ImGui::SliderFloat("X", &Position.x, -10, 10);
-		ImGui::SliderFloat("Y", &Position.y, -10, 10);
-		ImGui::SliderFloat("Z", &Position.z, -10, 10);
+		ImGui::SliderFloat("Position X", &Position.x, -10, 10);
+		ImGui::SliderFloat("Position Y", &Position.y, -10, 10);
+		ImGui::SliderFloat("Position Z", &Position.z, -10, 10);
 	}
 
 	ImGui::SliderInt("Smooth Steps", &SmoothSteps, 0, 6);
 
 	if (ImGui::CollapsingHeader("Colour"))
 	{
-		ImGui::SliderFloat("R", &Colour.x, 0, 1);
-		ImGui::SliderFloat("G", &Colour.y, 0, 1);
-		ImGui::SliderFloat("B", &Colour.z, 0, 1);
-		ImGui::SliderFloat("A", &Colour.w, 0, 1);
+		ImGui::SliderFloat("Colour R", &Colour.x, 0, 1);
+		ImGui::SliderFloat("Colour G", &Colour.y, 0, 1);
+		ImGui::SliderFloat("Colour B", &Colour.z, 0, 1);
+		ImGui::SliderFloat("Colour A", &Colour.w, 0, 1);
 	}
 
 	if (ImGui::CollapsingHeader("Light"))
@@ -196,23 +196,23 @@ void App1::gui()
 
 		if (ImGui::CollapsingHeader("Ambient Colour"))
 		{
-			ImGui::SliderFloat("R", &AmbientColour.x, 0, 1);
-			ImGui::SliderFloat("G", &AmbientColour.y, 0, 1);
-			ImGui::SliderFloat("B", &AmbientColour.z, 0, 1);
+			ImGui::SliderFloat("Ambient R", &AmbientColour.x, 0, 0.5);
+			ImGui::SliderFloat("Ambient G", &AmbientColour.y, 0, 0.5);
+			ImGui::SliderFloat("Ambient B", &AmbientColour.z, 0, 0.5);
 		}
 
 		if (ImGui::CollapsingHeader("Diffuse Colour"))
 		{
-			ImGui::SliderFloat("R", &DiffuseColour.x, 0, 1);
-			ImGui::SliderFloat("G", &DiffuseColour.y, 0, 1);
-			ImGui::SliderFloat("B", &DiffuseColour.z, 0, 1);
+			ImGui::SliderFloat("Diffuse R", &DiffuseColour.x, 0, 1);
+			ImGui::SliderFloat("Diffuse G", &DiffuseColour.y, 0, 1);
+			ImGui::SliderFloat("Diffuse B", &DiffuseColour.z, 0, 1);
 		}
 
 		if (ImGui::CollapsingHeader("Light Position"))
 		{
-			ImGui::SliderFloat("X", &LightPosition.x, -10, 10);
-			ImGui::SliderFloat("Y", &LightPosition.y, -10, 10);
-			ImGui::SliderFloat("Z", &LightPosition.z, -10, 10);
+			ImGui::SliderFloat("Light X", &LightPosition.x, -10, 10);
+			ImGui::SliderFloat("Light Y", &LightPosition.y, -10, 10);
+			ImGui::SliderFloat("Light Z", &LightPosition.z, -10, 10);
 		}
 	}
 
