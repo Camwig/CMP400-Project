@@ -45,9 +45,9 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	VertexBased = false;
 
 	light[0] = new Light();
-	light[0]->setAmbientColour(1.0f, 1.0f, 1.0f, 1.0f);
-	light[0]->setDiffuseColour(0.0f, 1.0f, 0.0f, 1.0f);
-	light[0]->setPosition(0.0f, 4.0f, 0.0f);
+	light[0]->setAmbientColour(AmbientColour.x, AmbientColour.y, AmbientColour.z, AmbientColour.w);
+	light[0]->setDiffuseColour(DiffuseColour.x, DiffuseColour.y, DiffuseColour.z, 1.0f);
+	light[0]->setPosition(LightPosition.x, LightPosition.y, LightPosition.z);
 
 	//TD_Text = new TDRenderTarget(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 
@@ -142,6 +142,10 @@ bool App1::render()
 		RenderedPass();
 	finalPass();
 
+	light[0]->setAmbientColour(AmbientColour.x, AmbientColour.y, AmbientColour.z, AmbientColour.w);
+	light[0]->setDiffuseColour(DiffuseColour.x, DiffuseColour.y, DiffuseColour.z, 1.0f);
+	light[0]->setPosition(LightPosition.x, LightPosition.y, LightPosition.z);
+
 	//gui();
 
 	// Present the rendered scene to the screen.
@@ -182,6 +186,34 @@ void App1::gui()
 		ImGui::SliderFloat("G", &Colour.y, 0, 1);
 		ImGui::SliderFloat("B", &Colour.z, 0, 1);
 		ImGui::SliderFloat("A", &Colour.w, 0, 1);
+	}
+
+	if (ImGui::CollapsingHeader("Light"))
+	{
+		//light[0]->setAmbientColour(1.0f, 1.0f, 1.0f, 1.0f);
+		//light[0]->setDiffuseColour(1.0f, 0.0f, 0.0f, 1.0f);
+		//light[0]->setPosition(0.0f, 4.0f, 0.0f);
+
+		if (ImGui::CollapsingHeader("Ambient Colour"))
+		{
+			ImGui::SliderFloat("R", &AmbientColour.x, 0, 1);
+			ImGui::SliderFloat("G", &AmbientColour.y, 0, 1);
+			ImGui::SliderFloat("B", &AmbientColour.z, 0, 1);
+		}
+
+		if (ImGui::CollapsingHeader("Diffuse Colour"))
+		{
+			ImGui::SliderFloat("R", &DiffuseColour.x, 0, 1);
+			ImGui::SliderFloat("G", &DiffuseColour.y, 0, 1);
+			ImGui::SliderFloat("B", &DiffuseColour.z, 0, 1);
+		}
+
+		if (ImGui::CollapsingHeader("Light Position"))
+		{
+			ImGui::SliderFloat("X", &LightPosition.x, -10, 10);
+			ImGui::SliderFloat("Y", &LightPosition.y, -10, 10);
+			ImGui::SliderFloat("Z", &LightPosition.z, -10, 10);
+		}
 	}
 
 	ImGui::SliderInt("Ray Trace Maximum Distance", &MAx_Distance, 0, 5000);

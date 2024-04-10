@@ -58,7 +58,7 @@ struct OutputType
     float3 normal : NORMAL;
     float3 worldPosition : TEXCOORD1;
     float3 viewVector : TEXCOORD2;
-    float4 lightViewPos : TEXCOORD3;
+    //float4 lightViewPos : TEXCOORD3;
 };
 
 //void SmoothNoise()
@@ -200,9 +200,9 @@ OutputType main(InputType input)
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
     
-    output.lightViewPos = mul(input.position, worldMatrix);
-    output.lightViewPos = mul(output.lightViewPos, lightViewMatrix[0]);
-    output.lightViewPos = mul(output.lightViewPos, lightProjectionMatrix[0]);
+    //output.lightViewPos = mul(input.position, worldMatrix);
+    //output.lightViewPos = mul(output.lightViewPos, lightViewMatrix[0]);
+    //output.lightViewPos = mul(output.lightViewPos, lightProjectionMatrix[0]);
 
 	// Store the texture coordinates for the pixel shader.
     output.tex = input.tex;

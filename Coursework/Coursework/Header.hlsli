@@ -529,7 +529,8 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, lightColour, Light1Pos);
     
-    colour += calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
+    //Need to also change this based on point or direction as vector needs to be negative for direction
+    colour *= calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
     
     /*float spe = pow(clamp( dot( reflect(rd,nor), lgt ), 0.0, 1.0 ),500.);*/
     //colour += pow(clamp(dot(reflect(ViewVector, Normal), Light1Pos), 0.0f, 1.0f), 500);

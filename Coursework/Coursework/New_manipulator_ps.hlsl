@@ -29,7 +29,7 @@ struct InputType
     float3 normal : NORMAL;
     float3 worldPosition : TEXCOORD1;
     float3 viewVector : TEXCOORD2;
-    float4 lightViewPos : TEXCOORD3;
+    //float4 lightViewPos : TEXCOORD3;
 };
 
 // Calculate lighting intensity based on direction and normal. Combine with light colour.
@@ -69,7 +69,7 @@ float4 main(InputType input) : SV_TARGET
     float3 lightVector;
     float attenuation;
     float4 lightColour[NUM_LIGHTS];
-    float4 final_colour = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 final_colour = float4(0.0f, 0.0f, 0.0f, 1.0f);
     
     
     if (NUM_LIGHTS > 0)
@@ -106,12 +106,11 @@ float4 main(InputType input) : SV_TARGET
                 lightColour[i] *= calcSpecular(float3(direction.x, direction.y, direction.z), input.normal, input.viewVector, float4(1, 1, 1, 1), specularPower);
             }
             
-            final_colour *= lightColour[i];
+            final_colour.xyz += lightColour[i];
 
         }
         
         //return float4(input.normal.x, input.normal.y, input.normal.z, 1.0f);
-        //return lightColour[0] * lightColour[1] * lightColour[2] * textureColour;
-        return final_colour * textureColour;
+        return final_colour + textureColour;
     }
 }
