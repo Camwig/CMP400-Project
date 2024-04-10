@@ -36,6 +36,18 @@ VertexManipulatorShader::~VertexManipulatorShader()
 		settingsBufferPs = 0;
 	}
 
+	if (extr_buffer)
+	{
+		extr_buffer->Release();
+		extr_buffer = 0;
+	}
+
+	if (lightBuffer)
+	{
+		lightBuffer->Release();
+		lightBuffer = 0;
+	}
+
 	// Release the layout.
 	if (layout)
 	{

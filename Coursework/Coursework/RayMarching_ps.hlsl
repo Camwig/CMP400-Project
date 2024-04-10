@@ -1,5 +1,7 @@
 #include "Header.hlsli"
 
+#define NUM_LIGHTS 1
+
 Texture2D shaderTexture : register(t0);
 Texture2D PerlinTexture : register(t1);
 SamplerState SampleType : register(s0);
@@ -39,6 +41,16 @@ cbuffer SettingsBuffer : register(b2)
     float MAx_Distance;
     float3 Padding2;
 }
+
+cbuffer LightBuffer : register(b3)
+{
+    float4 lightambient;
+    float4 lightdiffuse[NUM_LIGHTS];
+    float4 lightposition[NUM_LIGHTS];
+    float4 lightdirection;
+    float specularPower;
+    float3 padding5;
+};
 
 struct InputType
 {
@@ -120,6 +132,7 @@ float4 main(InputType input) : SV_TARGET
     //new_vector = viewVector;
     //return height * 30.0f;
     
+    [loop]
     for (int i = 0; i < num_of_steps; i++)
     {
         
@@ -214,20 +227,20 @@ float4 main(InputType input) : SV_TARGET
             
             
             /*new_vector = (camPos + total_distance) + distance_to_currentPos * viewVector*/;
-            float3 p = currentPos + (distance_to_currentPos);
+            //float3 p = currentPos + (distance_to_currentPos);
             
-            float3 SDF_Position = /*currentPos * distance_to_currentPos;*/float3(5.0f, 0.0f, 5.0f);
+            //float3 SDF_Position = /*currentPos * distance_to_currentPos;*/float3(5.0f, 0.0f, 5.0f);
             
             //new_vector = float3(currentPos.x + distance_to_currentPos * viewVector.x, currentPos.y + distance_to_currentPos * viewVector.y, currentPos.z + distance_to_currentPos * viewVector.z);
             //SDF_Position -= (n * 0.5f);
             
             float4 col = Colour;
-            float4 col2 = phongIllumination(shininess, viewVector, float3(0.0, 0.0f, 0.6f), currentPos, World, Octaves, Hurst, Position,SmoothSteps);
+            float4 col2 = phongIllumination(specularPower, viewVector, Position, currentPos, World, Octaves, Hurst,SmoothSteps,lightambient,lightposition[0],lightdirection[0],lightdiffuse[0]);
             col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
             return col /** textureColour*/;
         }
             
-        if (total_distance > 1000.0f)
+        if (total_distance > num_of_steps)
         {
             break;
         }

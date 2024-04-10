@@ -3,6 +3,8 @@
 //	return pos;
 //}
 
+#define NUM_LIGHTS 1
+
 cbuffer MatrixBuffer : register(b0)
 {
     matrix worldMatrix;
@@ -22,6 +24,15 @@ cbuffer CameraBuffer : register(b1)
     float3 padding4;
 };
 
+cbuffer ExtraBuffer : register(b2)
+{
+    matrix lightViewMatrix[NUM_LIGHTS];
+    matrix lightProjectionMatrix[NUM_LIGHTS];
+    //float Ocatves;
+    //float Hurst;
+    //float2 padding2;
+}
+
 struct InputType
 {
     float4 position : POSITION;
@@ -36,6 +47,7 @@ struct OutputType
     float3 normal : NORMAL;
     float3 worldPosition : TEXCOORD1;
     float3 viewVector : TEXCOORD2;
+    float4 lightViewPos : TEXCOORD3;
 };
 
 OutputType main(InputType input)
@@ -66,6 +78,10 @@ OutputType main(InputType input)
     output.position = mul(input.position, worldMatrix);
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
+    
+    output.lightViewPos = mul(input.position, worldMatrix);
+    output.lightViewPos = mul(output.lightViewPos, lightViewMatrix[0]);
+    output.lightViewPos = mul(output.lightViewPos, lightProjectionMatrix[0]);
 
     //output.colour = input.colour;
     output.tex = input.tex;

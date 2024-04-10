@@ -38,6 +38,18 @@ RayMarchingShader::~RayMarchingShader()
 		settingsBuffer = 0;
 	}
 
+	if (extr_buffer)
+	{
+		extr_buffer->Release();
+		extr_buffer = 0;
+	}
+
+	if (lightBuffer)
+	{
+		lightBuffer->Release();
+		lightBuffer = 0;
+	}
+
 	// Release the layout.
 	if (layout)
 	{
@@ -57,6 +69,9 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 	D3D11_BUFFER_DESC screenSizeBufferDesc;
 	D3D11_BUFFER_DESC settingsBufferDesc;
 	D3D11_SAMPLER_DESC samplerDesc;
+
+	D3D11_BUFFER_DESC lightBufferDesc;
+	D3D11_BUFFER_DESC extraBufferDesc;
 
 	// Load (+ compile) shader files
 	loadVertexShader(vsFilename);
@@ -114,10 +129,25 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 	settingsBufferDesc.StructureByteStride = 0;
 	renderer->CreateBuffer(&settingsBufferDesc,NULL,&settingsBuffer);
 
+	lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	lightBufferDesc.ByteWidth = sizeof(LightBufferType);
+	lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	lightBufferDesc.MiscFlags = 0;
+	lightBufferDesc.StructureByteStride = 0;
+	renderer->CreateBuffer(&lightBufferDesc, NULL, &lightBuffer);
+
+	extraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	extraBufferDesc.ByteWidth = sizeof(ExtraBufferType);
+	extraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	extraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	extraBufferDesc.MiscFlags = 0;
+	extraBufferDesc.StructureByteStride = 0;
+	renderer->CreateBuffer(&extraBufferDesc, NULL, &extr_buffer);
 }
 
 
-void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2, float deltaTime, ID3D11ShaderResourceView* p_texture, float Octaves, float Hurst, float Radius, XMFLOAT3 Position, float SmoothSteps, XMFLOAT4 Colour, float Max_distance)
+void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS_],XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2, float deltaTime, ID3D11ShaderResourceView* p_texture, float Octaves, float Hurst, float Radius, XMFLOAT3 Position, float SmoothSteps, XMFLOAT4 Colour, float Max_distance)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -127,10 +157,16 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	ScreenSizeBuffer* screen_;
 	SettingsBuffer* settings_;
 
+	ExtraBufferType* extra;
+	LightBufferType* lightPtr;
+
 	// Transpose the matrices to prepare them for the shader.
 	tworld = XMMatrixTranspose(worldMatrix);
 	tview = XMMatrixTranspose(viewMatrix);
 	tproj = XMMatrixTranspose(projectionMatrix);
+
+	XMMATRIX tLightViewMatrix1 = XMMatrixTranspose(light[0]->getViewMatrix());
+	XMMATRIX tLightProjectionMatrix1 = XMMatrixTranspose(light[0]->getOrthoMatrix());
 
 	// Lock the constant buffer so it can be written to.
 	deviceContext->Map(matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -186,6 +222,37 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	deviceContext->Unmap(settingsBuffer, 0);
 	deviceContext->PSSetConstantBuffers(2, 1, &settingsBuffer);
 
+	deviceContext->Map(lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	lightPtr = (LightBufferType*)mappedResource.pData;
+
+	//Setting the lighing values
+	lightPtr->diffuse[0] = light[0]->getDiffuseColour();
+	lightPtr->position[0] = XMFLOAT4(light[0]->getPosition().x, light[0]->getPosition().y, light[0]->getPosition().z, 1.0f);
+
+	//lightPtr->diffuse[1] = light[1]->getDiffuseColour();
+	//lightPtr->position[1] = XMFLOAT4(light[1]->getPosition().x, light[1]->getPosition().y, light[1]->getPosition().z, 1.0f);
+
+	//lightPtr->direction = XMFLOAT4(light[2]->getDirection().x, light[2]->getDirection().y, light[2]->getDirection().z, 1.0f);
+	//lightPtr->diffuse[2] = light[2]->getDiffuseColour();
+	//lightPtr->position[2] = XMFLOAT4(light[2]->getPosition().x, light[2]->getPosition().y, light[2]->getPosition().z, 2.0f);
+
+	lightPtr->ambient = light[0]->getAmbientColour();
+	lightPtr->specularPower = 2.0f;
+	lightPtr->padding = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	deviceContext->Unmap(lightBuffer, 0);
+	deviceContext->PSSetConstantBuffers(3, 1, &lightBuffer);
+
+	deviceContext->Map(extr_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	extra = (ExtraBufferType*)mappedResource.pData;
+	extra->lightView[0] = tLightViewMatrix1;
+	extra->lightProjection[0] = tLightProjectionMatrix1;
+	//extra->Ocatves = Octaves;
+	//extra->Hurst = Hurst;
+	//extra->padding = XMFLOAT2(0.0f,0.0f);
+	//dataPtr->lightView[1] = tLightViewMatrix2;
+	//dataPtr->lightProjection[1] = tLightProjectionMatrix2;
+	deviceContext->Unmap(extr_buffer, 0);
+	deviceContext->VSSetConstantBuffers(2, 1, &extr_buffer);
 
 	// Set shader texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);

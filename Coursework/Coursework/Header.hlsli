@@ -480,9 +480,9 @@ float3 estimateNormal_2(float3 p,float3 c, float4x4 World, int Octave, float Hur
     return normalize(Final_Normal);
 }
 
-float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float4x4 World, int Octave,float Hurst,float3 Object_pos,float SmoothSteps)
+float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 currentPos, float4x4 World, int Octave, float Hurst, float SmoothSteps, float4 ambientLight, float4 Light1Pos, float3 light1Direction,float4 lightColour)
 {
-    float4 ambientLight = float4(0.5, 0.5, 0.5, 1.0f);
+    //float4 ambientLight = float4(0.5, 0.5, 0.5, 1.0f);
     float4 colour = float4(0.0f, 0.0f, 0.0f,0.0f);
     //ambientLight = ambientLight * k_a;
     //colour = ambientLight * k_a;
@@ -490,7 +490,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     //The values in the sin and cos can be anything its for light position
     
     //The lightposition doesnt work as it should not entirley sure
-    float4 Light1Pos = float4(0.0f, 3.0f, 0.6f, 1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
+    //float4 Light1Pos = float4(0.0f, 3.0f, 0.6f, 1.0f); //float3(4.0f * sin(DeltaTime), 2.0f, 4.0f * cos(DeltaTime));
     //float4 Light1Pos = float4(3.0f, 5.0f, 5.0f, 1.0f);
     //float3 Light1Intensity = float3(0.8f,0.8f,0.8f);
     
@@ -512,9 +512,9 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     //light1Vector /= Campos;
     
-    float3 light1Direction = (float3(0.0f, -1.0f, 0.0f));
+    //float3 light1Direction = (float3(0.0f, -1.0f, 0.0f));
    
-    float3 Normal = estimateNormal_2(p, Object_pos, World, Octave, Hurst,SmoothSteps); /*float3(0.0f, 0.0f, 1.0f);*/
+    float3 Normal = estimateNormal_2(currentPos, Position, World, Octave, Hurst, SmoothSteps); /*float3(0.0f, 0.0f, 1.0f);*/
     
     //return float4(Normal.x,Normal.y,Normal.z,1.0f);
     
@@ -527,7 +527,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     light1Vector = normalize(light1Vector);
     
-    colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, float4(0.5f, 0.5f, 0.5f, 0.5f), Light1Pos);
+    colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, lightColour, Light1Pos);
     
     colour += calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
     
