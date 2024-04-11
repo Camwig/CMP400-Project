@@ -540,7 +540,7 @@ float3 estimateNormal_2(float3 p,float3 c, float4x4 World, int Octave, float Hur
 //    //return float4(Normal, 1.0f);
 //}
 
-float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float4x4 World, int Octave, float Hurst, float3 Object_pos, float SmoothSteps, float4 ambientLight, float4 Light1Pos, float3 light1Direction, float4 lightColour)
+float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float4x4 World, int Octave, float Hurst, float3 Object_pos, float SmoothSteps, float4 ambientLight, float4 Light1Pos, float4 light1Direction, float4 lightColour)
 {
     //float4 ambientLight = float4(0.5, 0.5, 0.5, 1.0f);
     float4 colour = float4(0.0f, 0.0f, 0.0f,0.0f);
@@ -587,9 +587,17 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     light1Vector = normalize(light1Vector);
     
-    colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, lightColour, Light1Pos);
-    
-    colour += calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
+    switch (Light1Pos.w)
+    {
+        case 1.0f:
+            colour = ambientLight + attenuation * calculateLighting(light1Vector, Normal, lightColour, Light1Pos);
+            colour += calcSpecular(light1Vector, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
+            break;
+        case 2.0f:
+            colour = ambientLight + attenuation * calculateLighting(light1Direction.xyz, Normal, lightColour, Light1Pos);
+            colour += calcSpecular(-light1Direction.xyz, Normal, ViewVector, float4(1, 1, 1, 1), shininess);
+            break;
+    }
     
     /*float spe = pow(clamp( dot( reflect(rd,nor), lgt ), 0.0, 1.0 ),500.);*/
     //colour += pow(clamp(dot(reflect(ViewVector, Normal), Light1Pos), 0.0f, 1.0f), 500);

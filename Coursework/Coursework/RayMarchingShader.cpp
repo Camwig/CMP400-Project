@@ -226,8 +226,12 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	lightPtr = (LightBufferType*)mappedResource.pData;
 
 	//Setting the lighing values
+
+
+	//Set the type of light this is with a  boolean
 	lightPtr->diffuse[0] = light[0]->getDiffuseColour();
-	lightPtr->position[0] = XMFLOAT4(light[0]->getPosition().x, light[0]->getPosition().y, light[0]->getPosition().z, 1.0f);
+	lightPtr->position[0] = XMFLOAT4(light[0]->getPosition().x, light[0]->getPosition().y, light[0]->getPosition().z, 2.0f);
+	lightPtr->direction[0] = XMFLOAT4(light[0]->getDirection().x, light[0]->getDirection().y, light[0]->getDirection().z, 1.0f);
 
 	//lightPtr->diffuse[1] = light[1]->getDiffuseColour();
 	//lightPtr->position[1] = XMFLOAT4(light[1]->getPosition().x, light[1]->getPosition().y, light[1]->getPosition().z, 1.0f);

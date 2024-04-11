@@ -12,7 +12,7 @@ cbuffer LightBuffer : register(b0)
     float4 ambient;
     float4 diffuse[NUM_LIGHTS];
     float4 position[NUM_LIGHTS];
-    float4 direction;
+    float4 direction[NUM_LIGHTS];
     float specularPower;
     float3 padding;
 };
@@ -101,9 +101,9 @@ float4 main(InputType input) : SV_TARGET
 	
                 lightVector = normalize(lightVector);
 	
-                lightColour[i] = ambient + attenuation * calculateLighting(float3(direction.x, direction.y, direction.z), input.normal, diffuse[i], position[i]);
+                lightColour[i] = ambient + attenuation * calculateLighting(float3(direction[i].x, direction[i].y, direction[i].z), input.normal, diffuse[i], position[i]);
 	
-                lightColour[i] *= calcSpecular(float3(direction.x, direction.y, direction.z), input.normal, input.viewVector, float4(1, 1, 1, 1), specularPower);
+                lightColour[i] *= calcSpecular(float3(direction[i].x, direction[i].y, direction[i].z), input.normal, input.viewVector, float4(1, 1, 1, 1), specularPower);
             }
             
             final_colour.xyz += lightColour[i];

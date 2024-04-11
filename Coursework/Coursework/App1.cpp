@@ -49,6 +49,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	light[0]->setDiffuseColour(DiffuseColour.x, DiffuseColour.y, DiffuseColour.z, 1.0f);
 	light[0]->setPosition(LightPosition.x, LightPosition.y, LightPosition.z);
 
+	light[0]->setDirection(LightDirection.x, LightDirection.y, LightDirection.z);
+
 	//TD_Text = new TDRenderTarget(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 
 	//PerlinGeneration();
@@ -146,6 +148,8 @@ bool App1::render()
 	light[0]->setDiffuseColour(DiffuseColour.x, DiffuseColour.y, DiffuseColour.z, 1.0f);
 	light[0]->setPosition(LightPosition.x, LightPosition.y, LightPosition.z);
 
+	light[0]->setDirection(LightDirection.x, LightDirection.y, LightDirection.z);
+
 	//gui();
 
 	// Present the rendered scene to the screen.
@@ -208,11 +212,20 @@ void App1::gui()
 			ImGui::SliderFloat("Diffuse B", &DiffuseColour.z, 0, 1);
 		}
 
+		//Only if point light
 		if (ImGui::CollapsingHeader("Light Position"))
 		{
 			ImGui::SliderFloat("Light X", &LightPosition.x, -10, 10);
 			ImGui::SliderFloat("Light Y", &LightPosition.y, -10, 10);
 			ImGui::SliderFloat("Light Z", &LightPosition.z, -10, 10);
+		}
+
+		//only if directional
+		if (ImGui::CollapsingHeader("Light Direction"))
+		{
+			ImGui::SliderFloat("Direction X", &LightDirection.x, -1, 1);
+			ImGui::SliderFloat("Direction Y", &LightDirection.y, -1, 1);
+			ImGui::SliderFloat("Direction Z", &LightDirection.z, -1, 1);
 		}
 	}
 

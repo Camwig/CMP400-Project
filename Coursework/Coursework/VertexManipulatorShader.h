@@ -16,7 +16,7 @@ private:
 		XMFLOAT4 ambient;
 		XMFLOAT4 diffuse[NUM_LIGHTS];
 		XMFLOAT4 position[NUM_LIGHTS];
-		XMFLOAT4 direction;
+		XMFLOAT4 direction[NUM_LIGHTS];
 		float specularPower;
 		XMFLOAT3 padding;
 	};

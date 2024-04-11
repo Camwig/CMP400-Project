@@ -47,7 +47,7 @@ cbuffer LightBuffer : register(b3)
     float4 lightambient;
     float4 lightdiffuse[NUM_LIGHTS];
     float4 lightposition[NUM_LIGHTS];
-    float4 lightdirection;
+    float4 lightdirection[NUM_LIGHTS];
     float specularPower;
     float3 padding5;
 };

@@ -85,6 +85,7 @@ private:
 	XMFLOAT4 AmbientColour = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	XMFLOAT3 DiffuseColour = XMFLOAT3(1.0f, 0.0f, 0.0f);
 	XMFLOAT3 LightPosition = XMFLOAT3(0.0f, 4.0f, 0.0f);
+	XMFLOAT3 LightDirection = XMFLOAT3(0.0f, -1.0f, 0.0f);
 
 	float sx;
 	float sy;
