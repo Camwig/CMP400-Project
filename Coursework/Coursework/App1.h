@@ -87,6 +87,8 @@ private:
 	XMFLOAT3 LightPosition = XMFLOAT3(0.0f, 4.0f, 0.0f);
 	XMFLOAT3 LightDirection = XMFLOAT3(0.0f, -1.0f, 0.0f);
 
+	bool point = true;
+
 	float sx;
 	float sy;
 

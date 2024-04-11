@@ -170,6 +170,7 @@ void App1::gui()
 	ImGui::Text("FPS: %.2f", timer->getFPS());
 	ImGui::Checkbox("Wireframe mode", &wireframeToggle);
 	ImGui::Checkbox("VertexBase", &VertexBased);
+	ImGui::Checkbox("Point light True/Directional Light false", &point);
 
 	ImGui::SliderInt("Octaves", &Octaves, 0, 12);
 	ImGui::SliderFloat("Hurst", &Hurst, 0, 1);
@@ -212,20 +213,25 @@ void App1::gui()
 			ImGui::SliderFloat("Diffuse B", &DiffuseColour.z, 0, 1);
 		}
 
-		//Only if point light
-		if (ImGui::CollapsingHeader("Light Position"))
+		if (point)
 		{
-			ImGui::SliderFloat("Light X", &LightPosition.x, -10, 10);
-			ImGui::SliderFloat("Light Y", &LightPosition.y, -10, 10);
-			ImGui::SliderFloat("Light Z", &LightPosition.z, -10, 10);
+			//Only if point light
+			if (ImGui::CollapsingHeader("Light Position"))
+			{
+				ImGui::SliderFloat("Light X", &LightPosition.x, -10, 10);
+				ImGui::SliderFloat("Light Y", &LightPosition.y, -10, 10);
+				ImGui::SliderFloat("Light Z", &LightPosition.z, -10, 10);
+			}
 		}
-
-		//only if directional
-		if (ImGui::CollapsingHeader("Light Direction"))
+		else
 		{
-			ImGui::SliderFloat("Direction X", &LightDirection.x, -1, 1);
-			ImGui::SliderFloat("Direction Y", &LightDirection.y, -1, 1);
-			ImGui::SliderFloat("Direction Z", &LightDirection.z, -1, 1);
+			//only if directional
+			if (ImGui::CollapsingHeader("Light Direction"))
+			{
+				ImGui::SliderFloat("Direction X", &LightDirection.x, -1, 1);
+				ImGui::SliderFloat("Direction Y", &LightDirection.y, -1, 1);
+				ImGui::SliderFloat("Direction Z", &LightDirection.z, -1, 1);
+			}
 		}
 	}
 
@@ -343,7 +349,7 @@ void App1::RenderedPass()
 
 	orthoMesh->sendData(renderer->getDeviceContext());
 		//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
-	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(),light, camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), /*applied_noise*/timer->getTime(), PerlinTexture->getShaderResourceView(),Octaves,Hurst,radius,Position,SmoothSteps,Colour,MAx_Distance);
+	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(),light, camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), /*applied_noise*/timer->getTime(), PerlinTexture->getShaderResourceView(),Octaves,Hurst,radius,Position,SmoothSteps,Colour,MAx_Distance,point);
 	shader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 
 	renderer->setZBuffer(true);
@@ -388,7 +394,7 @@ void App1::finalPass()
 
 		// Send geometry data, set shader parameters, render object with shader
 		mesh->sendData(renderer->getDeviceContext());
-		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition(), Octaves, Hurst, SmoothSteps, Colour);
+		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition(), Octaves, Hurst, SmoothSteps, Colour,point);
 		vertex_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 		//light_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition());

@@ -68,7 +68,7 @@ public:
 	RayMarchingShader(ID3D11Device* device, HWND hwnd);
 	~RayMarchingShader();
 
-	void setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS_],XMFLOAT3 cameraPos,XMFLOAT3 camForwardVec,float distance_from_shape,float height,float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2,float deltaTime, ID3D11ShaderResourceView* p_texture,float Octaves,float Hurst,float Radius,XMFLOAT3 Position,float SmoothSteps,XMFLOAT4 Colour, float Max_distance);
+	void setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS_],XMFLOAT3 cameraPos,XMFLOAT3 camForwardVec,float distance_from_shape,float height,float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2,float deltaTime, ID3D11ShaderResourceView* p_texture,float Octaves,float Hurst,float Radius,XMFLOAT3 Position,float SmoothSteps,XMFLOAT4 Colour, float Max_distance,bool light_type);
 
 private:
 	void initShader(const wchar_t* vs, const wchar_t* ps);

@@ -6,7 +6,7 @@
 	*Colour DONE
 	*Lighting
 		*General DONE
-		*I will need to be able to set to either directional or point through!!!
+		*I will need to be able to set to either directional or point through!!! DONE
 		*IF COMMENT AND CLEANING DONE Multiple lights
 	*Ray Tracing Steps DONE
 	*Smoothing loops DONE
