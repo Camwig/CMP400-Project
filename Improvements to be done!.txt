@@ -11,6 +11,8 @@
 	*Ray Tracing Steps DONE
 	*Smoothing loops DONE
 
+1.5 Possible memory leaks at octaves and smoothsteps so worth a fix!
+
 2. Clean Up the code
 
 3. Comment the code
