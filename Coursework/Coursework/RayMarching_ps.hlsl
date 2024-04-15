@@ -132,11 +132,17 @@ float4 main(InputType input) : SV_TARGET
     //new_vector = viewVector;
     //return height * 30.0f;
     
+    float3 currentPos = float3(0, 0, 0);
+    float distance_to_currentPos = 0;
+    float4 col = Colour;
+    float4 new_col = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 col2 = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    
     [loop]
     for (int i = 0; i < num_of_steps; i++)
     {
         
-        float3 currentPos = camPos + total_distance * viewVector; /*CameraForwardDirection*/
+        currentPos = camPos + total_distance * viewVector; /*CameraForwardDirection*/
         
         //if (i == 0)
         //{
@@ -205,7 +211,7 @@ float4 main(InputType input) : SV_TARGET
         //float distance_to_currentPos2 = distance_from_Line(currentPos, float3(camPos.x,camPos.y,camPos.z + 1.0f), EndPoint, 0.1f);
         
         //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
-        float distance_to_currentPos = New_Random_Sphere(currentPos, Position, radius, Octaves, Hurst);
+        distance_to_currentPos = New_Random_Sphere(currentPos, Position, radius, Octaves, Hurst);
         
         //float3 d = Distance_between_3DPoints_3_(currentPos, float3(0, 0, 0.6f));
         
@@ -234,9 +240,9 @@ float4 main(InputType input) : SV_TARGET
             //new_vector = float3(currentPos.x + distance_to_currentPos * viewVector.x, currentPos.y + distance_to_currentPos * viewVector.y, currentPos.z + distance_to_currentPos * viewVector.z);
             //SDF_Position -= (n * 0.5f);
             
-            float4 col = Colour;
-            float4 new_col = float4(0.0f, 0.0f, 0.0f, 1.0f);
-            float4 col2 = phongIllumination(specularPower, viewVector, Position, currentPos, World, Octaves, Hurst, Position, SmoothSteps, lightambient, lightposition[0], lightdirection[0], lightdiffuse[0]);
+            //float4 col = Colour;
+            new_col = float4(0.0f, 0.0f, 0.0f, 1.0f);
+            col2 = phongIllumination(specularPower, viewVector, Position, currentPos, World, Octaves, Hurst, Position, SmoothSteps, lightambient, lightposition[0], lightdirection[0], lightdiffuse[0]);
             //col = col+col2
             
             new_col.xyz += col2;
@@ -256,7 +262,7 @@ float4 main(InputType input) : SV_TARGET
     }
     
     //float4 col = float4(viewVector.x, viewVector.y, viewVector.z, 1.0f);
-    float4 col = float4(0.39f, 0.58f, 0.92f, 1.0f);
+    col = float4(0.39f, 0.58f, 0.92f, 1.0f);
     return col;
     
     /*
