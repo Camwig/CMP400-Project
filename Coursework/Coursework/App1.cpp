@@ -1,5 +1,3 @@
-// Lab1.cpp
-// Lab 1 example, simple coloured triangle mesh
 #include "App1.h"
 
 App1::App1()
@@ -12,65 +10,29 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	// Call super/parent init function (required!)
 	BaseApplication::init(hinstance, hwnd, screenWidth, screenHeight, in, VSYNC, FULL_SCREEN);
 
-	// Initalise scene variables.
-	//XMFLOAT3 a = XMFLOAT3(-7,11,12);
-	//XMFLOAT3 b = XMFLOAT3(0, 0, 0);
-
-	//float v = distance_from_sphere(a,b,3);
+	//Defines the size of the screen as well as the size the orthomesh should cover
 	sx = screenWidth;
 	sy = screenHeight;
 	orthoMesh = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth, screenHeight);	// Full screen size
-	sampleMesh = new OrthoMesh(renderer->getDevice(), renderer->getDeviceContext(), screenWidth, screenHeight);
 
-	//light_shader = new LightShader(renderer->getDevice(), hwnd);
-
+	//Initalises the shaders
 	shader = new RayMarchingShader(renderer->getDevice(), hwnd);
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
-	//perlinShader = new PerlinTextureShader(renderer->getDevice(), hwnd);
-
 	vertex_shader = new VertexManipulatorShader(renderer->getDevice(), hwnd);
 
-	//PerlinTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
-
-	//ID3D11Device::CreateRenderTargetView(D3D11_BIND_RENDER_TARGET);
-
+	//Initialises the render textures
 	renderTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
-	DownSampletexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 	FinalTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 
+	//Creates the sphere mesh
 	mesh = new SphereMesh(renderer->getDevice(), renderer->getDeviceContext());
-	//plane = new PlaneMesh(renderer->getDevice(), renderer->getDeviceContext());
 
-	started = false;
-	VertexBased = false;
-
+	//Defines the light defintions and properties
 	light[0] = new Light();
 	light[0]->setAmbientColour(AmbientColour.x, AmbientColour.y, AmbientColour.z, AmbientColour.w);
 	light[0]->setDiffuseColour(DiffuseColour.x, DiffuseColour.y, DiffuseColour.z, 1.0f);
 	light[0]->setPosition(LightPosition.x, LightPosition.y, LightPosition.z);
-
 	light[0]->setDirection(LightDirection.x, LightDirection.y, LightDirection.z);
-
-	//TD_Text = new TDRenderTarget(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
-
-	//PerlinGeneration();
-
-
-	//D3D11_TEXTURE3D_DESC desc;
-	//desc.Width = 256;
-	//desc.Height = 256;
-	//desc.Depth = 256;
-	//desc.MipLevels = 1;
-	//desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	//desc.Usage = D3D11_USAGE_DEFAULT;
-	//desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	//desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	//desc.MiscFlags = 0;
-
-	//ID3D11Device* pd3dDevice;
-	//pd3dDevice = renderer->getDevice();
-	//ID3D11Texture3D* pTexture = NULL;
-	//pd3dDevice->CreateTexture3D(&desc, NULL, &pTexture);
 }
 
 
@@ -110,50 +72,16 @@ bool App1::frame()
 
 bool App1::render()
 {
-	//// Clear the scene. (default blue colour)
-	////renderer->beginScene(0.39f, 0.58f, 0.92f, 1.0f);
-
-	//// Set the render target to be the render to texture and clear it
-	//renderTexture->setRenderTarget(renderer->getDeviceContext());
-	//renderTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
-
-	//// Generate the view matrix based on the camera's position.
-	//camera->update();
-
-	//// Get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
-	//XMMATRIX worldMatrix = renderer->getWorldMatrix();
-	//XMMATRIX viewMatrix = camera->getViewMatrix();
-	//XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
-
-	////shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, camera->getPosition(), camera->getForwardVector(),0.0f);
-	////shader->render(renderer->getDeviceContext(),0);
-
-	//renderer->setBackBufferRenderTarget();
-
-	//FillTDText();
-	//finalPass();
-	if (!VertexBased)
-		firstPass();
-	//if (!started)
-	//{
-	//	PerlinGeneration();
-	//	started = true;
-	//}
-	//SamplePass();
 	if (!VertexBased)
 		RenderedPass();
 	finalPass();
 
+	//Updates the lighting values
+	//Could of used a check but activley checking the change in the GUI was actively more computationally intensive
 	light[0]->setAmbientColour(AmbientColour.x, AmbientColour.y, AmbientColour.z, AmbientColour.w);
 	light[0]->setDiffuseColour(DiffuseColour.x, DiffuseColour.y, DiffuseColour.z, 1.0f);
 	light[0]->setPosition(LightPosition.x, LightPosition.y, LightPosition.z);
-
 	light[0]->setDirection(LightDirection.x, LightDirection.y, LightDirection.z);
-
-	//gui();
-
-	// Present the rendered scene to the screen.
-	//renderer->endScene();
 
 	return true;
 }
@@ -165,7 +93,6 @@ void App1::gui()
 	renderer->getDeviceContext()->HSSetShader(NULL, NULL, 0);
 	renderer->getDeviceContext()->DSSetShader(NULL, NULL, 0);
 
-	// Build UI
 	// Build UI
 	ImGui::Text("FPS: %.2f", timer->getFPS());
 	ImGui::Checkbox("Wireframe mode", &wireframeToggle);
@@ -195,9 +122,6 @@ void App1::gui()
 
 	if (ImGui::CollapsingHeader("Light"))
 	{
-		//light[0]->setAmbientColour(1.0f, 1.0f, 1.0f, 1.0f);
-		//light[0]->setDiffuseColour(1.0f, 0.0f, 0.0f, 1.0f);
-		//light[0]->setPosition(0.0f, 4.0f, 0.0f);
 
 		if (ImGui::CollapsingHeader("Ambient Colour"))
 		{
@@ -242,98 +166,11 @@ void App1::gui()
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
-void App1::FillTDText()
-{
-	TD_Text->setRenderTarget(renderer->getDeviceContext());
-	TD_Text->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 1.0f, 0.0f, 1.0f);
-
-	renderer->setBackBufferRenderTarget();
-}
-
-void App1::firstPass()
-{
-	// Clear the scene. (default blue colour)
-//renderer->beginScene(0.39f, 0.58f, 0.92f, 1.0f);
-
-// Set the render target to be the render to texture and clear it
-	renderTexture->setRenderTarget(renderer->getDeviceContext());
-	renderTexture->clearRenderTarget(renderer->getDeviceContext(), 1.0f, 0.0f, 1.0f, 1.0f);
-
-	// Generate the view matrix based on the camera's position.
-	camera->update();
-
-	// Get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
-	XMMATRIX worldMatrix = renderer->getWorldMatrix();
-	XMMATRIX viewMatrix = camera->getViewMatrix();
-	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
-
-	//shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, camera->getPosition(), camera->getForwardVector(),0.0f);
-	//shader->render(renderer->getDeviceContext(),0);
-
-	renderer->setBackBufferRenderTarget();
-}
-
-//--------------------------------------------------
-//void App1::PerlinGeneration()
-//{
-//	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
-//
-//	float screenSizeY = (float)PerlinTexture->getTextureHeight();
-//	float screenSizeX = (float)PerlinTexture->getTextureWidth();
-//
-//	PerlinTexture->setRenderTarget(renderer->getDeviceContext());
-//	PerlinTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
-//
-//	//PerlinTexture_2->
-//
-//	worldMatrix = renderer->getWorldMatrix();
-//	baseViewMatrix = camera->getOrthoViewMatrix();
-//	orthoMatrix = PerlinTexture->getOrthoMatrix();
-//
-//	// Render for Horizontal Blur
-//	renderer->setZBuffer(false);
-//
-//	sampleMesh->sendData(renderer->getDeviceContext());
-//
-//	//Replace with the Perlin texture
-//	//perlinShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(), screenSizeY, screenSizeX);
-//	perlinShader->render(renderer->getDeviceContext(), sampleMesh->getIndexCount());
-//
-//	renderer->setZBuffer(true);
-//
-//	// Reset the render target back to the original back buffer and not the render to texture anymore.
-//	renderer->setBackBufferRenderTarget();
-//}
-//--------------------------------------------------
-
-//void App1::SamplePass()
-//{
-//	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
-//
-//	DownSampletexture->setRenderTarget(renderer->getDeviceContext());
-//	DownSampletexture->clearRenderTarget(renderer->getDeviceContext(), 1.0f, 1.0f, 1.0f, 1.0f);
-//
-//	worldMatrix = renderer->getWorldMatrix();
-//	baseViewMatrix = camera->getOrthoViewMatrix();
-//	orthoMatrix = renderTexture->getOrthoMatrix();
-//
-//	// Render for Horizontal Blur
-//	renderer->setZBuffer(false);
-//
-//	sampleMesh->sendData(renderer->getDeviceContext());
-//	textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
-//	textureShader->render(renderer->getDeviceContext(), sampleMesh->getIndexCount());
-//
-//	renderer->setZBuffer(true);
-//
-//	// Reset the render target back to the original back buffer and not the render to texture anymore.
-//	renderer->setBackBufferRenderTarget();
-//}
-
 void App1::RenderedPass()
 {
 	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
 
+	//Defines the of the screen for use in the shader
 	float screenSizeY = (float)FinalTexture->getTextureHeight();
 	float screenSizeX = (float)FinalTexture->getTextureWidth();
 
@@ -348,7 +185,6 @@ void App1::RenderedPass()
 	renderer->setZBuffer(false);
 
 	orthoMesh->sendData(renderer->getDeviceContext());
-		//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
 	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix,light, camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), /*applied_noise*/timer->getTime(),Octaves,Hurst,radius,Position,SmoothSteps,Colour,MAx_Distance,point);
 	shader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 
@@ -374,7 +210,6 @@ void App1::finalPass()
 		XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
 
 		orthoMesh->sendData(renderer->getDeviceContext());
-		//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, /*FinalTexture*/TD_Text->getShaderResourceView());
 		textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, FinalTexture->getShaderResourceView());
 		textureShader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 		renderer->setZBuffer(true);
@@ -396,9 +231,6 @@ void App1::finalPass()
 		mesh->sendData(renderer->getDeviceContext());
 		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, light, camera->getPosition(), Octaves, Hurst, SmoothSteps, Colour,point);
 		vertex_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
-
-		//light_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition());
-		//light_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 	}
 
 	// Render GUI
