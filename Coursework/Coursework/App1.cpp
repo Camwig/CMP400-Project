@@ -26,11 +26,11 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	shader = new RayMarchingShader(renderer->getDevice(), hwnd);
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
-	perlinShader = new PerlinTextureShader(renderer->getDevice(), hwnd);
+	//perlinShader = new PerlinTextureShader(renderer->getDevice(), hwnd);
 
 	vertex_shader = new VertexManipulatorShader(renderer->getDevice(), hwnd);
 
-	PerlinTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
+	//PerlinTexture = new RenderTexture(renderer->getDevice(), screenWidth, screenHeight, SCREEN_NEAR, SCREEN_DEPTH);
 
 	//ID3D11Device::CreateRenderTargetView(D3D11_BIND_RENDER_TARGET);
 
@@ -274,36 +274,36 @@ void App1::firstPass()
 }
 
 //--------------------------------------------------
-void App1::PerlinGeneration()
-{
-	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
-
-	float screenSizeY = (float)PerlinTexture->getTextureHeight();
-	float screenSizeX = (float)PerlinTexture->getTextureWidth();
-
-	PerlinTexture->setRenderTarget(renderer->getDeviceContext());
-	PerlinTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
-
-	//PerlinTexture_2->
-
-	worldMatrix = renderer->getWorldMatrix();
-	baseViewMatrix = camera->getOrthoViewMatrix();
-	orthoMatrix = PerlinTexture->getOrthoMatrix();
-
-	// Render for Horizontal Blur
-	renderer->setZBuffer(false);
-
-	sampleMesh->sendData(renderer->getDeviceContext());
-
-	//Replace with the Perlin texture
-	//perlinShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(), screenSizeY, screenSizeX);
-	perlinShader->render(renderer->getDeviceContext(), sampleMesh->getIndexCount());
-
-	renderer->setZBuffer(true);
-
-	// Reset the render target back to the original back buffer and not the render to texture anymore.
-	renderer->setBackBufferRenderTarget();
-}
+//void App1::PerlinGeneration()
+//{
+//	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
+//
+//	float screenSizeY = (float)PerlinTexture->getTextureHeight();
+//	float screenSizeX = (float)PerlinTexture->getTextureWidth();
+//
+//	PerlinTexture->setRenderTarget(renderer->getDeviceContext());
+//	PerlinTexture->clearRenderTarget(renderer->getDeviceContext(), 0.0f, 0.0f, 1.0f, 1.0f);
+//
+//	//PerlinTexture_2->
+//
+//	worldMatrix = renderer->getWorldMatrix();
+//	baseViewMatrix = camera->getOrthoViewMatrix();
+//	orthoMatrix = PerlinTexture->getOrthoMatrix();
+//
+//	// Render for Horizontal Blur
+//	renderer->setZBuffer(false);
+//
+//	sampleMesh->sendData(renderer->getDeviceContext());
+//
+//	//Replace with the Perlin texture
+//	//perlinShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(), screenSizeY, screenSizeX);
+//	perlinShader->render(renderer->getDeviceContext(), sampleMesh->getIndexCount());
+//
+//	renderer->setZBuffer(true);
+//
+//	// Reset the render target back to the original back buffer and not the render to texture anymore.
+//	renderer->setBackBufferRenderTarget();
+//}
 //--------------------------------------------------
 
 //void App1::SamplePass()
@@ -349,7 +349,7 @@ void App1::RenderedPass()
 
 	orthoMesh->sendData(renderer->getDeviceContext());
 		//textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView());
-	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix, renderTexture->getShaderResourceView(),light, camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), /*applied_noise*/timer->getTime(), PerlinTexture->getShaderResourceView(),Octaves,Hurst,radius,Position,SmoothSteps,Colour,MAx_Distance,point);
+	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix,light, camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), /*applied_noise*/timer->getTime(),Octaves,Hurst,radius,Position,SmoothSteps,Colour,MAx_Distance,point);
 	shader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 
 	renderer->setZBuffer(true);
@@ -394,7 +394,7 @@ void App1::finalPass()
 
 		// Send geometry data, set shader parameters, render object with shader
 		mesh->sendData(renderer->getDeviceContext());
-		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition(), Octaves, Hurst, SmoothSteps, Colour,point);
+		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, light, camera->getPosition(), Octaves, Hurst, SmoothSteps, Colour,point);
 		vertex_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 
 		//light_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, PerlinTexture->getShaderResourceView(), light, camera->getPosition());

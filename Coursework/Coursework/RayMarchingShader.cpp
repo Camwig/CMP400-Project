@@ -8,11 +8,11 @@ RayMarchingShader::RayMarchingShader(ID3D11Device* device, HWND hwnd) : BaseShad
 
 RayMarchingShader::~RayMarchingShader()
 {
-	if (sampleState)
-	{
-		sampleState->Release();
-		sampleState = 0;
-	}
+	//if (sampleState)
+	//{
+	//	sampleState->Release();
+	//	sampleState = 0;
+	//}
 	// Release the matrix constant buffer.
 	if (matrixBuffer)
 	{
@@ -68,7 +68,7 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 	D3D11_BUFFER_DESC cameraBufferDesc;
 	D3D11_BUFFER_DESC screenSizeBufferDesc;
 	D3D11_BUFFER_DESC settingsBufferDesc;
-	D3D11_SAMPLER_DESC samplerDesc;
+	//D3D11_SAMPLER_DESC samplerDesc;
 
 	D3D11_BUFFER_DESC lightBufferDesc;
 	D3D11_BUFFER_DESC extraBufferDesc;
@@ -88,21 +88,21 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	renderer->CreateBuffer(&matrixBufferDesc, NULL, &matrixBuffer);
 
-	// Create a texture sampler state description.
-	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.MipLODBias = 0.0f;
-	samplerDesc.MaxAnisotropy = 1;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	samplerDesc.BorderColor[0] = 0;
-	samplerDesc.BorderColor[1] = 0;
-	samplerDesc.BorderColor[2] = 0;
-	samplerDesc.BorderColor[3] = 0;
-	samplerDesc.MinLOD = 0;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	renderer->CreateSamplerState(&samplerDesc, &sampleState);
+	//// Create a texture sampler state description.
+	//samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+	//samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	//samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	//samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	//samplerDesc.MipLODBias = 0.0f;
+	//samplerDesc.MaxAnisotropy = 1;
+	//samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	//samplerDesc.BorderColor[0] = 0;
+	//samplerDesc.BorderColor[1] = 0;
+	//samplerDesc.BorderColor[2] = 0;
+	//samplerDesc.BorderColor[3] = 0;
+	//samplerDesc.MinLOD = 0;
+	//samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	//renderer->CreateSamplerState(&samplerDesc, &sampleState);
 
 	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	cameraBufferDesc.ByteWidth = sizeof(CameraBufferType);
@@ -147,7 +147,7 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 }
 
 
-void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, ID3D11ShaderResourceView* texture, Light* light[NUM_LIGHTS_],XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2, float deltaTime, ID3D11ShaderResourceView* p_texture, float Octaves, float Hurst, float Radius, XMFLOAT3 Position, float SmoothSteps, XMFLOAT4 Colour, float Max_distance,bool light_type)
+void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, Light* light[NUM_LIGHTS_],XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2, float deltaTime, float Octaves, float Hurst, float Radius, XMFLOAT3 Position, float SmoothSteps, XMFLOAT4 Colour, float Max_distance,bool light_type)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -266,7 +266,7 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	deviceContext->VSSetConstantBuffers(2, 1, &extr_buffer);
 
 	// Set shader texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(0, 1, &texture);
-	deviceContext->PSSetShaderResources(1, 1, &p_texture);
-	deviceContext->PSSetSamplers(0, 1, &sampleState);
+	//deviceContext->PSSetShaderResources(0, 1, &texture);
+	//deviceContext->PSSetShaderResources(1, 1, &p_texture);
+	//deviceContext->PSSetSamplers(0, 1, &sampleState);
 }

@@ -49,7 +49,7 @@ private:
 
 	RayMarchingShader* shader;
 	TextureShader* textureShader;
-	PerlinTextureShader* perlinShader;
+	//PerlinTextureShader* perlinShader;
 
 	LightShader* light_shader;
 
@@ -58,7 +58,7 @@ private:
 	OrthoMesh* orthoMesh;
 	OrthoMesh* sampleMesh;
 
-	RenderTexture*/*ID3D10Texture3D**/ PerlinTexture;
+	//RenderTexture*/*ID3D10Texture3D**/ PerlinTexture;
 
 	TDRenderTarget* TD_Text;
 
@@ -66,7 +66,7 @@ private:
 	PlaneMesh* plane;
 
 
-	ID3D11Texture3D* PerlinTexture_2;
+	//ID3D11Texture3D* PerlinTexture_2;
 
 	RenderTexture* renderTexture;
 

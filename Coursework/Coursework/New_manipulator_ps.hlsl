@@ -4,7 +4,7 @@
 // Texture and sampler registers
 #define NUM_LIGHTS 1
 
-Texture2D texture0 : register(t0);
+//Texture2D texture0 : register(t0);
 SamplerState sampler0 : register(s0);
 
 cbuffer LightBuffer : register(b0)
@@ -103,7 +103,7 @@ float4 main(InputType input) : SV_TARGET
 	
                 lightColour[i] = ambient + attenuation * calculateLighting(float3(direction[i].x, direction[i].y, direction[i].z), input.normal, diffuse[i], position[i]);
 	
-                lightColour[i] *= calcSpecular(float3(direction[i].x, direction[i].y, direction[i].z), input.normal, input.viewVector, float4(1, 1, 1, 1), specularPower);
+                lightColour[i] *= calcSpecular(float3(-direction[i].x, -direction[i].y, -direction[i].z), input.normal, input.viewVector, float4(1, 1, 1, 1), specularPower);
             }
             
             final_colour.xyz += lightColour[i];

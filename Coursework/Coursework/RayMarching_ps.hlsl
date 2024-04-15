@@ -2,9 +2,9 @@
 
 #define NUM_LIGHTS 1
 
-Texture2D shaderTexture : register(t0);
-Texture2D PerlinTexture : register(t1);
-SamplerState SampleType : register(s0);
+//Texture2D shaderTexture : register(t0);
+////Texture2D PerlinTexture : register(t1);
+//SamplerState SampleType : register(s0);
 
 cbuffer CameraBuffer : register(b0)
 {

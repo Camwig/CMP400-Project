@@ -6,7 +6,7 @@
 //#include "Perlin_noise.hlsli"
 #include "Vertex_manipulation_header_.hlsli"
 
-Texture2D texture0 : register(t0);
+//Texture2D texture0 : register(t0);
 SamplerState sampler0 : register(s0);
 
 cbuffer MatrixBuffer : register(b0)
