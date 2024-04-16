@@ -39,6 +39,9 @@ private:
 		XMFLOAT2 Padding1;
 		float SmoothSteps;
 		XMFLOAT3 Padding2;
+		float Frequency;
+		float Amplitude;
+		XMFLOAT2 Padding3;
 	};
 
 	//Buffer to pass in the colour
@@ -57,7 +60,7 @@ public:
 	VertexManipulatorShader(ID3D11Device* device, HWND hwnd);
 	~VertexManipulatorShader();
 
-	void setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition, float Octaves, float Hurst,float SmoothSteps, XMFLOAT4 Colour,bool light_type);
+	void setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition, float Octaves, float Hurst,float SmoothSteps, XMFLOAT4 Colour,bool light_type,float Frequency,float Amplitude);
 
 private:
 	void initShader(const wchar_t* vs, const wchar_t* ps);

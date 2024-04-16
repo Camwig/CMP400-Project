@@ -42,6 +42,9 @@ cbuffer SettingsBuffer : register(b3)
     //float4 Colour;
     //float MAx_Distance;
     float3 Padding2;
+    float Freq;
+    float Amp;
+    float2 Padding3;
 }
 
 struct InputType
@@ -166,18 +169,26 @@ OutputType main(InputType input)
    [unroll(10)]
    for (int i = 1; i <= Octaves; i++)
    {
-        //Should be passed in
-        Frequency = /*1.0f;*/(i * i);
-        //Frequency = (i * i);
+        ////Should be passed in
+        //Frequency = /*1.0f;*/(i * i);
+        ////Frequency = (i * i);
+        //Input = float3(input.position.x * Frequency, input.position.y * Frequency, input.position.z * Frequency);
+        //n = color2(Input);
+        ////n = Manipulate_shape_based_on_noise(texture0,sampler0,input.tex);
+        ////Should be passed in
+        //Amplitude = /*1.0f;*/pow(Frequency, -Hurst);
+        ////Amplitude = pow(Frequency, -Hurst);
+        ////if (i != 1)
+        ////    Amplitude /= ((i) * (9 * i));
+        //noise += n * Amplitude /*(Amplitude/10.f)*/;
+        
+        Frequency = (i)/Freq; //5.f
         Input = float3(input.position.x * Frequency, input.position.y * Frequency, input.position.z * Frequency);
         n = color2(Input);
-        //n = Manipulate_shape_based_on_noise(texture0,sampler0,input.tex);
-        //Should be passed in
-        Amplitude = /*1.0f;*/pow(Frequency, -Hurst);
-        //Amplitude = pow(Frequency, -Hurst);
-        //if (i != 1)
-        //    Amplitude /= ((i) * (9 * i));
-        noise += n * Amplitude /*(Amplitude/10.f)*/;
+        Amplitude = pow(Frequency, -Hurst);
+        if (i != 1)
+            Amplitude *= ((Amp));
+        noise += n * Amplitude;
     }
     
     //noise = Smooth_Noise(noise,SmoothSteps);

@@ -123,7 +123,7 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 }
 
 
-void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, Light* light[NUM_LIGHTS_],XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2, float deltaTime, float Octaves, float Hurst, float Radius, XMFLOAT3 Position, float SmoothSteps, XMFLOAT4 Colour, float Max_distance,bool light_type)
+void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& worldMatrix, const XMMATRIX& viewMatrix, const XMMATRIX& projectionMatrix, Light* light[NUM_LIGHTS_],XMFLOAT3 cameraPos, XMFLOAT3 camForwardVec, float distance_from_shap, float height, float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2, float deltaTime, float Octaves, float Hurst, float Radius, XMFLOAT3 Position, float SmoothSteps, XMFLOAT4 Colour, float Max_distance,bool light_type, float Freq, float Amp)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -194,6 +194,9 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	settings_->Colour = Colour;
 	settings_->MAx_Distance = Max_distance;
 	settings_->Padding2 = XMFLOAT3(0.0f,0.0f,0.0f);
+	settings_->Frequency = Freq;
+	settings_->Amplitude = Amp;
+	settings_->Padding3 = XMFLOAT2(0.0f, 0.0f);
 	deviceContext->Unmap(settingsBuffer, 0);
 	deviceContext->PSSetConstantBuffers(2, 1, &settingsBuffer);
 

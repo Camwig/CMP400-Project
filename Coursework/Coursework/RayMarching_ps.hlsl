@@ -40,6 +40,9 @@ cbuffer SettingsBuffer : register(b2)
     float4 Colour;
     float MAx_Distance;
     float3 Padding2;
+    float Freq;
+    float Amp;
+    float2 Padding3;
 }
 
 cbuffer LightBuffer : register(b3)
@@ -138,6 +141,9 @@ float4 main(InputType input) : SV_TARGET
     float4 new_col = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 col2 = float4(0.0f, 0.0f, 0.0f, 1.0f);
     
+    //float Freq = 5.f;
+    //float Amp = 9.f;
+    
     [loop]
     for (int i = 0; i < num_of_steps; i++)
     {
@@ -225,7 +231,7 @@ float4 main(InputType input) : SV_TARGET
         //{
         
         //I need to find a new input for the noise that is the position but also not constantly changing
-        distance_to_currentPos = Apply_Noise(currentPos, distance_to_currentPos, Octaves, Hurst,SmoothSteps);
+        distance_to_currentPos = Apply_Noise(currentPos, distance_to_currentPos, Octaves, Hurst,SmoothSteps,Freq,Amp);
 
         
         if (distance_to_currentPos < 0.01f)
@@ -242,7 +248,7 @@ float4 main(InputType input) : SV_TARGET
             
             //float4 col = Colour;
             new_col = float4(0.0f, 0.0f, 0.0f, 1.0f);
-            col2 = phongIllumination(specularPower, viewVector, Position, currentPos, World, Octaves, Hurst, Position, SmoothSteps, lightambient, lightposition[0], lightdirection[0], lightdiffuse[0]);
+            col2 = phongIllumination(specularPower, viewVector, Position, currentPos, World, Octaves, Hurst, Position, SmoothSteps, lightambient, lightposition[0], lightdirection[0], lightdiffuse[0],Freq,Amp);
             //col = col+col2
             
             new_col.xyz += col2;

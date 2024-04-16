@@ -38,8 +38,7 @@ float Distance_between_3Dpoints_2_(float3 b, float3 a)
     return d;
 }
 
-//---Continue from here
-
+//Determines the distance from any point in space to the origin point of the sphere offset by the radius
 float New_Random_Sphere(float3 p, float3 c, float r,int Octaves,float Hurst)
 {
     float answer = Distance_between_3Dpoints_2_(p, c);
@@ -48,7 +47,8 @@ float New_Random_Sphere(float3 p, float3 c, float r,int Octaves,float Hurst)
     return answer;
 }
 
-float Apply_Noise(float3 p,float distance,int Octave,float Hurst,float SmoothSteps)
+//Applies perlin noise to the given surface
+float Apply_Noise(float3 p,float distance,int Octave,float Hurst,float SmoothSteps,float Freq,float Amp)
 {
     float Frequency = 0.5f;
     float Amplitude = 0.1f;
@@ -57,23 +57,28 @@ float Apply_Noise(float3 p,float distance,int Octave,float Hurst,float SmoothSte
         
     float noise = 0.0f;
     
+    //for each octave create the input for the nosie based on the current position of the point on the ray
+    //Multiplying the input by a frequency value will result in a greater amount of occurance of the noise
+    //and applying an amplitude value to the output will result in a greater change in the height of the noise
+    //[unroll(10)]
     for (int i = 1; i <= Octave; i++)
     {
-        Frequency = (i * i)/5.f;
+        Frequency = (i)/Freq; //5.f
         Input = float3(p.x * Frequency, p.y * Frequency, p.z * Frequency);
         n = color2(Input);
         Amplitude = pow(Frequency, Hurst);
-        if(i != 1)
-            Amplitude /= ((i) * (9*i));
+        if (i != 1)
+            Amplitude *= Amp;
         noise += n * Amplitude;
     }
     
-    for (int k = 0; k < SmoothSteps; k++)
+    //[unroll(10)]
+    for (int k = 1; k <= SmoothSteps; k++)
     {
         noise = smoothstep(-1, 1, noise);
     }
 
-    float answer = distance - noise;
+    float answer = distance + noise;
     return answer;
 }
 
@@ -199,25 +204,25 @@ float3 estimateNormal(float3 p, float4x4 World, int Octave, float Hurst)
     
 }
 
-float3 estimateNormal_2(float3 p,float3 c, float4x4 World, int Octave, float Hurst,float Smoothsteps)
+float3 estimateNormal_2(float3 p,float3 c, float4x4 World, int Octave, float Hurst,float Smoothsteps,float Freq,float Amp)
 {
     float Input_11 = New_Random_Sphere(float3(p.x + 0.002f, p.y, p.z), float3(c.x, c.y, c.z), 0.5f, Octave, Hurst);
-    Input_11 = Apply_Noise(float3(p.x + 0.002f, p.y, p.z), Input_11, Octave, Hurst,Smoothsteps);
+    Input_11 = Apply_Noise(float3(p.x + 0.002f, p.y, p.z), Input_11, Octave, Hurst,Smoothsteps,Freq,Amp);
     
     float Input_12 = New_Random_Sphere(float3(p.x - 0.002f, p.y, p.z), float3(c.x, c.y, c.z), 0.5f, Octave, Hurst);
-    Input_12 = Apply_Noise(float3(p.x - 0.002f, p.y, p.z), Input_12, Octave, Hurst,Smoothsteps);
+    Input_12 = Apply_Noise(float3(p.x - 0.002f, p.y, p.z), Input_12, Octave, Hurst, Smoothsteps, Freq, Amp);
     
     float Input_21 = New_Random_Sphere(float3(p.x, p.y + 0.002f, p.z), float3(c.x, c.y, c.z), 0.5f, Octave, Hurst);
-    Input_21 = Apply_Noise(float3(p.x, p.y + 0.002f, p.z), Input_21, Octave, Hurst,Smoothsteps);
+    Input_21 = Apply_Noise(float3(p.x, p.y + 0.002f, p.z), Input_21, Octave, Hurst, Smoothsteps, Freq, Amp);
     
     float Input_22 = New_Random_Sphere(float3(p.x, p.y - 0.002f, p.z), float3(c.x, c.y, c.z), 0.5f, Octave, Hurst);
-    Input_22 = Apply_Noise(float3(p.x, p.y - 0.002f, p.z), Input_22, Octave, Hurst,Smoothsteps);
+    Input_22 = Apply_Noise(float3(p.x, p.y - 0.002f, p.z), Input_22, Octave, Hurst, Smoothsteps, Freq, Amp);
     
     float Input_31 = New_Random_Sphere(float3(p.x, p.y, p.z + 0.002f), float3(c.x, c.y, c.z), 0.5f, Octave, Hurst);
-    Input_31 = Apply_Noise(float3(p.x, p.y, p.z + 0.002f), Input_31, Octave, Hurst,Smoothsteps);
+    Input_31 = Apply_Noise(float3(p.x, p.y, p.z + 0.002f), Input_31, Octave, Hurst, Smoothsteps, Freq, Amp);
     
     float Input_32 = New_Random_Sphere(float3(p.x, p.y, p.z - 0.002f), float3(c.x, c.y, c.z), 0.5f, Octave, Hurst);
-    Input_32 = Apply_Noise(float3(p.x, p.y, p.z - 0.002f), Input_32, Octave, Hurst,Smoothsteps);
+    Input_32 = Apply_Noise(float3(p.x, p.y, p.z - 0.002f), Input_32, Octave, Hurst, Smoothsteps, Freq, Amp);
     
     float3 Final_Normal = (float3(
     Input_11 - Input_12,
@@ -228,7 +233,7 @@ float3 estimateNormal_2(float3 p,float3 c, float4x4 World, int Octave, float Hur
     return normalize(Final_Normal);
 }
 
-float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float4x4 World, int Octave, float Hurst, float3 Object_pos, float SmoothSteps, float4 ambientLight, float4 Light1Pos, float4 light1Direction, float4 lightColour)
+float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, float3 p, float4x4 World, int Octave, float Hurst, float3 Object_pos, float SmoothSteps, float4 ambientLight, float4 Light1Pos, float4 light1Direction, float4 lightColour,float Freq, float Amp)
 {
     float4 colour = float4(0.0f, 0.0f, 0.0f,0.0f);
     
@@ -238,7 +243,7 @@ float4 phongIllumination(float shininess, float3 ViewVector, float3 Position, fl
     
     light1Vector = (float3(Light1Pos.x, Light1Pos.y, Light1Pos.z) - Result_pos);
    
-    float3 Normal = estimateNormal_2(p, Object_pos, World, Octave, Hurst,SmoothSteps);
+    float3 Normal = estimateNormal_2(p, Object_pos, World, Octave, Hurst, SmoothSteps, Freq, Amp);
     
     float attenuation = 0.0f;
     

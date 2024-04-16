@@ -125,7 +125,7 @@ void VertexManipulatorShader::initShader(const wchar_t* vsFilename, const wchar_
 }
 
 
-void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition, float Octaves, float Hurst,float SmoothSteps, XMFLOAT4 Colour,bool light_type)
+void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition, float Octaves, float Hurst,float SmoothSteps, XMFLOAT4 Colour,bool light_type,float freq,float Amp)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -204,6 +204,9 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	settings_->Padding1 = XMFLOAT2(0.0f,0.0f);
 	settings_->SmoothSteps = SmoothSteps;
 	settings_->Padding2 = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	settings_->Frequency = freq;
+	settings_->Amplitude = Amp;
+	settings_->Padding3 = XMFLOAT2(0.0f, 0.0f);
 	deviceContext->Unmap(settingsBufferVs, 0);
 	deviceContext->VSSetConstantBuffers(3, 1, &settingsBufferVs);
 

@@ -48,6 +48,9 @@ private:
 		XMFLOAT4 Colour;
 		float MAx_Distance;
 		XMFLOAT3 Padding2;
+		float Frequency;
+		float Amplitude;
+		XMFLOAT2 Padding3;
 	};
 
 	//Buffer to pass the lighting data into the shader
@@ -73,7 +76,7 @@ public:
 	RayMarchingShader(ID3D11Device* device, HWND hwnd);
 	~RayMarchingShader();
 
-	void setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, Light* light[NUM_LIGHTS_],XMFLOAT3 cameraPos,XMFLOAT3 camForwardVec,float distance_from_shape,float height,float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2,float deltaTime,float Octaves,float Hurst,float Radius,XMFLOAT3 Position,float SmoothSteps,XMFLOAT4 Colour, float Max_distance,bool light_type);
+	void setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, Light* light[NUM_LIGHTS_],XMFLOAT3 cameraPos,XMFLOAT3 camForwardVec,float distance_from_shape,float height,float width, const XMMATRIX& world2, const XMMATRIX& view2, const XMMATRIX& projection2,float deltaTime,float Octaves,float Hurst,float Radius,XMFLOAT3 Position,float SmoothSteps,XMFLOAT4 Colour, float Max_distance,bool light_type,float Freq,float Amp);
 
 private:
 	void initShader(const wchar_t* vs, const wchar_t* ps);

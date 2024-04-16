@@ -101,6 +101,9 @@ void App1::gui()
 
 	ImGui::SliderInt("Octaves", &Octaves, 0, 12);
 	ImGui::SliderFloat("Hurst", &Hurst, 0, 1);
+	ImGui::SliderFloat("Frequency", &Frequency, 1, 10);
+	ImGui::SliderFloat("Amplitude", &Amplitude, 1, 10);
+
 	ImGui::SliderFloat("Radius", &radius, 0, 10);
 
 	if (ImGui::CollapsingHeader("Position"))
@@ -185,7 +188,7 @@ void App1::RenderedPass()
 	renderer->setZBuffer(false);
 
 	orthoMesh->sendData(renderer->getDeviceContext());
-	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix,light, camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), /*applied_noise*/timer->getTime(),Octaves,Hurst,radius,Position,SmoothSteps,Colour,MAx_Distance,point);
+	shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, baseViewMatrix, orthoMatrix,light, camera->getPosition(), camera->getForwardVector(), 0.0f, sy, sx, renderer->getWorldMatrix(), camera->getViewMatrix(), renderer->getProjectionMatrix(), /*applied_noise*/timer->getTime(),Octaves,Hurst,radius,Position,SmoothSteps,Colour,MAx_Distance,point,10-Frequency,Amplitude);
 	shader->render(renderer->getDeviceContext(), orthoMesh->getIndexCount());
 
 	renderer->setZBuffer(true);
@@ -229,7 +232,7 @@ void App1::finalPass()
 
 		// Send geometry data, set shader parameters, render object with shader
 		mesh->sendData(renderer->getDeviceContext());
-		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, light, camera->getPosition(), Octaves, Hurst, SmoothSteps, Colour,point);
+		vertex_shader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, light, camera->getPosition(), Octaves, Hurst, SmoothSteps, Colour,point,10-Frequency,Amplitude);
 		vertex_shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 	}
 
