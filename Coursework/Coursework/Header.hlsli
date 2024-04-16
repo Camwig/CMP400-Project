@@ -63,12 +63,12 @@ float Apply_Noise(float3 p,float distance,int Octave,float Hurst,float SmoothSte
     //[unroll(10)]
     for (int i = 1; i <= Octave; i++)
     {
-        Frequency = (i)/Freq; //5.f
+        Frequency = (i*i)/Freq; //5.f
         Input = float3(p.x * Frequency, p.y * Frequency, p.z * Frequency);
         n = color2(Input);
         Amplitude = pow(Frequency, Hurst);
         if (i != 1)
-            Amplitude *= Amp;
+            Amplitude /= Amp;
         noise += n * Amplitude;
     }
     
