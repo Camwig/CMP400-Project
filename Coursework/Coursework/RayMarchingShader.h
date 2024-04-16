@@ -11,7 +11,7 @@ class RayMarchingShader: public BaseShader
 {
 private:
 
-	//Will need a struct to be able to pass the data of the shape
+	//Buffer to pass camera data into shader 
 	struct CameraBufferType
 	{
 		XMFLOAT3 CameraOrigin;
@@ -24,6 +24,7 @@ private:
 		XMFLOAT3 padding4;
 	};
 
+	//Screen size and matrix based data for shader
 	struct ScreenSizeBuffer
 	{
 		float screenWidth;
@@ -35,6 +36,7 @@ private:
 		XMMATRIX View;
 	};
 
+	//Buffer to pass data in about the noise generation into the shader
 	struct SettingsBuffer
 	{
 		float Octaves;
@@ -48,6 +50,7 @@ private:
 		XMFLOAT3 Padding2;
 	};
 
+	//Buffer to pass the lighting data into the shader
 	struct LightBufferType
 	{
 		XMFLOAT4 ambient;
@@ -58,6 +61,8 @@ private:
 		XMFLOAT3 padding;
 	};
 
+	//Buffer to pass extra lighting data to the shader
+	//Specifically the light view matrix and the light projection matrix
 	struct ExtraBufferType
 	{
 		XMMATRIX lightView[NUM_LIGHTS_];
@@ -76,7 +81,6 @@ private:
 	ID3D11Buffer* matrixBuffer;
 	ID3D11Buffer* cameraBuffer;
 	ID3D11Buffer* settingsBuffer;
-	//ID3D11SamplerState* sampleState;
 	ID3D11Buffer* screenSizeBuffer;
 	ID3D11Buffer* lightBuffer;
 	ID3D11Buffer* extr_buffer;

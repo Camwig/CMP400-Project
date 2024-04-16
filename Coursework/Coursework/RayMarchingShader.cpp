@@ -8,11 +8,6 @@ RayMarchingShader::RayMarchingShader(ID3D11Device* device, HWND hwnd) : BaseShad
 
 RayMarchingShader::~RayMarchingShader()
 {
-	//if (sampleState)
-	//{
-	//	sampleState->Release();
-	//	sampleState = 0;
-	//}
 	// Release the matrix constant buffer.
 	if (matrixBuffer)
 	{
@@ -68,8 +63,6 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 	D3D11_BUFFER_DESC cameraBufferDesc;
 	D3D11_BUFFER_DESC screenSizeBufferDesc;
 	D3D11_BUFFER_DESC settingsBufferDesc;
-	//D3D11_SAMPLER_DESC samplerDesc;
-
 	D3D11_BUFFER_DESC lightBufferDesc;
 	D3D11_BUFFER_DESC extraBufferDesc;
 
@@ -87,23 +80,6 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 
 	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
 	renderer->CreateBuffer(&matrixBufferDesc, NULL, &matrixBuffer);
-
-	//// Create a texture sampler state description.
-	//samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-	//samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	//samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	//samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	//samplerDesc.MipLODBias = 0.0f;
-	//samplerDesc.MaxAnisotropy = 1;
-	//samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	//samplerDesc.BorderColor[0] = 0;
-	//samplerDesc.BorderColor[1] = 0;
-	//samplerDesc.BorderColor[2] = 0;
-	//samplerDesc.BorderColor[3] = 0;
-	//samplerDesc.MinLOD = 0;
-	//samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	//renderer->CreateSamplerState(&samplerDesc, &sampleState);
-
 	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	cameraBufferDesc.ByteWidth = sizeof(CameraBufferType);
 	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -112,7 +88,7 @@ void RayMarchingShader::initShader(const wchar_t* vsFilename, const wchar_t* psF
 	cameraBufferDesc.StructureByteStride = 0;
 	renderer->CreateBuffer(&cameraBufferDesc, NULL, &cameraBuffer);
 
-	// Setup the description of the screen size.
+	// Setup the description of the shaders.
 	screenSizeBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	screenSizeBufferDesc.ByteWidth = sizeof(ScreenSizeBuffer);
 	screenSizeBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -178,6 +154,7 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	// Now set the constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
 
+	//Map the appropriate data to the buffer and pass it to the correct shader
 	deviceContext->Map(cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	camPtr = (CameraBufferType*)mappedResource.pData;
 	camPtr->CameraOrigin = cameraPos;
@@ -190,8 +167,6 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	camPtr->padding4 = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	deviceContext->Unmap(cameraBuffer, 0);
 	deviceContext->PSSetConstantBuffers(0, 1, &cameraBuffer);
-
-	//deviceContext->Unmap(cameraBuffer, 0);
 	deviceContext->VSSetConstantBuffers(1, 1, &cameraBuffer);
 
 	deviceContext->Map(screenSizeBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -224,13 +199,9 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 
 	deviceContext->Map(lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	lightPtr = (LightBufferType*)mappedResource.pData;
-
-	//Setting the lighing values
-
-
-	//Set the type of light this is with a  boolean
 	lightPtr->diffuse[0] = light[0]->getDiffuseColour();
 	lightPtr->direction[0] = XMFLOAT4(light[0]->getDirection().x, light[0]->getDirection().y, light[0]->getDirection().z, 1.0f);
+	//Check the lighting boolean to set the light positions w value as it is not used we can use it to set what kind of lighting the passed data represents 
 	if (light_type)
 	{
 		lightPtr->position[0] = XMFLOAT4(light[0]->getPosition().x, light[0]->getPosition().y, light[0]->getPosition().z, 1.0f);
@@ -239,13 +210,6 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	{
 		lightPtr->position[0] = XMFLOAT4(light[0]->getPosition().x, light[0]->getPosition().y, light[0]->getPosition().z, 2.0f);
 	}
-
-	//lightPtr->diffuse[1] = light[1]->getDiffuseColour();
-	//lightPtr->position[1] = XMFLOAT4(light[1]->getPosition().x, light[1]->getPosition().y, light[1]->getPosition().z, 1.0f);
-
-	//lightPtr->direction = XMFLOAT4(light[2]->getDirection().x, light[2]->getDirection().y, light[2]->getDirection().z, 1.0f);
-	//lightPtr->diffuse[2] = light[2]->getDiffuseColour();
-	//lightPtr->position[2] = XMFLOAT4(light[2]->getPosition().x, light[2]->getPosition().y, light[2]->getPosition().z, 2.0f);
 
 	lightPtr->ambient = light[0]->getAmbientColour();
 	lightPtr->specularPower = 2.0f;
@@ -257,16 +221,6 @@ void RayMarchingShader::setShaderParameters(ID3D11DeviceContext* deviceContext, 
 	extra = (ExtraBufferType*)mappedResource.pData;
 	extra->lightView[0] = tLightViewMatrix1;
 	extra->lightProjection[0] = tLightProjectionMatrix1;
-	//extra->Ocatves = Octaves;
-	//extra->Hurst = Hurst;
-	//extra->padding = XMFLOAT2(0.0f,0.0f);
-	//dataPtr->lightView[1] = tLightViewMatrix2;
-	//dataPtr->lightProjection[1] = tLightProjectionMatrix2;
 	deviceContext->Unmap(extr_buffer, 0);
 	deviceContext->VSSetConstantBuffers(2, 1, &extr_buffer);
-
-	// Set shader texture resource in the pixel shader.
-	//deviceContext->PSSetShaderResources(0, 1, &texture);
-	//deviceContext->PSSetShaderResources(1, 1, &p_texture);
-	//deviceContext->PSSetSamplers(0, 1, &sampleState);
 }
