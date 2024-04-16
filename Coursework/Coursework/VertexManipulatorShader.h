@@ -11,6 +11,8 @@ using namespace DirectX;
 class VertexManipulatorShader : public BaseShader
 {
 private:
+
+	//Buffer to pass the lighting data into the shader
 	struct LightBufferType
 	{
 		XMFLOAT4 ambient;
@@ -21,12 +23,15 @@ private:
 		XMFLOAT3 padding;
 	};
 
+	//Buffer to pass extra lighting data to the shader
+	//Specifically the light view matrix and the light projection matrix
 	struct ExtraBufferType
 	{
 		XMMATRIX lightView[NUM_LIGHTS];
 		XMMATRIX lightProjection[NUM_LIGHTS];
 	};
 
+	//Buffer to pass data in about the noise generation into the shader
 	struct SettingsBufferVs
 	{
 		float Octaves;
@@ -36,11 +41,13 @@ private:
 		XMFLOAT3 Padding2;
 	};
 
+	//Buffer to pass in the colour
 	struct SettingsBufferPs
 	{
 		XMFLOAT4 Colour;
 	};
 
+	//Buffer to pass in camera position data
 	struct CameraBufferType
 	{
 		XMFLOAT3 cameraPosition;
@@ -60,7 +67,6 @@ private:
 	ID3D11Buffer* cameraBuffer;
 	ID3D11Buffer* settingsBufferVs;
 	ID3D11Buffer* settingsBufferPs;
-	//ID3D11SamplerState* sampleState;
 	ID3D11Buffer* lightBuffer;
 	ID3D11Buffer* extr_buffer;
 };

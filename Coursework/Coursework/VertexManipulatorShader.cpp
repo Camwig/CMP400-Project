@@ -10,13 +10,6 @@ VertexManipulatorShader::VertexManipulatorShader(ID3D11Device* device, HWND hwnd
 
 VertexManipulatorShader::~VertexManipulatorShader()
 {
-	// Release the sampler state.
-	//if (sampleState)
-	//{
-	//	sampleState->Release();
-	//	sampleState = 0;
-	//}
-
 	// Release the matrix constant buffer.
 	if (matrixBuffer)
 	{
@@ -62,37 +55,6 @@ VertexManipulatorShader::~VertexManipulatorShader()
 
 void VertexManipulatorShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilename)
 {
-	//D3D11_BUFFER_DESC matrixBufferDesc;
-	//D3D11_SAMPLER_DESC samplerDesc;
-
-	//// Load (+ compile) shader files
-	//loadVertexShader(vsFilename);
-	//loadPixelShader(psFilename);
-
-	//// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
-	//matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	//matrixBufferDesc.ByteWidth = sizeof(MatrixBufferType);
-	//matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	//matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	//matrixBufferDesc.MiscFlags = 0;
-	//matrixBufferDesc.StructureByteStride = 0;
-
-	//// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-	//renderer->CreateBuffer(&matrixBufferDesc, NULL, &matrixBuffer);
-
-	//// Create a texture sampler state description.
-	//samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-	//samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	//samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	//samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-	//samplerDesc.MipLODBias = 0.0f;
-	//samplerDesc.MaxAnisotropy = 1;
-	//samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	//samplerDesc.MinLOD = 0;
-	//samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-	//// Create the texture sampler state.
-	//renderer->CreateSamplerState(&samplerDesc, &sampleState);
 
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_BUFFER_DESC cameraBufferDesc;
@@ -116,7 +78,7 @@ void VertexManipulatorShader::initShader(const wchar_t* vsFilename, const wchar_
 	matrixBufferDesc.StructureByteStride = 0;
 	renderer->CreateBuffer(&matrixBufferDesc, NULL, &matrixBuffer);
 
-
+	//Create the description for the buffer
 	extraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	extraBufferDesc.ByteWidth = sizeof(ExtraBufferType);
 	extraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -133,18 +95,6 @@ void VertexManipulatorShader::initShader(const wchar_t* vsFilename, const wchar_
 	cameraBufferDesc.MiscFlags = 0;
 	cameraBufferDesc.StructureByteStride = 0;
 	renderer->CreateBuffer(&cameraBufferDesc, NULL, &cameraBuffer);
-
-	// Create a texture sampler state description.
-	//samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-	//samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	//samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	//samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	//samplerDesc.MipLODBias = 0.0f;
-	//samplerDesc.MaxAnisotropy = 1;
-	//samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	//samplerDesc.MinLOD = 0;
-	//samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	//renderer->CreateSamplerState(&samplerDesc, &sampleState);
 
 	// Setup light buffer
 	// Setup the description of the light dynamic constant buffer that is in the pixel shader.
@@ -177,33 +127,6 @@ void VertexManipulatorShader::initShader(const wchar_t* vsFilename, const wchar_
 
 void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection, Light* light[NUM_LIGHTS], XMFLOAT3 CameraPosition, float Octaves, float Hurst,float SmoothSteps, XMFLOAT4 Colour,bool light_type)
 {
-	//HRESULT result;
-	//D3D11_MAPPED_SUBRESOURCE mappedResource;
-	//MatrixBufferType* dataPtr;
-	//XMMATRIX tworld, tview, tproj;
-
-
-	//// Transpose the matrices to prepare them for the shader.
-	//tworld = XMMatrixTranspose(worldMatrix);
-	//tview = XMMatrixTranspose(viewMatrix);
-	//tproj = XMMatrixTranspose(projectionMatrix);
-
-	//// Sned matrix data
-	//result = deviceContext->Map(matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	//dataPtr = (MatrixBufferType*)mappedResource.pData;
-	//dataPtr->world = tworld;// worldMatrix;
-	//dataPtr->view = tview;
-	//dataPtr->projection = tproj;
-	//deviceContext->Unmap(matrixBuffer, 0);
-	//deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
-
-	//// Set shader texture and sampler resource in the pixel shader.
-	//deviceContext->PSSetShaderResources(0, 1, &texture);
-	//deviceContext->PSSetSamplers(0, 1, &sampleState);
-
-	//deviceContext->VSSetShaderResources(0, 1, &texture);
-	//deviceContext->VSSetSamplers(0, 1, &sampleState);
-
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -224,9 +147,8 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	//Defines and sets up each light view matrix along with the projection matrix
 	XMMATRIX tLightViewMatrix1 = XMMatrixTranspose(light[0]->getViewMatrix());
 	XMMATRIX tLightProjectionMatrix1 = XMMatrixTranspose(light[0]->getOrthoMatrix());
-	//XMMATRIX tLightViewMatrix2 = XMMatrixTranspose(light[1]->getViewMatrix());
-	//XMMATRIX tLightProjectionMatrix2 = XMMatrixTranspose(light[1]->getOrthoMatrix());
 
+	//Takes the data and inserts into the buffer at which point it is passed to the given shader
 	result = deviceContext->Map(matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	dataPtr = (MatrixBufferType*)mappedResource.pData;
 	dataPtr->world = tworld;// worldMatrix;
@@ -240,11 +162,6 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	extra = (ExtraBufferType*)mappedResource.pData;
 	extra->lightView[0] = tLightViewMatrix1;
 	extra->lightProjection[0] = tLightProjectionMatrix1;
-	//extra->Ocatves = Octaves;
-	//extra->Hurst = Hurst;
-	//extra->padding = XMFLOAT2(0.0f,0.0f);
-	//dataPtr->lightView[1] = tLightViewMatrix2;
-	//dataPtr->lightProjection[1] = tLightProjectionMatrix2;
 	deviceContext->Unmap(extr_buffer, 0);
 	deviceContext->VSSetConstantBuffers(2, 1, &extr_buffer);
 
@@ -274,13 +191,6 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 		lightPtr->position[0] = XMFLOAT4(light[0]->getPosition().x, light[0]->getPosition().y, light[0]->getPosition().z, 2.0f);
 	}
 
-	//lightPtr->diffuse[1] = light[1]->getDiffuseColour();
-	//lightPtr->position[1] = XMFLOAT4(light[1]->getPosition().x, light[1]->getPosition().y, light[1]->getPosition().z, 1.0f);
-
-	//lightPtr->direction = XMFLOAT4(light[2]->getDirection().x, light[2]->getDirection().y, light[2]->getDirection().z, 1.0f);
-	//lightPtr->diffuse[2] = light[2]->getDiffuseColour();
-	//lightPtr->position[2] = XMFLOAT4(light[2]->getPosition().x, light[2]->getPosition().y, light[2]->getPosition().z, 2.0f);
-
 	lightPtr->ambient = light[0]->getAmbientColour();
 	lightPtr->specularPower = 2.0f;
 	lightPtr->padding = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -291,28 +201,15 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	settings_ = (SettingsBufferVs*)mappedResource.pData;
 	settings_->Octaves = Octaves;
 	settings_->Hurst = Hurst;
-	//settings_->radius = Radius;
 	settings_->Padding1 = XMFLOAT2(0.0f,0.0f);
-	//settings_->Position = Position;
 	settings_->SmoothSteps = SmoothSteps;
-	//settings_->Colour = Colour;
-	//settings_->MAx_Distance = Max_distance;
 	settings_->Padding2 = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	deviceContext->Unmap(settingsBufferVs, 0);
 	deviceContext->VSSetConstantBuffers(3, 1, &settingsBufferVs);
-	//deviceContext->PSSetConstantBuffers(1, 1, &settingsBufferVs);
 
 	deviceContext->Map(settingsBufferPs, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	settings_2 = (SettingsBufferPs*)mappedResource.pData;
 	settings_2->Colour = Colour;
 	deviceContext->Unmap(settingsBufferPs, 0);
-	//deviceContext->VSSetConstantBuffers(3, 1, &settingsBufferVs);
 	deviceContext->PSSetConstantBuffers(1, 1, &settingsBufferPs);
-
-	// Set shader texture resource in the pixel shader.
-	//deviceContext->PSSetShaderResources(0, 1, &texture);
-	//deviceContext->PSSetSamplers(0, 1, &sampleState);
-
-	//deviceContext->VSSetShaderResources(0, 1, &texture);
-	//deviceContext->VSSetSamplers(0, 1, &sampleState);
 }
