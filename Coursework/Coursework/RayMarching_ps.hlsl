@@ -248,7 +248,7 @@ float4 main(InputType input) : SV_TARGET
             
             //float4 col = Colour;
             new_col = float4(0.0f, 0.0f, 0.0f, 1.0f);
-            col2 = phongIllumination(specularPower, viewVector, Position, currentPos, World, Octaves, Hurst, Position, SmoothSteps, lightambient, lightposition[0], lightdirection[0], lightdiffuse[0],Freq,Amp);
+            col2 = BlingphongIllumination(specularPower, viewVector, Position, currentPos, World, Octaves, Hurst, Position, SmoothSteps, lightambient, lightposition[0], lightdirection[0], lightdiffuse[0], Freq, Amp);
             //col = col+col2
             
             new_col.xyz += col2;
