@@ -70,6 +70,10 @@ private:
 
 	//Holds the light
 	Light* light[NUM_LIGHTS];
+
+	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix, orthoViewMatrix, viewMatrix, projectionMatrix, scaleMatrix;
+	float screenSizeY;
+	float screenSizeX;
 };
 
 #endif

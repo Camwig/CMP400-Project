@@ -47,6 +47,39 @@ App1::~App1()
 		delete shader;
 		shader = 0;
 	}
+	if (textureShader)
+	{
+		delete textureShader;
+		textureShader = 0;
+	}
+	if (vertex_shader)
+	{
+		delete vertex_shader;
+		vertex_shader = 0;
+	}
+	if (renderTexture)
+	{
+		delete renderTexture;
+		renderTexture = 0;
+	}
+	if (FinalTexture)
+	{
+		delete FinalTexture;
+		FinalTexture = 0;
+	}
+	if (mesh)
+	{
+		delete mesh;
+		mesh = 0;
+	}
+	for (int i =0; i< NUM_LIGHTS; i++)
+	{
+		if (light[i])
+		{
+			delete light[i];
+			light[i] = 0;
+		}
+	}
 }
 
 
@@ -72,6 +105,7 @@ bool App1::frame()
 
 bool App1::render()
 {
+	//Memory leak in one of these functions
 	if (!VertexBased)
 		RenderedPass();
 	finalPass();
@@ -171,11 +205,11 @@ void App1::gui()
 
 void App1::RenderedPass()
 {
-	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
+	//XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
 
 	//Defines the of the screen for use in the shader
-	float screenSizeY = (float)FinalTexture->getTextureHeight();
-	float screenSizeX = (float)FinalTexture->getTextureWidth();
+	/*float*/ screenSizeY = (float)FinalTexture->getTextureHeight();
+	/*float*/ screenSizeX = (float)FinalTexture->getTextureWidth();
 
 	FinalTexture->setRenderTarget(renderer->getDeviceContext());
 	FinalTexture->clearRenderTarget(renderer->getDeviceContext(), 1.0f, 0.0f, 0.0f, 1.0f);
@@ -204,13 +238,14 @@ void App1::finalPass()
 
 	// RENDER THE RENDER TEXTURE SCENE
 	// Requires 2D rendering and an ortho mesh.
+	camera->update();
 
 	if (!VertexBased)
 	{
 		renderer->setZBuffer(false);
-		XMMATRIX worldMatrix = renderer->getWorldMatrix();
-		XMMATRIX orthoMatrix = renderer->getOrthoMatrix();  // ortho matrix for 2D rendering
-		XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
+		/*XMMATRIX*/ worldMatrix = renderer->getWorldMatrix();
+		/*XMMATRIX*/ orthoMatrix = renderer->getOrthoMatrix();  // ortho matrix for 2D rendering
+		/*XMMATRIX*/ orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
 
 		orthoMesh->sendData(renderer->getDeviceContext());
 		textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, FinalTexture->getShaderResourceView());
@@ -219,15 +254,15 @@ void App1::finalPass()
 	}
 	else
 	{
-		camera->update();
+		/*camera->update();*/
 
 		// Get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
-		XMMATRIX worldMatrix = renderer->getWorldMatrix();
-		XMMATRIX viewMatrix = camera->getViewMatrix();
-		XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
+		/*XMMATRIX*/ worldMatrix = renderer->getWorldMatrix();
+		/*XMMATRIX*/ viewMatrix = camera->getViewMatrix();
+		/*XMMATRIX*/ projectionMatrix = renderer->getProjectionMatrix();
 
 		worldMatrix = XMMatrixTranslation(Position.x, Position.y, Position.z);
-		XMMATRIX scaleMatrix = XMMatrixScaling(radius, radius, radius);
+		/*XMMATRIX*/ scaleMatrix = XMMatrixScaling(radius, radius, radius);
 		worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
 		// Send geometry data, set shader parameters, render object with shader
