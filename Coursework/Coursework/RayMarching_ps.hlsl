@@ -1,4 +1,4 @@
-#include "Header.hlsli"
+#include "RayHeader.hlsli"
 
 #define NUM_LIGHTS 1
 

@@ -1,7 +1,7 @@
 
 #define NUM_LIGHTS 1
 
-#include"Header.hlsli"
+#include"LightHeader.hlsli"
 
 cbuffer LightBuffer : register(b0)
 {
