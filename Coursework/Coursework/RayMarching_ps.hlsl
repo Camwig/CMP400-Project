@@ -2,10 +2,6 @@
 
 #define NUM_LIGHTS 1
 
-//Texture2D shaderTexture : register(t0);
-////Texture2D PerlinTexture : register(t1);
-//SamplerState SampleType : register(s0);
-
 cbuffer CameraBuffer : register(b0)
 {
     float3 CameraOrigin;
@@ -66,226 +62,83 @@ struct InputType
 
 float4 main(InputType input) : SV_TARGET
 {
-    //bool UpdatePerlin = true;
-    
-    
+    //Set the camera position
     float3 camPos = CameraOrigin;
-    
-    //float stepSize = 1000.0f;
+    //Sets the maximum number of steps for the raymarching
     int num_of_steps = MAx_Distance;
     float total_distance = 0.0f;
     
     float2 Resoloution = float2(screenWidth, screenheight);
     
+    //Translates the texture coordinates of the orthomesh we are using as a render target 
+    //into screen space(as the quads texture coordinates are often clamped between 0 and 1)
     float xc = input.tex.x * screenWidth;
     float yc = input.tex.y * screenheight;
     
+    //We can now translate these screen space coordinates into normalised device coordinates using the the equation used to calculate the 
+    //screen space coordinates we can solve for normalised device coordinates
     
-    float4 newCoords = float4( (2.0 * xc / Resoloution.x - 1.0f) /** CameraForwardDirection.x*/, (-2.0 * yc / Resoloution.y + 1.0f), 1.0f, 0.0f);
-
+    //Xs = (Xndc*(W+W))/2
+    //Ys = -(Yndc*(H+H))/2
+    
+    //Where Xndc,Yndc are position coordinates in normalised device space
+    //Xs,Ys are the coordinates in screen space
+    //W is the width of the screens resoloutuion
+    //H is the height of the screens resoloution
+    
+    float4 newCoords = float4( (2.0 * xc / Resoloution.x - 1.0f) , (-2.0 * yc / Resoloution.y + 1.0f), 1.0f, 0.0f);
+    
+    //We then divide by the given values of the projection matrix to allow for the rays to accuratley shoot
+    //through the x and y in the near plane
     float xcoord = newCoords.x / Projection[0][0];
     float ycoord = newCoords.y / Projection[1][1];
 
+    //We then translate this vector into the view space of the camera
+    //as currently it exists in the view space of the render target mesh
     float4 v = float4(xcoord, ycoord, 1, 0);
+    //Normalised in unit length
     float3 viewVector = normalize(mul(v, View));
-    
-    float3 Test = mul(viewVector, World);
-    
+    //Then translates that direction into world space
     viewVector = normalize(mul(viewVector,World));
     
-    //Test = viewVector;
-    
-    //float shininess = 10.0f;
-    
-    //bool Perlin = false;
-
-    //float3 Result = float3(0.0, 0.0, 0.0);
-    
-    //float4 height = PerlinTexture.Sample(SampleType, input.tex,0);
-    
-    
-    //height = mul(height, World);
-    
-    //height = height * 1.0f;
-    
-    //if (height < 0.0f)
-    //{
-    //    height = 0.001f;
-    //}
-    
-    //float3 Startpoint = camPos /** viewVector*/;
-    
-    //float3 EndPoint = float3(Test.x - Startpoint.x, Test.y - Startpoint.y, Test.z - Startpoint.z);
-    
-    
-    //Need to figure out how to move from input.tex equivilent of the SDF shape
-    
-    //float4 textureColour = PerlinTexture.Sample(SampleType, input.tex.xy);
-    
-    
-    //EndPoint = mul(EndPoint, World);
-    
-    //float3 new_vector = float3(camPos.xyz - EndPoint.xyz);
-    
-    //new_vector = normalize(new_vector);
-    
-    //int Octave = 3;
-    //float Hurst = 0.5f;
-    
-    //new_vector = viewVector;
-    //return height * 30.0f;
-    
+    //Defines the variables here as to save on GPU writings as much as I can
+    //so they are not defined every frame
     float3 currentPos = float3(0, 0, 0);
     float distance_to_currentPos = 0;
     float4 col = Colour;
     float4 new_col = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 col2 = float4(0.0f, 0.0f, 0.0f, 1.0f);
     
-    //float Freq = 5.f;
-    //float Amp = 9.f;
-    
+    //Informs the shader compiler make use of the loop as an
+    //iterative process rather than performing each loop indivdually unrolled
     [loop]
     for (int i = 0; i < num_of_steps; i++)
     {
-        
-        currentPos = camPos + total_distance * viewVector; /*CameraForwardDirection*/
-        
-        //if (i == 0)
-        //{
-        //    EndPoint = float3(viewVector.x - currentPos.x, viewVector.y - currentPos.y, viewVector.z - currentPos.z);
-        //}
-        
-        //float3 currentPos = (camPos * newCoords) + total_distance * CameraForwardDirection; /*CameraForwardDirection*/;
-            
-        //float distance_to_currentPos = min(distance_from_sphere(currentPos, float3(1.5f, 0.0f, 0.0f), 2.0f), distance_from_sphere(currentPos, -1 * float3(1.5f, 0.0f, 0.0f), 2.0f));
-        
-        //float distance_to_currentPos = distance_from_Elipsoid_bound(currentPos, float3(0.2f, 0.25f, 0.05f), 0.1f);
-        
-        //float3 value = currentPos - 25*(round(currentPos/25.0f));
-        
-        //float distance_to_currentPos = distance_from_sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
-        //UpdatePerlin = false;
-        
-        //float distance_to_currentPos2 = distance_from_sphere(currentPos, EndPoint, 1.0f);
-        
-        //if (i == 0)
-        //{
-            //EndPoint = float3(Test.x /*- camPos.x*/, Test.y /*- camPos.y*/, Test.z /*- camPos.z*/);
-            //EndPoint += distance_to_currentPos;
-            //EndPoint = mul(EndPoint, World);
-        //}
-        
-        //float distance_to_currentPos = distance_from_plane(currentPos, normalize(float3(0.0021f, 0.0045f, 0.001f)), 200.0f);
-        
-        //float distance_to_currentPos = distance_from_box(currentPos, float3(0.3f, 0.3f, 1.0f));
-        
-        //float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 10.0f), float3(10.0f, 0.0f, 0.0f));
-        
-        //float distance_to_currentPos = distance_from_quad(currentPos, float3(0.0f, 0.0f, 0.0f), float3(0.0f,10.0f, 0.0f), float3(10.0f, 10.0f, 0.0f), float3(10.0f, 0.0f, 0.0f));
-        
-        //vec2 p = (fragCoord.xy / iResolution.y) * 2.0 - 1.0;
-        //vec3 xyz = vec3(p, 0);
-        //float n = color(xyz.xy * 4.0);
-        
-        //float2 p = ()
-
-        //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f, newCoords.x, newCoords.y, newCoords.z, height.r);
-        
-        //float multiple = 0.25f;
-        //float3 Input = float3(currentPos.x * multiple, currentPos.y * multiple, currentPos.z * multiple);
-        //float n = color2(Input);
-        
-        //if (n < 0.0f)
-        //{
-        //    n = 0.001f;
-        //}
-        
-        //float noise = n * 0.25f;
-        
-        //distance_to_currentPos -= noise;
-        
-        //Inital values for the perlin noise to be generated from
-        //distance_to_currentPos -= (0.38f*height.r);
-        
-        
-        //float3 xyz = float3(newCoords.xy, -sqrt(distance_to_currentPos));
-        //float n = color(xyz * 4.0f);
-        //float3 Result = mix3(0.0f, 0.5 + 0.5 * n, smoothstep(0.0, 0.003, distance_to_currentPos)) * float3(1, 1, 1);
-        
-        //return float4(Result.x, Result.y, Result.z, 1.0f);
-        
-        //float distance_to_currentPos2 = distance_from_Line(currentPos, float3(camPos.x,camPos.y,camPos.z + 1.0f), EndPoint, 0.1f);
-        
-        //float distance_to_currentPos = Random_Sphere(currentPos, float3(0.0, 0.0f, 0.6f), 1.0f);
+        //Determine the point along a cast ray
+        currentPos = camPos + total_distance * viewVector;
+        //Determines the distance between the current point along a ray and the defined shape
         distance_to_currentPos = New_Random_Sphere(currentPos, Position, radius, Octaves, Hurst);
-        
-        //float3 d = Distance_between_3DPoints_3_(currentPos, float3(0, 0, 0.6f));
-        
-        //float3 New_p = input.worldPosition.xyz;
-        
-        //float3 New_p = float3(sin(0.53), sin(-0.45), sin(0.78));
-       
-        //distance_to_currentPos = Apply_Noise(currentPos, distance_to_currentPos, Octave, Hurst);
-        
-        //if (distance_to_currentPos < 0.25f)
-        //{
-        
-        //I need to find a new input for the noise that is the position but also not constantly changing
+        //Applies noise value to the distance between the point along the ray and the surface
         distance_to_currentPos = Apply_Noise(currentPos, distance_to_currentPos, Octaves, Hurst,SmoothSteps,Freq,Amp);
 
-        
+        //Check if the distance is within a certain distance to confirm a hit of the surface
         if (distance_to_currentPos < 0.01f)
         {
-            
-            
-            /*new_vector = (camPos + total_distance) + distance_to_currentPos * viewVector*/;
-            //float3 p = currentPos + (distance_to_currentPos);
-            
-            //float3 SDF_Position = /*currentPos * distance_to_currentPos;*/float3(5.0f, 0.0f, 5.0f);
-            
-            //new_vector = float3(currentPos.x + distance_to_currentPos * viewVector.x, currentPos.y + distance_to_currentPos * viewVector.y, currentPos.z + distance_to_currentPos * viewVector.z);
-            //SDF_Position -= (n * 0.5f);
-            
-            //float4 col = Colour;
+            //Apply the colour and lighting value to the point on the screen
             new_col = float4(0.0f, 0.0f, 0.0f, 1.0f);
             col2 = BlingphongIllumination(specularPower, viewVector, Position, currentPos, World, Octaves, Hurst, Position, SmoothSteps, lightambient, lightposition[0], lightdirection[0], lightdiffuse[0], Freq, Amp);
-            //col = col+col2
-            
             new_col.xyz += col2;
-            
-            //float4 col2 = phongIllumination(shininess, viewVector, Position, currentPos, World, Octaves, Hurst, Position, SmoothSteps);
-            //col = float4(col.x * col2.x, col.y * col2.y, col.z * col2.z, col.w * col2.w);
-            return col + new_col /** textureColour*/;
+            return col + new_col;
         }
-            
+        //Checks if the total distance we have travelled along the ray has surrpassed the maximum amount of distance the shader is allowed to travel    
         if (total_distance > num_of_steps)
         {
             break;
         }
-
-        //Check this is proper sphere tracing
-        total_distance += /*0.1f*/distance_to_currentPos;
+        //If no intersection is found add the current distance between the two points to the distance to travel
+        total_distance += distance_to_currentPos;
     }
-    
-    //float4 col = float4(viewVector.x, viewVector.y, viewVector.z, 1.0f);
+
     col = float4(0.39f, 0.58f, 0.92f, 1.0f);
     return col;
-    
-    /*
-    
-    Loop for length of the ray
-    -move along the ray by a set step amount
-    -check if we have intersected with the shape
-        -if we have set pixel to bright colout
-        -if we have NOT keep going
-    -if we do not find any intersection set pixel to be some dark colour for background
-    
-    */
-    
-    //float3 camPos = float3(0, 0, -1);
-    //float3 camTarget = float3(0, 0, 0);
-    
-    //Normalize screen coordinates
-    
-    //Then render the image
 }
