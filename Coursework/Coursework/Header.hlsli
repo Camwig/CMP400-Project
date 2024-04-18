@@ -60,15 +60,14 @@ float Apply_Noise(float3 p,float distance,int Octave,float Hurst,float SmoothSte
     //for each octave create the input for the nosie based on the current position of the point on the ray
     //Multiplying the input by a frequency value will result in a greater amount of occurance of the noise
     //and applying an amplitude value to the output will result in a greater change in the diffrence of the noise
-    //[unroll(10)]
     for (int i = 1; i <= Octave; i++)
     {
-        Frequency = (i*i)/Freq; //5.f
+        Frequency = (i)/Freq; //5.f
         Input = float3(p.x * Frequency, p.y * Frequency, p.z * Frequency);
         n = color2(Input);
         Amplitude = pow(Frequency, Hurst);
         if (i != 1)
-            Amplitude /= Amp;
+            Amplitude /= Amp*i;
         noise += n * Amplitude;
     }
     

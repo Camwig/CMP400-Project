@@ -47,8 +47,8 @@ private:
 	RenderTexture* FinalTexture;
 
 	//Defines the inital values of the shape and the scene that can be editied using the GUI
-	int Octaves = 2;
-	float Hurst = 0.506f;
+	int Octaves = 5;
+	float Hurst = 0.65606f;
 	float radius = 2.5f;
 	XMFLOAT3 Position = XMFLOAT3(0.0f, 0.0f, 0.6f);
 	int SmoothSteps = 2;
@@ -60,8 +60,8 @@ private:
 	XMFLOAT3 LightPosition = XMFLOAT3(0.0f, 6.0f, 0.0f);
 	XMFLOAT3 LightDirection = XMFLOAT3(0.0f, -1.0f, 0.0f);
 
-	float Frequency = 3.362f;
-	float Amplitude = 2.5f;
+	float Frequency = 3.545f;
+	float Amplitude = 1.699f;
 
 	bool point = true;
 	float sx;

@@ -133,7 +133,7 @@ void App1::gui()
 	ImGui::Checkbox("VertexBase", &VertexBased);
 	ImGui::Checkbox("Point light True/Directional Light false", &point);
 
-	ImGui::SliderInt("Octaves", &Octaves, 0, 12);
+	ImGui::SliderInt("Octaves", &Octaves, 0, 10);
 	ImGui::SliderFloat("Hurst", &Hurst, 0, 1);
 	ImGui::SliderFloat("Frequency", &Frequency, 1, 10);
 	ImGui::SliderFloat("Amplitude", &Amplitude, 1, 10);
