@@ -71,6 +71,7 @@ private:
 	//Holds the light
 	Light* light[NUM_LIGHTS];
 
+	//Defines the matrices and screen size variables for later use
 	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix, orthoViewMatrix, viewMatrix, projectionMatrix, scaleMatrix;
 	float screenSizeY;
 	float screenSizeX;

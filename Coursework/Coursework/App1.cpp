@@ -205,11 +205,9 @@ void App1::gui()
 
 void App1::RenderedPass()
 {
-	//XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
-
 	//Defines the of the screen for use in the shader
-	/*float*/ screenSizeY = (float)FinalTexture->getTextureHeight();
-	/*float*/ screenSizeX = (float)FinalTexture->getTextureWidth();
+	screenSizeY = (float)FinalTexture->getTextureHeight();
+	screenSizeX = (float)FinalTexture->getTextureWidth();
 
 	FinalTexture->setRenderTarget(renderer->getDeviceContext());
 	FinalTexture->clearRenderTarget(renderer->getDeviceContext(), 1.0f, 0.0f, 0.0f, 1.0f);
@@ -243,9 +241,9 @@ void App1::finalPass()
 	if (!VertexBased)
 	{
 		renderer->setZBuffer(false);
-		/*XMMATRIX*/ worldMatrix = renderer->getWorldMatrix();
-		/*XMMATRIX*/ orthoMatrix = renderer->getOrthoMatrix();  // ortho matrix for 2D rendering
-		/*XMMATRIX*/ orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
+		worldMatrix = renderer->getWorldMatrix();
+		orthoMatrix = renderer->getOrthoMatrix();  // ortho matrix for 2D rendering
+		orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
 
 		orthoMesh->sendData(renderer->getDeviceContext());
 		textureShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, orthoViewMatrix, orthoMatrix, FinalTexture->getShaderResourceView());
@@ -254,15 +252,13 @@ void App1::finalPass()
 	}
 	else
 	{
-		/*camera->update();*/
-
 		// Get the world, view, projection, and ortho matrices from the camera and Direct3D objects.
-		/*XMMATRIX*/ worldMatrix = renderer->getWorldMatrix();
-		/*XMMATRIX*/ viewMatrix = camera->getViewMatrix();
-		/*XMMATRIX*/ projectionMatrix = renderer->getProjectionMatrix();
+		worldMatrix = renderer->getWorldMatrix();
+		viewMatrix = camera->getViewMatrix();
+		projectionMatrix = renderer->getProjectionMatrix();
 
 		worldMatrix = XMMatrixTranslation(Position.x, Position.y, Position.z);
-		/*XMMATRIX*/ scaleMatrix = XMMatrixScaling(radius, radius, radius);
+		scaleMatrix = XMMatrixScaling(radius, radius, radius);
 		worldMatrix = XMMatrixMultiply(worldMatrix, scaleMatrix);
 
 		// Send geometry data, set shader parameters, render object with shader
