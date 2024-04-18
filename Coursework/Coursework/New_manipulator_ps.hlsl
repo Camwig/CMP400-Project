@@ -1,11 +1,7 @@
-// Texture pixel/fragment shader
-// Basic fragment shader for rendering textured geometry
 
-// Texture and sampler registers
 #define NUM_LIGHTS 1
 
-//Texture2D texture0 : register(t0);
-SamplerState sampler0 : register(s0);
+#include"Header.hlsli"
 
 cbuffer LightBuffer : register(b0)
 {
@@ -29,43 +25,12 @@ struct InputType
     float3 normal : NORMAL;
     float3 worldPosition : TEXCOORD1;
     float3 viewVector : TEXCOORD2;
-    //float4 lightViewPos : TEXCOORD3;
 };
-
-// Calculate lighting intensity based on direction and normal. Combine with light colour.
-float4 calculateLighting(float3 lightDirection, float3 normal, float4 ldiffuse, float4 position)
-{
-    float intensity;
-    if (position.w == 1.0f)
-    {
-        intensity = saturate(dot(normal, lightDirection));
-    }
-    else if (position.w == 2.0f)
-    {
-        intensity = saturate(dot(normal, -lightDirection));
-    }
-    float4 colour = saturate(ldiffuse * intensity);
-    return colour;
-}
-
-float4 calcSpecular(float3 lightDirection, float3 normal, float3 viewVector, float4 specularColour, float specularPower)
-{
-    float3 halfway = normalize(lightDirection + viewVector);
-    float specularIntensity = pow(max(dot(normal, halfway), 0.0f), specularPower);
-    return saturate(specularColour * specularIntensity);
-}
-
-float4 calcAttenuation(float distance, float constantfactor, float linearFactor, float quadraticfactor)
-{
-    float attenuation = 1.f / ((constantfactor + (linearFactor * distance) + (quadraticfactor * pow(distance, 2))));
-    return attenuation;
-}
 
 float4 main(InputType input) : SV_TARGET
 {
-    //Try implementing a for loop to loop through instead
-	
-    float4 textureColour = Colour; //texture0.Sample(sampler0, input.tex);
+    //Sets the intial values
+    float4 textureColour = Colour;
     float3 lightVector;
     float attenuation;
     float4 lightColour[NUM_LIGHTS];
@@ -80,37 +45,40 @@ float4 main(InputType input) : SV_TARGET
             lightVector = float3(0.0f, 0.0f, 0.0f);
             lightColour[i] = float4(0.0f, 0.0f, 0.0f, 0.0f);
             
-            if (position[i].w == 1.0f)
+            switch (position[i].w)
             {
-                lightVector = (float3(position[i].x, position[i].y, position[i].z) - input.worldPosition);
+                case 1.0f:
+                    //Light is in fact a point light
+        
+                    lightVector = (float3(position[i].x, position[i].y, position[i].z) - input.worldPosition);
+	            
+                    //Calculate the attenuation
+                    attenuation = calcAttenuation(length(lightVector), 0.5f, 0.125f, 0.0f);
+	            
+                    lightVector = normalize(lightVector);
+	                //Calculates the lighting
+                    lightColour[i] = ambient + attenuation * calculateLighting(lightVector, input.normal, diffuse[i], position[i]);
+	                //Adds the specular values
+                    lightColour[i] *= calcSpecular(lightVector, input.normal, input.viewVector, float4(1, 1, 1, 1), specularPower);
+                    break;
+                case 2.0f:
+                     //Light is in fact a directional light
+                    lightVector = (float3(position[i].x, position[i].y, position[i].z) - input.worldPosition);;
+	                //Calculate the attenuation
+                    attenuation = calcAttenuation(length(lightVector), 0.5f, 0.125f, 0.0f);
 	
-                attenuation = calcAttenuation(length(lightVector), 0.5f, 0.125f, 0.0f);
-	
-                lightVector = normalize(lightVector);
-	
-                lightColour[i] = ambient + attenuation * calculateLighting(lightVector, input.normal, diffuse[i], position[i]);
-	
-                lightColour[i] *= calcSpecular(lightVector, input.normal, input.viewVector, float4(1, 1, 1, 1), specularPower);
+                    lightVector = normalize(lightVector);
+	                 //Calculates the lighting
+                    lightColour[i] = ambient + attenuation * calculateLighting(float3(direction[i].x, direction[i].y, direction[i].z), input.normal, diffuse[i], position[i]);
+	                //Adds the specular values
+                    lightColour[i] *= calcSpecular(float3(-direction[i].x, -direction[i].y, -direction[i].z), input.normal, input.viewVector, float4(1, 1, 1, 1), specularPower);
+                    break;
             }
             
-            if (position[i].w == 2.0f)
-            {
-                lightVector = (float3(position[i].x, position[i].y, position[i].z) - input.worldPosition);;
-	
-                attenuation = calcAttenuation(length(lightVector), 0.5f, 0.125f, 0.0f);
-	
-                lightVector = normalize(lightVector);
-	
-                lightColour[i] = ambient + attenuation * calculateLighting(float3(direction[i].x, direction[i].y, direction[i].z), input.normal, diffuse[i], position[i]);
-	
-                lightColour[i] *= calcSpecular(float3(-direction[i].x, -direction[i].y, -direction[i].z), input.normal, input.viewVector, float4(1, 1, 1, 1), specularPower);
-            }
-            
-            final_colour.xyz += lightColour[i];
+            final_colour += lightColour[i];
 
         }
         
-        //return float4(input.normal.x, input.normal.y, input.normal.z, 1.0f);
         return final_colour + textureColour;
     }
 }
