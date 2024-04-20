@@ -53,8 +53,8 @@ private:
 	//Buffer to pass in camera position data
 	struct CameraBufferType
 	{
-		XMFLOAT3 cameraPosition;
 		float padding;
+		XMFLOAT3 cameraPosition;
 	};
 public:
 	VertexManipulatorShader(ID3D11Device* device, HWND hwnd);

@@ -41,6 +41,12 @@ VertexManipulatorShader::~VertexManipulatorShader()
 		lightBuffer = 0;
 	}
 
+	if (cameraBuffer)
+	{
+		cameraBuffer->Release();
+		cameraBuffer = 0;
+	}
+
 	// Release the layout.
 	if (layout)
 	{
@@ -58,7 +64,7 @@ void VertexManipulatorShader::initShader(const wchar_t* vsFilename, const wchar_
 
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_BUFFER_DESC cameraBufferDesc;
-	D3D11_SAMPLER_DESC samplerDesc;
+	//D3D11_SAMPLER_DESC samplerDesc;
 	D3D11_BUFFER_DESC lightBufferDesc;
 
 	D3D11_BUFFER_DESC extraBufferDesc;
@@ -89,7 +95,7 @@ void VertexManipulatorShader::initShader(const wchar_t* vsFilename, const wchar_
 
 	//Create and setup the camera buffer
 	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	cameraBufferDesc.ByteWidth = sizeof(MatrixBufferType);
+	cameraBufferDesc.ByteWidth = sizeof(CameraBufferType);
 	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cameraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cameraBufferDesc.MiscFlags = 0;
@@ -149,7 +155,7 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	XMMATRIX tLightProjectionMatrix1 = XMMatrixTranspose(light[0]->getOrthoMatrix());
 
 	//Takes the data and inserts into the buffer at which point it is passed to the given shader
-	result = deviceContext->Map(matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	/*result = */deviceContext->Map(matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	dataPtr = (MatrixBufferType*)mappedResource.pData;
 	dataPtr->world = tworld;// worldMatrix;
 	dataPtr->view = tview;
@@ -158,7 +164,7 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
 
 
-	result = deviceContext->Map(extr_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	/*result = */deviceContext->Map(extr_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	extra = (ExtraBufferType*)mappedResource.pData;
 	extra->lightView[0] = tLightViewMatrix1;
 	extra->lightProjection[0] = tLightProjectionMatrix1;
@@ -169,7 +175,7 @@ void VertexManipulatorShader::setShaderParameters(ID3D11DeviceContext* deviceCon
 	camPtr = (CameraBufferType*)mappedResource.pData;
 	camPtr->cameraPosition = CameraPosition;
 	camPtr->padding = 0.0f;
-	deviceContext->Unmap(cameraBuffer, 1);
+	deviceContext->Unmap(cameraBuffer, 0);
 	deviceContext->VSSetConstantBuffers(1, 1, &cameraBuffer);
 
 	//Additional
