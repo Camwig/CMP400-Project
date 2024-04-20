@@ -60,7 +60,7 @@ OutputType main(InputType input)
     float n = 0.0f;
         
     float noise = 0.0f;
-    float3 Normal = normalize(input.normal);
+    //float3 Normal = (input.normal);
     
     //Makes use of the [loop] propmpt
     //to make sure the shader iterates over the noise to build on top of it
@@ -77,7 +77,7 @@ OutputType main(InputType input)
         Amplitude = pow(Frequency, -Hurst);
         if (i != 1) //This is to prevent the amplitude from being edited before the first ocatve of noise has been passed
             Amplitude /= ((Amp*i)); //Edit the amplitude by reducing it
-        noise += (n * Normal) * Amplitude; //Final output of the noise
+        noise += (n) * Amplitude; //Final output of the noise
     }
     
     [loop]
@@ -86,7 +86,7 @@ OutputType main(InputType input)
     
     //Add ths noise to the current position of the normal by multiplying it to the normal of the position
     //since its a sphere will be perpendicular to the vertex
-    input.position.xyz += (noise /** input.normal*/);
+    input.position.xyz += (noise * input.normal);
     
     float4 worldPosition = mul(input.position, worldMatrix);
     output.viewVector = cameraPosition.xyz - worldPosition.xyz;
