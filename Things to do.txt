@@ -1,0 +1,17 @@
+- Setup the Gui so I can set objects such as shapes octaves perlin position and size etc. 
+	
+-Setup a system that can decide between diffrent functions to determine the distance field
+ how I would do this immediatley isI could put these functions to calculate these objects 
+ under a single struct/pointer so I can pass it in along with the 
+ location which I will also need to include as a struct with the shape
+
+-Setup the profiler for performance
+
+-Fix the vertex based perlin stuff and set that Fractional Brownain motion
+
+-Try and add smoothing to both if there is time! Added smoothing to vertex will try on
+ distance fields now. Nope computer not like
+
+-POSSIBLE EXTRA after improving general performance as much as I can could look into
+ making use of the compute shader to try and improve efficecny by making use of group
+ shared memeory.
